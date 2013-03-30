@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="http://duby.is-a-geek.com:834/socket.io/socket.io.js"></script>
+	<script>
+		var socket = io.connect('http://duby.is-a-geek.com:834');
+		socket.on('connect', function(){
+			console.log('connected');
+		});
+
+		socket.on('echo', function(msg){
+			console.log('echo', msg);
+		});
+	</script>
+</head>
+<body>
+	<p>Log away</p>
+</body>
+</html>

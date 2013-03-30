@@ -1,0 +1,510 @@
+/*
+    PHONES BOTH ORIENTATIONS
+*/
+@media only screen and (max-width: 767px){
+  
+}
+
+/*
+    TABLETS (BLEEDS INTO DESKTOP)
+*/
+@media only screen and (min-width: 768px){
+  .page article{
+    padding:0 0 0 0;
+    margin:2%;
+  }
+
+  #index .machine-holder,
+  #index .player-holder,
+  #players .nights-holder,
+  #players .machine-holder{
+    display:inline-block;
+    vertical-align:top;
+  }
+    #index .machine-holder,
+    #players .nights-holder{
+      width:36%;
+      margin-right:2%;
+    }
+    #index .player-holder,
+    #players .machine-holder{
+      width:60%;
+    }
+
+  #index .notes{
+    margin:15px 0;
+    text-align:center;
+  }
+}
+
+/*
+    DESKTOP
+*/
+@media only screen and (min-width: 1025px){  
+  .page > article{
+    margin:0;
+    padding-top:15px;
+  }
+  
+  /* break the nights panel out of a popup */
+  .page > header .select-trigger{ cursor:default; } 
+  .page > header .select-trigger div:after{ display:none; }
+
+  #nights-panel,
+  #scoring-machine-panel,
+  #players-panel,
+  #user_admin-users-panel{
+    display:block !important;
+    margin:0;
+    top:70px; left:1%;
+    width:20%;
+    z-index:auto;
+  }
+    #nights-panel .pointer,
+    #nights-panel .close,
+    #scoring-machine-panel .pointer,
+    #scoring-machine-panel .close,
+    #players-panel .pointer,
+    #players-panel .close,
+    #user_admin-users-panel .pointer,
+    #user_admin-users-panel .close{
+     display:none; 
+   }
+   #nights-panel header,
+   #scoring-machine-panel header,
+   #players-panel header,
+   #user_admin-users-panel header{ padding:15px; }
+
+   #nights-panel header h1,
+   #scoring-machine-panel header h1,
+   #players-panel header h1,
+   #user_admin-users-panel header h1{ font-size:20px; }
+
+   #nights-panel article,
+   #scoring-machine-panel article,
+   #players-panel article,
+   #user_admin-users-panel article{ padding-bottom:10px; }
+  
+  #index .machine-holder,
+  #players .nights-holder{
+    width:25%; 
+    margin:0 1% 0 22%;
+  }
+  
+  #index .player-holder,
+  #players .machine-holder{
+    width:50%; 
+  }
+  
+  #scoring .scoring-form,
+  #user_admin .user-form{
+    margin:auto 2% auto 23%;
+  }
+ 
+  abbv{
+    cursor:help;
+    border-bottom:1px dotted #aaa;
+  }
+  
+}
+
+
+
+
+
+/* hide scoring to start */
+.page > header button.scoring,
+.page > header button.login{ display:none; }
+
+
+/*
+ * --- INDEX : PLAYER HOLDER ---
+*/
+.player-holder .listview ul:before{
+  content:'';
+  display:block;
+  height:3px; width:100%;
+  background:#9f9f9f;
+  border-top:1px solid #8b8b8b;
+  border-bottom:1px solid #b3b3b3;
+}
+  .player-holder .listview ul li:last-child{
+    border-bottom:none;
+  }
+.player-holder .listview li h3{
+  text-transform:none; 
+}
+.listview li .score{
+  font-size:18px;
+  font-weight:bold;
+  letter-spacing:-.04em;
+  color:#775737;
+  text-align:center;
+  line-height:.9em;
+}
+  .listview li .score span{ display:block; }
+  .listview li .score span:last-child{ color:#98724b; }
+
+  /*-- players scores --*/
+.player-holder .player-points{
+  position:relative;
+  margin:5px 10px 0 10px;
+  max-width:600px;
+}
+  .player-holder li p.player-points .player-machine{
+    display:inline-block;
+    width:20%;
+    text-align:center;
+    color:#a7a7a7;
+    font-weight:100;
+  }
+  .player-holder li p.player-points .abbv{
+    display:block;
+    font-weight:bold;
+    color:#939393;
+    margin-bottom:2px;
+  }
+
+/* user logged in highlight in player list */
+.player-holder li.user h3:before{
+  content:'';
+  display:inline-block;
+  width:21px; height:22px;
+  background:url(/grpl/layout_imgs/mobile_sprite.png) no-repeat 0 -225px;
+  vertical-align:middle;
+  margin-right:5px;
+}
+
+/* highlight the live night on index */
+#nights-panel .listview li.live a:before{
+  content:'';
+  display:block;
+  float:left;
+  width:16px; height:28px;
+  margin:2px 5px 0 -5px;
+  background:url(/grpl/layout_imgs/mobile_sprite.png) 0 -164px;
+}
+
+/*
+ * --- ADMIN PANEL ---
+*/
+/* panels for categories */
+#admin-panel article h1,
+.listview > h2{
+  padding:10px;
+  font-size:16px;
+  font-weight:bold;
+  color:#878787;
+  text-shadow:0 0 2px #fff;
+  border:1px solid #d5d5d5;
+  border-left:none;
+  border-right:none;
+  background: #fafafa; /* Old browsers */
+  background: -moz-linear-gradient(top,  #fafafa 0%, #dfdfdf 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fafafa), color-stop(100%,#dfdfdf)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  #fafafa 0%,#dfdfdf 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  #fafafa 0%,#dfdfdf 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  #fafafa 0%,#dfdfdf 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  #fafafa 0%,#dfdfdf 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fafafa', endColorstr='#dfdfdf',GradientType=0 ); /* IE6-9 */
+}
+  #admin-panel section > h1:first-child{ border-top:none; }
+
+#admin-panel header h1 a{
+  display:inline-block;
+  width:18px; height:16px;
+  overflow:hidden;
+  text-indent:-999999px;
+  margin:0 15px 0 0;
+  background:url(/grpl/layout_imgs/mobile_sprite.png) no-repeat 0 -292px;
+}
+
+#admin-panel .listview h3{ font-size:16px; }
+#admin-panel .listview p{
+  font-size:12px;
+  color:#919191;
+  text-transform:uppercase;
+}
+
+#admin-panel article h2{
+  background:#e9e9e9;
+  padding:7px 10px;
+  font-size:12px;
+  color:#878787;
+  border-top:1px solid #dadada;
+  border-bottom:1px solid #d5d5d5;
+}
+#admin-panel button{
+  width:276px;
+  margin:10px;
+}
+
+
+/*-- scoring styles ---*/
+#admin-panel section.scoring{
+  display:none;
+}
+/* set the scoring buttons on top of each other */
+#admin-panel button.stop-scoring{
+    display:none;
+}
+
+
+
+/*-- admin panel scoring groups --*/
+#admin-panel .scoring-groups a:after{ display:none; }
+#admin-panel .scoring-groups p.machines{
+  margin-top:3px; 
+}
+#admin-panel .scoring-groups p.machines span.abbv{
+  display:inline-block;
+  margin-right:10px;
+  letter-spacing:.04em;
+  color:#b5b5b5;
+}
+#admin-panel .scoring-groups p.machines span.abbv.done{
+  font-weight:normal;
+  color:#919191;
+}
+
+#admin-panel .scoring-groups .status-indicator{
+  position:absolute;
+  right:10px;
+  top:50%;
+  margin-top:-9px;
+}
+
+
+
+
+
+/* 
+    SCORING PAGE
+*/
+/* hide link arrows in machine panel to make room for indicator */
+#scoring-machine-panel .listview a:after{ display:none; }
+
+#scoring p.machine-notes{
+  font-size:14px;
+  color:#6f6f6f;
+  line-height:1.4em;
+  margin:-10px -15px 10px -15px;
+  padding:10px 15px;
+  border-bottom:1px solid #dadada;
+}
+
+#scoring .scoring-form{
+  margin-bottom:40px;
+}
+
+#scoring .players li{
+  padding:12px 15px 12px 40px;
+  position:relative;
+}
+#scoring .players li span.number{
+  position:absolute;
+  top:50%; left:10px;
+  margin-top:-13px;
+  font-size:26px;
+  color:#98724b;
+  letter-spacing:-.06em;
+}
+#scoring .players li span.number:after{ content:'.'; }
+
+
+
+#scoring .scoring-form button[type="submit"]{
+  min-width:100px;
+}
+
+/*--- confirmed ---*/
+label.confirmed{
+  display:block;
+  color:#515151;
+  font-size:20px;
+  text-transform:uppercase;
+  font-weight:bold;
+  cursor:pointer;
+  padding:15px !important;
+}
+.confirmed input{
+  display:none; 
+}
+.confirmed .status-indicator{
+  display:inline-block;
+  vertical-align:middle;
+  margin-right:5px;
+}
+
+
+/*
+ *    PLAYERS PAGE
+*/
+.chart{
+  height:300px;
+  width:100%;  
+}
+
+#players .nights-holder fieldset{
+  display:inline-block;
+  width:48%;
+  text-align:center;
+  margin:10px 0 20px 1%;
+  padding:15px 0;
+  font-family:'Roboto Condensed';
+  font-size:18px;
+  font-weight:100;
+  border-radius:5px;
+  background:#fff;
+  box-shadow:0 0 1px #8b8b8b;
+}
+  #players .nights-holder .points{
+    margin-left:1%;
+  }
+  #players .nights-holder fieldset legend{
+    width:100%;
+    text-transform:uppercase;
+    text-align:center;
+    font-weight:bold;
+    border-radius:5px 5px 0 0;
+    padding:5px 0;
+    background:#8b8b8b;
+    color:#fff;
+  }
+
+#players .nights-holder .listview{
+  border-top:1px solid #dadada;
+  margin-top:5px;
+}
+
+
+/*--- Machines Chart ---*/
+#players-machines-chart{
+  height:auto;
+  text-align:left;
+  margin-bottom:20px;
+}
+  #players-machines-chart thead th{
+    border-bottom:1px solid #ccc;
+    padding-bottom:4px;
+  }
+    #players-machines-chart thead th label{
+      text-transform:uppercase;
+      margin-right:5px;
+    }
+    #players-machines-chart #machines-compare-to option{
+      padding:2px 50px 2px 0;
+    }
+    #players-machines-chart thead .legend{ display:none; }
+    #players-machines-chart.comparison .legend{ display:inline-block; }
+      #players-machines-chart thead .legend p{
+        display:inline-block;
+        margin-left:5px;
+      }
+      #players-machines-chart thead .legend p{
+        padding:4px 6px;
+        color:#fff;
+        background:#699db1;
+      }
+      #players-machines-chart thead .legend p.compared-to{
+        background:#8db27b;
+      }
+
+  #players-machines-chart tbody tr:nth-child(even) td,
+  #players-machines-chart tbody tr:nth-child(even) tr{
+    background:#eee;
+  }
+  #players-machines-chart tbody th{
+    width:55px;
+    padding:8px 5px 8px 0;
+    border-right:1px solid #ccc;
+    border-bottom:1px solid #ccc;
+    font-size:16px;
+    font-weight:700;
+    text-align:right;
+    vertical-align:middle;
+  }
+  #players-machines-chart tbody td{
+    vertical-align:middle;
+    border-bottom:1px solid #ccc;    
+  }
+  #players-machines-chart tbody td div{
+    display:inline-block;
+    font-size:12px;
+    font-weight:300;
+    color:#fff;
+    text-align:center;
+    padding:8px 0;
+    margin:2px 0;
+    background:#699db1;
+  }
+    #players-machines-chart.comparison tbody td{
+      padding:4px 0 2px 0;
+    }
+    #players-machines-chart.comparison tbody td div{
+      padding:5px 0;
+      margin:0 0 2px 0;
+    }
+    #players-machines-chart tbody td div:nth-child(2){
+      background:#8db27b;
+    }
+
+/* comparing to another player */
+#players-machines-chart.comparison td div:nth-child(2){
+  background:#699db1; 
+}
+  #players-machines-chart.comparison td div.comparison{
+    display:block;
+    width:100%;
+    padding:0;
+    background:none;
+    text-align:left;
+    margin-top:0;
+  }
+  #players-machines-chart.comparison td div.comparison div{
+    background:#8db27b;
+  }
+
+
+
+/*
+ * Login Form
+*/
+#login-panel .listview li{
+  padding:10px;
+}
+#login-panel .listview button{
+  width:100%;
+  font-size:1.2857em;
+  padding:6px 0;
+  margin-bottom:2px;
+}
+#login-panel .listview button + h2{
+  position:absolute;
+  line-height:1em;
+  font-size:22px;
+  font-weight:900;
+  margin-top:0;
+  margin-left:-15px;
+  color:#900;
+  width:auto;
+  padding-right:10px;
+  font-style:italic;
+  background:#efefef;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,447 @@
+<!DOCTYPE html> 
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+
+	<title>GRPL</title> 
+	<link rel="stylesheet" href="css/reset.css" />
+	<link rel="stylesheet" href="css/main.css" />
+	<link rel="stylesheet" href="css/styles.css" />
+	<link rel="stylesheet" href="jqplot/jquery.jqplot.min.css" />
+
+	<script src="http://duby.is-a-geek.com:834/socket.io/socket.io.js"></script>
+	<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+	<script src="js/flatiron.director.min.js"></script>
+
+	<script src="js/main.js"></script>
+	<script src="jqplot/jquery.jqplot.min.js"></script>
+	<script src="jqplot/jqplot.barRenderer.min.js"></script>
+	<script src="jqplot/jqplot.pointLabels.min.js"></script>
+	<script src="js/jquery.cookie.js"></script>
+
+	<script src="js/socket.js"></script>
+	<script src="js/user.js"></script>
+	<script src="js/admin.js"></script>
+	<script src="js/scoring.js"></script>
+	<script src="js/players.js"></script>
+	<script src="js/index.js"></script>
+
+	<!-- icons -->
+	<link rel="shortcut icon" type="image/x-icon" href="icons/favicon.ico" />
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="icons/apple-touch-icon-114x114-precomposed.png" />
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="icons/apple-touch-icon-72x72-precomposed.png" />
+	<link rel="apple-touch-icon-precomposed" href="icons/apple-touch-icon-57x57-precomposed.png">
+	
+
+</head>
+<body>
+<div id="fb-root"></div>
+
+<!-- INDEX -->
+<div class="page" data-route="index" data-title="" id="index">
+
+	<header>
+		<div class="left">
+			<button class="admin" title="Open Admin Panel">
+				<span class="title">Admin</span>
+			</button>
+			
+			<h1 class="hdr-logo"><a href="#/index" title="home">GRPL</a></h1>
+		</div>
+
+		<div class="right">
+			<section class="user-area">
+				<button class="login" title="Login">
+					<span class="title">Login</span>
+				</button>
+				<button class="scoring" title="Start Scoring">
+					<span class="title">Start Scoring</span>
+				</button>
+			</section>
+		</div>
+
+		<div class="center">
+			<section class="nights-trigger select-trigger" data-dropdown="nights-popup">
+				<div><!-- hook for the dropdown icon -->
+					<h2>Loading</h2>
+					<p>loading information, please wait</p>
+				</div>
+			</section>
+		</div>
+
+	</header>
+
+	<article>		
+
+		<section class="machine-holder collapsible">
+			<header>
+				<h1>Machines</h1>
+			</header>
+			<div class="content">
+				<div class="listview">
+					<p>Loading machines, please wait</p>
+				</div>
+			</div>
+		</section>
+		
+		<section class="player-holder collapsible">
+			<header>
+				<h1>Scores</h1>
+			</header>
+			<div class="content">
+				<div class="listview">
+					<p>Loading players, please wait</p>
+				</div>
+			</div>
+		</section>
+
+		<div class="notes"></div>
+
+	</article>
+
+	<div id="nights-panel" class="popup center show-header">
+		<header>
+			<span class="pointer"></span>
+			<h1>Choose a Night</h1>
+			<a class="close" href="#">Close</a>
+		</header>
+		<article class="listview">
+			<!--article content injected here -->
+		</article>
+	</div>
+
+</div>
+
+<!-- SCORING -->
+<div class="page" data-route="scoring" data-title="Scoring" id="scoring">
+	
+	<header>
+		<div class="left">
+			<button class="admin" title="Open Admin Panel">
+				<span class="title">Admin</span>
+			</button>
+			
+			<h1 class="hdr-logo"><a href="#/index" title="home">GRPL</a></h1>
+		</div>
+
+		<div class="right">
+			<section class="user-area">
+				<button class="live live-results-trigger" title="View Live Scoring">
+					<span class="title">View Live Scores</span>
+				</button>
+			</section>
+		</div>
+		
+		<div class="center">
+			<section class="machines-trigger select-trigger" data-dropdown="scoring-machines">
+				<div><!-- hook for the dropdown icon -->
+					<h2>Loading</h2>
+					<p>loading information, please wait</p>
+				</div>
+			</section>
+		</div>		
+	</header>
+
+	<article>
+
+		<form class="scoring-form" autocomplete="off">
+			<input type="hidden" name="starts" value="" />
+			<input type="hidden" name="current-offset" value="" />
+			<input type="hidden" name="abbv" value="" />
+
+			<section>
+				<header>
+					<h1>Game Title</h1>
+				</header>
+
+				<div class="content">
+					<p class="machine-notes"></p>
+					<div class="players listview"></div>
+				</div>
+			</section>
+
+			<section>
+				<label class="content confirmed">
+					<span class="status-indicator confirmed-indicator" data-status="off"></span>
+					<input type="checkbox" name="confirmed" /> Confirmed
+				</label>
+			</section>
+
+			<div class="button-holder right">
+				<button type="submit" class="inline" disabled="disabled">Save</button>
+			</div>
+
+		</form>
+
+	</article>
+
+	
+	<div id="scoring-machine-panel" class="popup center show-header">
+		<header>
+			<span class="pointer"></span>
+			<h1>Machine Order</h1>
+			<a class="close" href="#">Close</a>
+		</header>
+		<article class="listview">
+			<!--article content injected here -->
+		</article>
+	</div>
+
+	<div id="scoring-live-panel" class="player-holder popup right show-header">
+		<header>
+			<span class="pointer"></span>
+			<h1>Live Results</h1>
+			<a class="close" href="#">Close</a>			
+		</header>
+		<article class="listview">
+			<p>Loading players, please wait</p>
+		</article>
+	</div>
+
+</div>
+
+
+<!-- PLAYERS -->
+<div class="page" data-route="players" data-title="Players" id="players">
+
+	<header>
+		<div class="left">
+			<button class="admin" title="Open Admin Panel">
+				<span class="title">Admin</span>
+			</button>
+			
+			<h1 class="hdr-logo"><a href="#/index" title="home">GRPL</a></h1>
+		</div>
+
+		<div class="right">
+			<section class="user-area">
+				<button class="login" title="Login">
+					<span class="title">Login</span>
+				</button>
+				<button class="scoring" title="Start Scoring">
+					<span class="title">Start Scoring</span>
+				</button>
+			</section>
+		</div>
+
+		<div class="center">
+			<section class="players-trigger select-trigger" data-dropdown="nights-popup">
+				<div><!-- hook for the dropdown icon -->
+					<h2>Loading</h2>
+				</div>
+			</section>
+		</div>
+
+	</header>
+
+	<article>
+		
+		<section class="nights-holder collapsible">
+			<header>
+				<h1>League Nights</h1>
+			</header>
+			<div class="content">
+				<div id="players-nights-chart" class="chart"></div>
+				<fieldset class="points">
+					<legend>Points</legend>
+					<span></span>
+				</fieldset>
+				<fieldset class="place">
+					<legend>Place</legend>
+					<span></span>
+				</fieldset>
+				<div class="listview">
+					<p>Loading players, please wait</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="machine-holder collapsible">
+			<header>
+				<h1>Machines</h1>
+			</header>
+			<div class="content">
+				<table id="players-machines-chart" class="chart">
+					<thead>
+						<tr>
+							<th colspan="2">
+								<label for="machines-compare-to">Compare To:</label><select id="machines-compare-to"><option value=""></option></select>
+								<div class="legend">
+									<p class="player">Player</p>
+									<p class="compared-to">Compared To</p>
+								</div>
+							</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+					<tfoot></tfoot>
+				</table>
+				<div class="listview">
+					<p>Loading machines, please wait</p>
+				</div>
+			</div>
+		</section>
+
+		<div class="notes"></div>
+
+	</article>
+
+	<div id="players-panel" class="popup center show-header">
+		<header>
+			<span class="pointer"></span>
+			<h1>Choose a Player</h1>
+			<a class="close" href="#">Close</a>
+		</header>
+		<article class="listview">
+			<!--article content injected here -->
+		</article>
+	</div>
+
+</div>
+
+
+<!-- USER ADMIN -->
+<div class="page" data-route="admin/users" data-title="User Admin" id="user_admin">
+
+	<header>
+		<div class="left">
+			<button class="admin" title="Open Admin Panel">
+				<span class="title">Admin</span>
+			</button>			
+			<h1 class="hdr-logo"><a href="#/index" title="home">GRPL</a></h1>
+		</div>
+		<div class="right">
+			<section class="user-area">
+				<button class="login" title="Login">
+					<span class="title">Login</span>
+				</button>
+				<button class="scoring" title="Start Scoring">
+					<span class="title">Start Scoring</span>
+				</button>
+			</section>
+		</div>
+		<div class="center">
+			<section class="players-trigger select-trigger" data-dropdown="nights-popup">
+				<div><!-- hook for the dropdown icon -->
+					<h2>Loading</h2>
+				</div>
+			</section>
+		</div>
+	</header>
+
+	<article>
+		<form class="user-form" autocomplete="off">
+			<input type="hidden" name="name_key" value="" />
+			<section>
+				<header>
+					<h1>Choose a User</h1>
+				</header>
+				<div class="content">
+					<div class="fields listview"><ul></ul></div>
+				</div>
+			</section>
+			<div class="button-holder right">
+				<button type="submit" class="inline">Save</button>
+			</div>
+		</form>
+	</article>
+
+	<div id="user_admin-users-panel" class="popup center show-header">
+		<header>
+			<span class="pointer"></span>
+			<h1>Choose a Player</h1>
+			<a class="close" href="#">Close</a>
+		</header>
+		<article class="listview">
+			<!--article content injected here -->
+		</article>
+	</div>
+
+</div>
+
+
+
+<div id="overlay"></div>
+
+<div id="loading">
+	<div class="inner">
+		<div class="text"><span>l</span><span>o</span><span>a</span><span>d</span><span>i</span><span>n</span><span>g</span></div>
+	</div>
+</div>
+
+<div id="login-panel" class="popup center dialog">
+	<header>
+		<h1>Login</h1>
+		<a class="close" href="#">Close</a>
+	</header>
+	<article class="content">
+		<h2>If you're in the Facebook Group...</h2>
+		<p>... your login with Facebook has already been setup. Otherwise talk to an Admin to setup an email/password login.</p>
+		<form class="login-form">
+			<section class="listview">
+				<ul>
+					<li><button class="blue login fb_login"><span class="title">Login with Facebook</button><h2>OR</h2></li>
+					<li><label>Email</label><fieldset><input type="email" name="email" /></fieldset></li>
+					<li><label>Password</label><fieldset><input type="password" name="password" /></fieldset></li>
+				</ul>
+			</section>
+		</form>
+		<div class="button-holder right">
+			<a class="close" href="#">Cancel</a>
+			<button class="usr-btn"><span class="title">Login</span></button>
+		</div>
+	</article>
+</div>
+
+
+<div id="admin-panel" class="popup left show-header">
+	<header>
+		<span class="pointer"></span>
+		<a class="close" href="#">Close</a>
+		<h1><a href="#/index" title="Home">Home</a>Admin Panel</h1>
+	</header>
+	<article>
+		<section class="scoring">
+			<h1>Scoring</h1>
+
+			<button class="stop-scoring red" disabled="disabled">
+				<span class="title">Stop Scoring</span>
+			</button>
+
+			<button class="prepare-scoring green" disabled="disabled">
+				<span class="title">Start Scoring</span>
+			</button>
+
+			<h2>Group Progress</h2>
+
+			<div class="listview scoring-groups"></div>
+
+		</section>
+
+		<section class="user">
+			<h1>Users</h1>
+			<button class="admin-users blue admin">
+				<span class="title">Manage Users</span>
+			</button>
+		</section>
+
+		<section class="nights">
+			<h1>League Nights</h1>
+
+			<button class="new-league-night blue plus">
+				<span class="title">New League Night</span>
+			</button>
+
+			<h2>All Nights</h2>
+
+			<div class="listview league-nights"></div>
+
+		</section>
+
+	</article>
+</div>
+
+
+</body>
+</html>	
