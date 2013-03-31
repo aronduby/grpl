@@ -5,33 +5,7 @@ var io = require('socket.io').listen(834,{
 		'browser client gzip': true
 	}),
 	https = require('https'),
-	Q = require('q'),
-	winston = require('winston');
-
-
-// Setup Winston as our logger
-winston.remove(winston.transports.Console);
-winston.add(winston.transports.Console,{ colorize: true });
-winston.add(winston.transports.File, {
-	filename: 'D:/My Documents/website/grpl/logs/all.log',
-	name: 'file.all',
-	json: false,
-	colorize: true,
-	handleExceptions: true
-});
-winston.add(winston.transports.File,{
-	filename: 'D:/My Documents/website/grpl/logs/info.log',
-	level: 'info',
-	name: 'file.info',
-	colorize: true
-});
-winston.add(winston.transports.File,{
-	filename: 'D:/My Documents/website/grpl/logs/warn-error.log',
-	level: 'warn',
-	name: 'file.warn',
-	colorize: true
-});
-io.set('logger', winston);
+	Q = require('q');
 
 // MYSQL
 var mysql = require('mysql'),
@@ -46,7 +20,6 @@ var mysql = require('mysql'),
 
 function handleDisconnect(conn){
 	conn.on('error', function(err){
-		winston.info('Re-connecting lost connection: ' +err.stack);
 		db_connection.destroy();
 		db_connection = mysql.createConnection(db_connection.config);
 		handleDisconnect(db_connection);
@@ -67,7 +40,6 @@ var scoring = {
 
 	start: function(starts){
 		var d = Q.defer();
-		winston.info('starting scoring');
 		var self = this;
 
 		this.starts = starts;
@@ -155,7 +127,6 @@ var scoring = {
 	},
 
 	_getMachines: function(){
-		winston.info('getting machines...');
 		var d = Q.defer(),
 			self = this,
 			sql = "SELECT m.name, m.abbv, m.image, m.note FROM machine_to_league_night mtln LEFT JOIN machine m USING(abbv) WHERE mtln.starts=?";
@@ -265,7 +236,6 @@ io.sockets.on('connection', function(socket){
 	
 	// loggin in via facebook token
 	socket.on('loginFromAccessToken', function(token, fn){
-		winston.info('loginFromAccessToken');
 		https.get('https://graph.facebook.com/me?fields=id&access_token='+token, function(res) {
 			res.on('data', function(d) {
 				var obj = JSON.parse(d);
@@ -274,7 +244,7 @@ io.sockets.on('connection', function(socket){
 				sql = 'SELECT player_id, first_name, last_name, admin, name_key, hash FROM player WHERE facebook_id=?';
 				var query = db_connection.query(sql, [obj.id]);
 				query.on('error', function(err){
-					winston.error('query error', err);
+					console.log('query error', err);
 					fn(false);
 				})
 				.on('result', function(row){
@@ -290,18 +260,16 @@ io.sockets.on('connection', function(socket){
 			});
 
 		}).on('error', function(e) {
-			winston.error(e);
+			console.log(e);
 		});
 	});
 
-	socket.on('loginFromHash', function(hash, fn){
-		winston.info('loginFromHash');
-		
+	socket.on('loginFromHash', function(hash, fn){		
 		var sql = "SELECT player_id, first_name, last_name, admin, name_key, hash FROM player WHERE hash=?",
 			query = db_connection.query(sql, [hash]);
 
 		query.on('error', function(err){
-			winston.error('query error', err);
+			console.log('query error', err);
 			fn(false);
 		})
 		.on('result', function(row){
@@ -317,13 +285,11 @@ io.sockets.on('connection', function(socket){
 	});
 
 	socket.on('loginFromForm', function(email, password, fn){
-		winston.info('loginFromForm');
-
 		var sql = "SELECT player_id, first_name, last_name, admin, name_key, hash FROM player WHERE email=? AND hash = MD5(CONCAT(name_key,'-',email,'-',?,'-',IFNULL(facebook_id,'')))",
 			query = db_connection.query(sql, [email, password]);
 
 		query.on('error', function(err){
-			winston.error('query error', err);
+			console.log('query error', err);
 			fn(false);
 		})
 		.on('result', function(row){
@@ -342,14 +308,9 @@ io.sockets.on('connection', function(socket){
 	socket.on('amILoggedIn', function(fn){
 		socket.get('user', function(err, user){
 			if(err){
-				winston.error(err);
+				console.log(err);
 				throw new Error(err);
 			} else {
-				if(user !== null){
-					winston.info('User ' + user.name_key + ' already logged in');
-				} else {
-					winston.info('User data not found');
-				}
 				fn(user);
 			}
 		});
@@ -361,11 +322,10 @@ io.sockets.on('connection', function(socket){
 			"ON DUPLICATE KEY UPDATE name_key=VALUES(name_key), first_name=VALUES(first_name), last_name=VALUES(last_name), facebook_id=VALUES(facebook_id), email=VALUES(email), hash=VALUES(hash)";
 		var query = db_connection.query(sql, [name_key, first_name, last_name, facebook_id, email, name_key+'-'+email+'-'+password]);
 		query.on('error', function(err){
-			winston.error('register user query error', err);
+			console.log('register user query error', err);
 			socket.emit('error', err.message);
 		})
 		.on('result', function(row){
-			winston.info('registered user successfully');
 			fn(true);
 		});
 	});
@@ -428,7 +388,7 @@ io.sockets.on('connection', function(socket){
 			socket.broadcast.emit('scoring_update', data);
 			fn(data);
 		}).fail(function(err){
-			winston.error(err);
+			console.log(err);
 			socket.emit('error', err.msg);
 		});		
 	});
@@ -451,40 +411,6 @@ io.sockets.on('connection', function(socket){
 
 		// fn(d);
 	});
-
-	socket.on('getMachinesPlayedLessThanXTimes', function(times, limit, fn){
-		if(times == undefined)
-			times = 2;
-		if(limit == undefined)
-			limit = 5;
-
-		var sql = "SELECT m.*, COUNT(mtln.abbv) AS played " +
-			"FROM machine m " +
-			"LEFT JOIN machine_to_league_night mtln USING (abbv) " +
-			"LEFT JOIN league_night ln ON(mtln.starts=ln.starts) " +
-			"WHERE " +
-			"m.season_id=? " +
-			"AND ( " +
-			    "ln.season_id = ? " +
-			    "OR ln.season_id IS NULL " +
-			") " +
-			"GROUP BY mtln.abbv " +
-			"HAVING played < ? " +
-			"ORDER BY RAND() " +
-			"LIMIT ? ";
-
-		var query = db_connection.query(sql, [season_id, season_id, times, limit]);
-		query.on('error', function(err){
-			winston.error('get machines played less than x times query error', err);
-			socket.emit('error', err.message);
-		})
-		.on('result', function(row){
-			console.log(row);
-			// fn(row);
-		});
-
-	});
-
 
 
 	socket.on('emitError', function(msg){
