@@ -170,7 +170,7 @@
   content:'';
   display:inline-block;
   width:21px; height:22px;
-  background:url(/grpl/layout_imgs/mobile_sprite.png) no-repeat 0 -225px;
+  background:url(/layout_imgs/mobile_sprite.png) no-repeat 0 -225px;
   vertical-align:middle;
   margin-right:5px;
 }
@@ -182,7 +182,7 @@
   float:left;
   width:16px; height:28px;
   margin:2px 5px 0 -5px;
-  background:url(/grpl/layout_imgs/mobile_sprite.png) 0 -164px;
+  background:url(/layout_imgs/mobile_sprite.png) 0 -164px;
 }
 
 /*
@@ -216,7 +216,7 @@
   overflow:hidden;
   text-indent:-999999px;
   margin:0 15px 0 0;
-  background:url(/grpl/layout_imgs/mobile_sprite.png) no-repeat 0 -292px;
+  background:url(/layout_imgs/mobile_sprite.png) no-repeat 0 -292px;
 }
 
 #admin-panel .listview h3{ font-size:16px; }

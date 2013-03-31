@@ -1,21 +1,14 @@
 <?php
 # DONT FORGET TO REMOVE ME
-ini_set('display_errors', '1');
+// ini_set('display_errors', '1');
 
 // database
 DEFINE('DB_TYPE', 'mysql');
 DEFINE('DB_SERVER', 'localhost');
 DEFINE('DB_USER', 'grpl');
 DEFINE('DB_PASSWD', 'phyle7mothy');
-DEFINE('DB_NAME', 'aronduby_grpl');
+DEFINE('DB_NAME', 'grpl');
 
-// site stuff
-/*
-DEFINE('SITE_ROOT', '/wip/fhcwm');
-DEFINE('SITE_BASE', 'http://client.grcmc.org/wip/fhcwm/');
-DEFINE('PATH_TO_UPLOADS', SITE_ROOT.'/uploads');
-DEFINE('TEMPLATE_PATH', SITE_ROOT.'/templates');
-*/
 
 DEFINE('DEV_EMAIL', 'aron.duby@gmail.com');
 
