@@ -14,7 +14,7 @@ var mysql = require('mysql'),
 		port     : '3306', 
 		user     : 'grpl',
 		password : 'phyle7mothy',
-		database : 'aronduby_grpl'
+		database : 'grpl'
 	},
 	db_connection = mysql.createConnection(db_config);
 

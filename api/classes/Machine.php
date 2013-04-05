@@ -41,15 +41,17 @@ class Machine extends DBObject {
 	}
 
 	public static function getMachinesPlayedLessThanXTimes(Season $season, $times = 2){
-		$sql = "SELECT m.*,COUNT(mtln.abbv) AS played
-			FROM machine m 
-			LEFT JOIN machine_to_league_night mtln USING (abbv) 
-			LEFT JOIN league_night ln ON(mtln.starts=ln.starts)
-			WHERE
-			m.season_id=".$season->season_id."
-			AND ( ln.season_id = ".$season->season_id." OR ln.season_id IS NULL)
-			GROUP BY mtln.abbv 
-			HAVING played < ".$times;
+		$sql = "SELECT m.*, COUNT(mtln.abbv) AS played
+			FROM 
+			machine m 
+			LEFT JOIN (
+				machine_to_league_night mtln
+				LEFT JOIN league_night ln USING(starts)
+			) USING (abbv, season_id)
+			WHERE 
+			m.season_id=".$season->season_id." 
+			GROUP BY m.abbv
+			HAVING played <= ".$times;
 
 		$dbh = PDODB::getInstance();
 		$stmt = $dbh->query($sql);
