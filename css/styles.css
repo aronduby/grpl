@@ -116,6 +116,18 @@
 .page > header button.scoring,
 .page > header button.login{ display:none; }
 
+/* player subs */
+.listview li span.sub{
+  margin-left:5px;
+  font-weight:normal;
+  font-size:.9em;
+  color:#aaa;
+  text-transform: none;
+}
+.listview li span.sub:before{
+  content:'*';
+}
+
 
 /*
  * --- INDEX : PLAYER HOLDER ---
@@ -465,7 +477,15 @@ label.confirmed{
     background:#8db27b;
   }
 
-
+/* sub played game */
+#players-machines-chart tbody td div.sub{
+  -moz-opacity:.9;
+  -webkit-opacity:.9;
+  opacity:.9;
+}
+#players-machines-chart tbody td div.sub:after{
+  content:'*'; 
+}
 
 /*
  * Login Form
@@ -492,6 +512,7 @@ label.confirmed{
   font-style:italic;
   background:#efefef;
 }
+
 
 
 

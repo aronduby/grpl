@@ -57,7 +57,8 @@ class LeagueNight extends DBObject {
 		// get the subs
 		$sql = "SELECT lnsub.*, CONCAT(p.first_name,' ',p.last_name) AS player FROM league_night_sub lnsub LEFT JOIN player p USING(name_key) WHERE starts='".$this->starts."'";
 		$stmt = self::$dbh->query($sql);
-		$this->substitutes = $stmt->fetchAll(PDO::FETCH_OBJ);
+		foreach($stmt->fetchAll(PDO::FETCH_OBJ) as $obj)
+			$this->substitutes[$obj->name_key] = $obj;
 
 		return $this->substitutes;
 	}

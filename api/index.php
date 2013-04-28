@@ -48,7 +48,7 @@ $app->get('/leaguenight/totals', function() use ($app, $season){
 	$night->players = $players;
 	$night->machines = $machines;
 	$night->machines_note = 'Machines Played Less Than Twice';
-	$night->subs = [];
+	$night->subs = new StdClass();
 
 	echo json_encode($night);
 
@@ -78,6 +78,8 @@ $app->get('/leaguenight/:starts', function($starts) use ($app, $season){
 	}
 
 	$night->subs = $night->getSubs();
+	if(count($night->subs) == 0)
+		$night->subs = new StdClass();
 
 	echo json_encode($night);
 
@@ -182,10 +184,11 @@ $app->get('/players/:name_key', function($name_key) use($app, $season){
 
 	// league night points
 	$sql = "SELECT
-		l.title, lns.starts, SUM(lns.points) AS points
+		l.title, lns.starts, SUM(lns.points) AS points, lnsub.sub
 	FROM
 		league_night l
 		LEFT JOIN league_night_score lns USING(starts)
+		LEFT JOIN league_night_sub lnsub USING(starts, name_key)
 	WHERE
 		l.season_id=".$dbh->quote($season->season_id)."
 		AND lns.name_key=".$dbh->quote($player->name_key)."
@@ -196,11 +199,12 @@ $app->get('/players/:name_key', function($name_key) use($app, $season){
 
 	// machine points
 	$sql = "SELECT
-		m.*, lns.points, lns.starts
+		m.*, lns.points, lns.starts, lnsub.sub
 	FROM
 		league_night l
 		LEFT JOIN league_night_score lns USING(starts)
 		LEFT JOIN machine m USING(abbv)
+		LEFT JOIN league_night_sub lnsub USING(starts, name_key)
 	WHERE
 		l.season_id=".$dbh->quote($season->season_id)."
 		AND lns.name_key=".$dbh->quote($player->name_key)."
