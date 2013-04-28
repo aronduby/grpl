@@ -18,11 +18,12 @@ class PlayerGroupList implements IteratorAggregate, JsonSerializable {
 				COUNT(IF(lns.points=7,1,null)) AS firsts,
 				COUNT(IF(lns.points=5,1,null)) AS seconds,
 				COUNT(IF(lns.points=3,1,null)) AS thirds,
-				COUNT(IF(lns.points=1,1,null)) AS fourths
+				COUNT(IF(lns.points=1,1,null)) AS fourths,
+			    COUNT(DISTINCT subs.sub_id) AS subbed
 			FROM 
 				league_night_score lns
-			LEFT JOIN 
-				league_night ln USING ( starts )";
+				LEFT JOIN league_night ln USING ( starts )
+				LEFT JOIN league_night_sub subs USING( starts, name_key )";
 
 		if($limit_to instanceof LeagueNight){
 			$sql .= " WHERE lns.starts < '".$limit_to->starts."' AND ln.season_id = ".intval($limit_to->season_id);
@@ -35,7 +36,8 @@ class PlayerGroupList implements IteratorAggregate, JsonSerializable {
 				firsts DESC,
 				seconds DESC,
 				thirds DESC,
-				fourths DESC";
+				fourths DESC,
+				subbed ASC";
 
 		$stmt = PDODB::getInstance()->query($sql);
 		$players = $stmt->fetchAll(PDO::FETCH_OBJ);

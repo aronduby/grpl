@@ -145,6 +145,15 @@ $(document).ready(function(){
 				// NOTES
 				$('.notes', page).html(night.note);
 
+				// SUBS
+				if(night.subs.length > 0){
+					var subul = $('<ul/>');
+					for(i in night.subs){
+						subul.append('<li>'+night.subs[i].sub+' played on behalf of '+night.subs[i].player+'</li>');
+					}
+					$('.notes', page).append(subul);
+				}
+
 			},
 			error: function(jqXHR, status, error){
 				console.log(status, error);

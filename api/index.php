@@ -76,6 +76,8 @@ $app->get('/leaguenight/:starts', function($starts) use ($app, $season){
 		$night->machines_note = 'Machines Played Less Than Twice';
 	}
 
+	$night->subs = $night->getSubs();
+
 	echo json_encode($night);
 
 });
