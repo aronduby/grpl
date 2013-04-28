@@ -132,7 +132,10 @@ $(document).ready(function(){
 						group_holder.append(
 							'<li data-name_key="'+p.name_key+'" data-pre_total="'+pre_total+'" '+(User.logged_in==true && User.name_key == p.name_key ? 'class="user" ' : '')+'>' +
 								'<a href="#/players/'+p.name_key+'" title="view player info">' +
-									'<h3>'+p.first_name+' '+p.last_name+'</h3>' +
+									'<h3>' +
+										p.first_name+' '+p.last_name +
+										(night.subs[p.name_key] != undefined ? '<span class="sub" title="sub">'+night.subs[p.name_key].sub+'</span>' : '') +
+									'</h3>' +
 									(machine_points != false ? '<p class="player-points">'+machine_points.html()+'</p>' : '' ) +
 									'<span class="score right '+(score.length>1 ? 'double' : '')+'"><span>'+score.join('</span><span>')+'</span></span>' +
 								'</a>' + 
@@ -144,6 +147,13 @@ $(document).ready(function(){
 
 				// NOTES
 				$('.notes', page).html(night.note);
+
+				// SUBS
+				var subul = $('<ul/>');
+				for(i in night.subs){
+					subul.append('<li>'+night.subs[i].sub+' played on behalf of '+night.subs[i].player+'</li>');
+				}
+				$('.notes', page).append(subul);
 
 			},
 			error: function(jqXHR, status, error){

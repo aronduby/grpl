@@ -8,6 +8,7 @@ class LeagueNight extends DBObject {
 	public $starts;
 	public $note;
 
+	protected $substitutes;
 
 	// db info
 	protected $table = 'league_night';
@@ -47,6 +48,19 @@ class LeagueNight extends DBObject {
 
 	public function getMachines(){
 		return Machine::getForLeagueNight($this);
+	}
+
+	public function getSubs(){
+		if(isset($this->substitutes))
+			return $this->substitutes;
+
+		// get the subs
+		$sql = "SELECT lnsub.*, CONCAT(p.first_name,' ',p.last_name) AS player FROM league_night_sub lnsub LEFT JOIN player p USING(name_key) WHERE starts='".$this->starts."'";
+		$stmt = self::$dbh->query($sql);
+		foreach($stmt->fetchAll(PDO::FETCH_OBJ) as $obj)
+			$this->substitutes[$obj->name_key] = $obj;
+
+		return $this->substitutes;
 	}
 
 }

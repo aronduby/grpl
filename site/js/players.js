@@ -62,7 +62,7 @@ $(document).ready(function(){
 							}
 
 							var width = ((50 * Number(machines[i].points))/7);
-							comparison.append('<div style="width:'+width+'%;">'+machines[i].points+'</div>');
+							comparison.append('<div class="'+(machines[i].sub!=null ? 'sub' : '')+'" style="width:'+width+'%;">'+machines[i].points+'</div>');
 						}
 					},
 					error: function(jqXHR, status, error){
@@ -117,7 +117,6 @@ $(document).ready(function(){
 			url: 'api/players/'+name_key,
 			dataType: 'json',
 			success: function(data){
-				console.log(data);
 
 				var player = data.player,
 					place = data.place,
@@ -132,15 +131,31 @@ $(document).ready(function(){
 					.find('fieldset.place span').text(place).end();
 
 				// nights chart
-				var points = [],
+				var points = {
+						player: [],
+						sub: []
+					},
 					months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
 					j = 1,
 					night_list = $('<ul></ul>');
 				for(i in nights.reverse()){
-					points.push([j, Number(nights[i].points)]);
+					points.player.push([j, Number(nights[i].points)]);
+
+					// if there's a sub for this week treat it as a part of the second series
+					if(nights[i].sub != null)
+						points.sub.push([j, Number(nights[i].points)]);
+					
 					var dateobj = new Date(nights[i].starts+'T00:00:00-05:00');
 						
-					night_list.append('<li><a href="#/index/'+nights[i].starts+'" title="view week"><h2>'+nights[i].title+'</h2><p>'+(months[dateobj.getUTCMonth()] + ' ' + dateobj.getUTCDate().cardinal() + ', ' + dateobj.getUTCFullYear())+'</p><span class="score right">'+nights[i].points+'</span></a></li>');
+					night_list.append('<li>' +
+						'<a href="#/index/'+nights[i].starts+'" title="view week">' +
+							'<h2>' +
+								nights[i].title + 
+								(nights[i].sub != null ? '<span class="sub" title="sub">'+nights[i].sub+'</span>' : '') +
+							'</h2>' +
+							'<p>'+(months[dateobj.getUTCMonth()] + ' ' + dateobj.getUTCDate().cardinal() + ', ' + dateobj.getUTCFullYear())+'</p>' +
+							'<span class="score right">'+nights[i].points+'</span>' +
+						'</a></li>');
 					j++;
 				}
 				// charts have to be drawn when shown so dump the data as json into the chart div
@@ -158,11 +173,18 @@ $(document).ready(function(){
 						tr = $('<tr class="'+machines[i].abbv+'"><th><abbv title="'+machines[i].name+'">'+machines[i].abbv+'</abbv></th><td></td></tr>').appendTo(chart);
 					}
 					var width = ((50 * Number(machines[i].points))/7);
-					tr.find('td').append('<div style="width:'+width+'%;">'+machines[i].points+'</div>');
+					tr.find('td').append('<div class="'+(machines[i].sub!=null ? 'sub' : '')+'" style="width:'+width+'%;">'+machines[i].points+'</div>');
 					
 
 					var dateobj = new Date(machines[i].starts+'T00:00:00-05:00');
-					machine_list.append('<li><h2>'+machines[i].name+'</h2><p>'+(months[dateobj.getUTCMonth()] + ' ' + dateobj.getUTCDate().cardinal() + ', ' + dateobj.getUTCFullYear())+'</p><span class="score right">'+machines[i].points+'</span></li>');
+					machine_list.append('<li>' + 
+						'<h2>' +
+							machines[i].name + 
+							(machines[i].sub != null ? '<span class="sub" title="sub">'+machines[i].sub+'</span>' : '') +
+						'</h2>' +
+						'<p>'+(months[dateobj.getUTCMonth()] + ' ' + dateobj.getUTCDate().cardinal() + ', ' + dateobj.getUTCFullYear())+'</p>' +
+						'<span class="score right">'+machines[i].points+'</span>' +
+					'</li>');
 				}
 				
 				$('.listview', machine_holder).empty().append(machine_list);
@@ -185,7 +207,7 @@ $(document).ready(function(){
 	$('.page[data-route="players"]').on('show', function(){
 		var points = JSON.parse($('#players-nights-chart').text());
 		$('#players-nights-chart').empty();
-		$.jqplot('players-nights-chart', [points], {
+		$.jqplot('players-nights-chart', [points.player, points.sub], {
 			title: {
 				text: 'POINTS PER LEAGUE NIGHT',
 				fontFamily: 'Roboto Condensed',
@@ -195,6 +217,17 @@ $(document).ready(function(){
 			seriesDefaults: {
 				pointLabels: { show:true }
 			},
+			series:[
+				{}, // default for first series
+				// series 2 is sub points so style it different
+				{
+					pointLabels: {show: false},
+					showLine: false,
+					markerOptions:{
+						color:'#8DB27B'
+					}
+				}
+			],
 			axes:{
 				xaxis: {
 					tickOptions: {
