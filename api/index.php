@@ -48,6 +48,7 @@ $app->get('/leaguenight/totals', function() use ($app, $season){
 	$night->players = $players;
 	$night->machines = $machines;
 	$night->machines_note = 'Machines Played Less Than Twice';
+	$night->subs = [];
 
 	echo json_encode($night);
 
