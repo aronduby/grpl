@@ -57,6 +57,7 @@ handleDisconnect(db_connection);
 
 var admin_ids = [],
 	season_id = 1;
+	
 var scoring = {
 	started: false,
 	starts: '',

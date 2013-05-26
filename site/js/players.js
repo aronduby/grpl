@@ -38,9 +38,7 @@ $(document).ready(function(){
 			} else {
 				chart.addClass('comparison').find('div.comparison').remove();
 				App.loading.show();
-				$.ajax({
-					url: 'api/players/'+val,
-					dataType: 'json',
+				Api.get('players.namekey', val, {
 					success: function(data){
 
 						// update the legend
@@ -72,7 +70,7 @@ $(document).ready(function(){
 					complete: function(){
 						App.loading.hide();
 					}
-				})
+				});
 			}
 			
 
@@ -89,9 +87,9 @@ $(document).ready(function(){
 
 	// redraw our interface on hash change
 	$('.page[data-route="players"]').on("change", function(e, name_key) {
-		console.log('players on change');
 
 		if($(this).data('name_key') == name_key){
+			App.loading.hide();
 			return true;
 		} else
 			$(this).data('name_key', name_key);
@@ -113,11 +111,8 @@ $(document).ready(function(){
 			.find('option[disabled]').removeAttr('disabled').end()
 			.find('option[value="'+name_key+'"]').attr('disabled','disabled');
 
-		var dfd = $.ajax({
-			url: 'api/players/'+name_key,
-			dataType: 'json',
+		var dfd = Api.get('players.namekey', name_key, {
 			success: function(data){
-
 				var player = data.player,
 					place = data.place,
 					total_points = data.total_points,
@@ -159,7 +154,7 @@ $(document).ready(function(){
 					j++;
 				}
 				// charts have to be drawn when shown so dump the data as json into the chart div
-				$('#players-nights-chart').empty().text(JSON.stringify(points));
+				$('#players-nights-chart-data').empty().text(JSON.stringify(points));
 				$('.listview', nights_holder).empty().append(night_list);
 
 
@@ -205,7 +200,7 @@ $(document).ready(function(){
 
 
 	$('.page[data-route="players"]').on('show', function(){
-		var points = JSON.parse($('#players-nights-chart').text());
+		var points = JSON.parse($('#players-nights-chart-data').text());
 		$('#players-nights-chart').empty();
 		$.jqplot('players-nights-chart', [points.player, points.sub], {
 			title: {
@@ -241,9 +236,12 @@ $(document).ready(function(){
 				background: 'transparent'
 			}
 		});
+	});
 
-	})
 
+	$(window).on('resize', function(){
+		$('.page[data-route="players"]').trigger('show');
+	});
 
 
 	

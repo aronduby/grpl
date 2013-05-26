@@ -12,6 +12,8 @@ body{
   position:relative;
 }
 
+.json{ display:none; }
+
 .page{
   position:relative;
   width:100%;  

@@ -1,0 +1,4 @@
+RewriteEngine On
+
+RewriteCond %{HTTP_HOST} duby\.is-a-geek\.com
+RewriteRule ()	http://grpl.info

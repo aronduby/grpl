@@ -175,8 +175,7 @@ $(document).ready(function(){
 			}
 
 			// LIVE RESULTS PANEL
-			var dfd = $.ajax('api/leaguenight/'+Scoring.starts, {
-				dataType: 'json',
+			var dfd = Api.get('leaguenight.starts', Scoring.starts, {
 				success: function(night){
 					// PLAYERS
 					var player_holder = $('.player-holder .listview', page).empty();
@@ -220,8 +219,8 @@ $(document).ready(function(){
 
 					}
 				},
-				error: function(jqXHR, status, error){
-					console.log(status, error);
+				error: function(error){
+					console.log(error);
 					alert('Sorry, we could not load the data. Please check your data connection.');
 				}
 			});

@@ -56,7 +56,7 @@ $app->get('/leaguenight/totals', function() use ($app, $season){
 
 
 /*
- *	The LeagueNight no players or machines
+ *	The LeagueNight
 */
 $app->get('/leaguenight/:starts', function($starts) use ($app, $season){
 

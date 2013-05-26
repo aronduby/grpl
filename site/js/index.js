@@ -79,9 +79,17 @@ $(document).ready(function(){
 			.find('h2').text(App.league_nights[hash].title).end()
 			.find('p').text(App.league_nights[hash].desc);
 
-		var dfd = $.ajax('api/leaguenight/'+hash, {
-			dataType: 'json',
+		var method = 'leaguenight.',
+			arg = hash;
+		if(hash=='totals'){
+			method += 'totals';
+			arg = null;
+		} else {
+			method += 'starts';
+		}
+		var dfd = Api.get(method, arg, {
 			success: function(night){
+				console.log(night);
 				// MACHINES
 				if(night.machines.length > 0){
 					var machine_list = $('<ul></ul>');
@@ -99,51 +107,62 @@ $(document).ready(function(){
 				}
 
 				// PLAYERS
-				var player_holder = $('.player-holder .listview', page).empty();
+				var player_holder = $('.player-holder .listview', page).empty(),
+					group_holder = $('<ul></ul>'),
+					j = 0;
+
 				for(i in night.players){
-					var group_holder = $('<ul></ul>'),
-						group = night.players[i];								
-					
-					for(j in group){
-						var p = group[j],
-							machine_points = false;
-
-						// machine places
-						if(p.machines != undefined){
-							machine_points = $('<div></div>');
-							for(abbv in p.machines){
-								machine_points.append('<span class="player-machine" data-abbv="'+abbv+'">' +
-									'<span class="abbv">'+abbv+'</span>' +
-									'<span class="machine-points">'+(p.machines[abbv]!='' ? p.machines[abbv] : '-')+'</span>' +
-								'</span>');
-							}
-						}
-
-						var score = p.score.split(' '),
-							pre_total = score[0];
-						// if there's two scores the first is the total from the night
-						// the second score is the total up to that night
-						// so for the total at the end of the night add the two together
-						if(score.length > 1){
-							pre_total = score[1];
-							score[1] = Number(score[0]) + Number(score[1]);
-						}
-
-						group_holder.append(
-							'<li data-name_key="'+p.name_key+'" data-pre_total="'+pre_total+'" '+(User.logged_in==true && User.name_key == p.name_key ? 'class="user" ' : '')+'>' +
-								'<a href="#/players/'+p.name_key+'" title="view player info">' +
-									'<h3>' +
-										p.first_name+' '+p.last_name +
-										(night.subs[p.name_key] != undefined ? '<span class="sub" title="sub">'+night.subs[p.name_key].sub+'</span>' : '') +
-									'</h3>' +
-									(machine_points != false ? '<p class="player-points">'+machine_points.html()+'</p>' : '' ) +
-									'<span class="score right '+(score.length>1 ? 'double' : '')+'"><span>'+score.join('</span><span>')+'</span></span>' +
-								'</a>' + 
-							'</li>');
+					if(j%4 == 0 && j != 0){
+						player_holder.append(group_holder);
+						group_holder = $('<ul></ul>');
 					}
-					player_holder.append(group_holder);
 
+					var p = night.players[i],
+						machine_points = false;
+
+					// machine places
+					if(p.machines != undefined){
+						machine_points = $('<div></div>');
+						for(abbv in p.machines){
+							machine_points.append('<span class="player-machine" data-abbv="'+abbv+'">' +
+								'<span class="abbv">'+abbv+'</span>' +
+								'<span class="machine-points">'+(p.machines[abbv]!='' ? p.machines[abbv] : '-')+'</span>' +
+							'</span>');
+						}
+					}
+
+					var score = [p.score],
+						pre_total = p.night_score;
+
+					if(p.night_score != undefined){
+						score[0] = score[0] + p.night_score;
+						score.unshift(p.night_score);						
+					}
+					// if there's two scores the first is the total from the night
+					// the second score is the total up to that night
+					// so for the total at the end of the night add the two together
+					/*
+					if(score.length > 1){
+						pre_total = score[1];
+						score[1] = Number(score[0]) + Number(score[1]);
+					}
+					*/
+
+					group_holder.append(
+						'<li data-name_key="'+p.name_key+'" data-pre_total="'+pre_total+'" '+(User.logged_in==true && User.name_key == p.name_key ? 'class="user" ' : '')+'>' +
+							'<a href="#/players/'+p.name_key+'" title="view player info">' +
+								'<h3>' +
+									p.first_name+' '+p.last_name +
+									(night.subs!=undefined && night.subs[p.name_key] != undefined ? '<span class="sub" title="sub">'+night.subs[p.name_key].sub+'</span>' : '') +
+								'</h3>' +
+								(machine_points != false ? '<p class="player-points">'+machine_points.html()+'</p>' : '' ) +
+								'<span class="score right '+(score.length>1 ? 'double' : '')+'"><span>'+score.join('</span><span>')+'</span></span>' +
+							'</a>' + 
+						'</li>');
+
+					j++;
 				}
+				player_holder.append(group_holder);
 
 				// NOTES
 				$('.notes', page).html(night.note);
@@ -156,8 +175,8 @@ $(document).ready(function(){
 				$('.notes', page).append(subul);
 
 			},
-			error: function(jqXHR, status, error){
-				console.log(status, error);
+			error: function(error){
+				console.log(error);
 				alert('Sorry, we could not load the data. Please check your data connection.');
 			},
 			complete: function(){
@@ -166,7 +185,7 @@ $(document).ready(function(){
 		});
 
 		// when live starts for today add the class, update the title, and add the machines
-		// but don't set it up until the ajax data is loaded
+		// but don't set it up until the data is loaded
 		dfd.then(function(){
 			Scoring.add('started', function(){
 				if(Scoring.starts == hash){

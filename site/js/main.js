@@ -2,6 +2,7 @@ var App = {
 
 	league_nights: {}, // all of the league nights
 	players: {},
+	season_id: 2,
 	ready: $.Deferred(), // triggered once we have all of our needed info loaded
 
 	init: function(){
@@ -9,8 +10,7 @@ var App = {
 		this.loading.show();
 
 		// grab all of the league nights
-		var lnl = $.ajax('api/leaguenight', {
-			dataType: 'json',
+		var lnl = Api.get('leaguenight', {
 			success: function(nights){
 				var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
 					today = new Date();
@@ -54,9 +54,7 @@ var App = {
 
 		// grab all of our players
 		// get all of our players info
-		var pl = $.ajax({
-			url: 'api/players',
-			dataType: 'json',
+		var pl = Api.get('players', this.season_id, {
 			success: function(players){
 				for(i in players){
 					App.players[players[i].name_key] = players[i];
@@ -318,28 +316,6 @@ Number.prototype.cardinal = function(){
        v=this%100;
    return this+(s[(v-20)%10]||s[v]||s[0]);
 };
-
-$.PubSub = {
-	callbacks: {},
-	add: function(e, fn){
-		// make sure we have that e callback
-		if(e in this.callbacks == false)
-			return false;
-
-		// add it to our callback/deffer
-		if(this.isDeferred(this.callbacks[e])){
-			this.callbacks[e].then(fn);
-		} else {
-			this.callbacks[e].add(fn);
-		}
-
-		return this;
-	},
-	isDeferred: function(obj){
-		return 'promise' in obj;
-	}
-}
-
 
 
 Popup = function(el, opts){

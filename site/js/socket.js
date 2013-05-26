@@ -1,5 +1,5 @@
 
-var Socket = $.extend(io.connect('http://grpl.info:834',{
+var Socket = $.extend(io.connect('http://localhost:834',{
 		'sync disconnect on unload': true
 	}), $.PubSub, {
 
