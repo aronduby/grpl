@@ -213,7 +213,9 @@ if (cluster.isMaster) {
 			}).fail(function(err){ console.log(err); cb(err); }).done();
 		});
 
-	});
+		
+
+	});// end connect
 
 
 }
