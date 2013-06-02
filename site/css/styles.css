@@ -515,8 +515,56 @@ label.confirmed{
 
 
 
+/*
+ *  Wiggle Animation
+*/
+.wiggle{
+  -moz-animation-name:wiggle;
+  -moz-animation-duration:.2s;
+  -moz-animation-iteration-count:2;
 
+  -webkit-animation-name:wiggle;
+  -webkit-animation-duration:.2s;
+  -webkit-animation-iteration-count:2;
 
+  -ms-animation-name:wiggle;
+  -ms-animation-duration:.2s;
+  -ms-animation-iteration-count:2;
+
+  -o-animation-name:wiggle;
+  -o-animation-duration:.2s;
+  -o-animation-iteration-count:2;
+
+  animation-name:wiggle;
+  animation-duration:.2s;
+  animation-iteration-count:2;
+}
+
+@-moz-keyframes wiggle{
+  from{ left:0; }
+  50%{ left:-5px; } 
+  to{ left:5px; }
+}
+@-webkit-keyframes wiggle{
+  from{ left:0; }
+  50%{ left:-5px; } 
+  to{ left:5px; }
+}
+@-ms-keyframes wiggle{
+  from{ left:0; }
+  50%{ left:-5px; } 
+  to{ left:5px; }
+}
+@-o-keyframes wiggle{
+  from{ left:0; }
+  50%{ left:-5px; } 
+  to{ left:5px; }
+}
+@keyframes wiggle{
+  from{ left:0; }
+  50%{ left:-5px; } 
+  to{ left:5px; }
+}
 
 
 

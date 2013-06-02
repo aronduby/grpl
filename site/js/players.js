@@ -240,7 +240,8 @@ $(document).ready(function(){
 
 
 	$(window).on('resize', function(){
-		$('.page[data-route="players"]').trigger('show');
+		if( $('.page[data-route="players"]').is(':visible') )
+			$('.page[data-route="players"]').trigger('show');
 	});
 
 

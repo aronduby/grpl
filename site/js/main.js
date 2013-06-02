@@ -228,19 +228,32 @@ $(document).ready(function() {
 		$('label[for="'+$(this).attr('id')+'"]').addClass('checked');
 	});
 
+	// WIGGLER
+	// add the wiggle css class to any element to wiggle it
+	// this function removes the wiggle class when it's done wiggling
+	// then we can add the class later on and it will happen again
+	$('body').on('animationend webkitAnimationEnd MSAnimationEnd oanimationend', '.wiggle', function(e){
+		$(this).removeClass('wiggle');
+	});
+
 
 	// add a generic echo callback
 	Socket.add('echo', function(msg){
 		console.log(msg);
 	}).add('error', function(err){
-		console.log(err);
-		App.loading.hide();
-		dialog({
+		var dialog_opts = {
 			title: 'Error',
 			headline: 'Server reported the following error',
 			msg: err,
 			btn:{ class: 'close' }
-		});
+		};
+
+		console.log(err);
+		App.loading.hide();
+		if(err.msg != undefined){
+			dialog_opts = $.extend(true, dialog_opts, err);
+		}
+		dialog(dialog_opts);
 	}).add('disconnect', function(){
 		dialog({
 			title: 'Disconnected',

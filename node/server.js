@@ -39,6 +39,7 @@ if (cluster.isMaster) {
 		redisSub : sub,
 		RedisClient : client
 	}));
+	io.set('log level',2);
 
 
 	io.sockets.on('connection', function(socket){
@@ -46,11 +47,189 @@ if (cluster.isMaster) {
 		console.log('connected to '+ cluster.worker.id);
 
 		/*
+		 *	LOGIN METHODS
+		*/
+		// cookie hash
+		socket.on('user.loginFromHash', function(hash, cb){
+			grpl.player.getByHash(hash)
+			.then(function(player){
+				socket.set('user.name_key', player.name_key);
+				socket.set('user.admin', player.admin);
+				cb(null, player);
+			})
+			.fail(function(err){
+				cb(err);
+			}).done();
+		});
+
+		// facebook access token
+		socket.on('user.loginFromAccessToken', function(token, cb){
+			grpl.player.getByFBToken(token)
+			.then(function(player){
+				socket.set('user.name_key', player.name_key);
+				socket.set('user.admin', player.admin);
+				cb(null, player);
+			})
+			.fail(function(err){
+				cb(err);
+			}).done();
+		});
+
+		// email/password login
+		socket.on('user.loginFromForm', function(email, password, cb){
+			grpl.player.getByEmailAndPassword(email, password)
+			.then(function(player){
+				socket.set('user.name_key', player.name_key);
+				socket.set('user.admin', player.admin);
+				cb(null, player);
+			})
+			.fail(function(err){
+				cb(err);
+			}).done();
+		});
+
+		// registering a user to login with email/password
+		socket.on('user.register', function(data, cb){
+			grpl.player.register(data)
+			.then(function(bool){
+				cb(null, bool);
+			})
+			.fail(function(err){
+				cb(err);
+			}).done();
+		});
+
+
+		/*
+		 *	SCORING
+		*/
+		socket.on('scoring.emitIfStarted', function(){
+			var d = Q.defer();
+
+			grpl.scoring.resolveWithData(d)
+			.then(function(data){
+				if(data.started == true){
+					socket.emit('scoring_started', data);
+				}
+			})
+			.fail(function(err){
+				console.log(err);
+				socket.emit('error', err);
+			}).done();
+		});
+
+		socket.on('scoring.started', function(cb){
+			grpl.scoring.started()
+			.then(function(started){
+				cb(null, started);
+			})
+			.fail(function(err){
+				console.log(err);
+				cb(err);
+			}).done();
+		});
+
+		socket.on('scoring.start', function(starts, cb){
+			socket.get('user.admin', function(err, admin){
+				if(admin != true && admin != 'true'){
+					socket.emit('error', {
+						title:'Error',
+						headline: 'Nope...',
+						msg: '<p>Only Admins can start scoring. If you think you should be an admin talk to the people in charge.</p>'
+					});
+				} else {
+					if(!starts){
+						socket.emit('error', 'You must supply a date for the scoring system');
+						return false;
+					}
+					grpl.scoring.start(starts)
+					.then(function(data){
+						io.sockets.emit('scoring_started', data);
+					})
+					.fail(function(err){
+						console.log(err);
+						socket.emit('error', err.message);
+					})
+					.done();
+				}
+			});
+		});
+
+		socket.on('scoring.stop', function(cb){
+			socket.get('user.admin', function(err, admin){
+				if(admin != true && admin != 'true'){
+					socket.emit('error', {
+						title:'Error',
+						headline: 'Nope...',
+						msg: '<p>Only Admins can stop scoring. If you think you should be an admin talk to the people in charge.</p>',
+						btn: false
+					});
+				} else {				
+					grpl.scoring.stop();
+					io.sockets.emit('scoring_stopped');
+				}
+			});
+		});
+
+		socket.on('scoring.getMachines', function(cb){
+			grpl.scoring.getMachines()
+			.then(function(d){
+				cb(null, d);
+			})
+			.fail(function(err){
+				cb(err);
+			}).done();
+		});
+
+		socket.on('scoring.getPlayers', function(cb){
+			grpl.scoring.getPlayers()
+			.then(function(d){
+				cb(null, d);
+			})
+			.fail(function(err){
+				cb(err);
+			}).done();
+		});
+
+		socket.on('scoring.getGroupForUser', function(name_key, cb){
+			grpl.scoring.getGroupForUser(name_key)
+			.then(function(d){
+				cb(null, d);
+			})
+			.fail(function(err){
+				console.log(err);
+				cb(err);
+			}).done();
+		});
+
+		socket.on('scoring.login', function(cb){
+			socket.get('user.name_key', function(err, name_key){
+				if(err){
+					socket.emit('error', err.message);
+				} else {
+					cb(name_key);
+					socket.emit('scoring_logged_in', name_key);
+				}
+			});
+		});
+
+		socket.on('scoring.update', function(data, cb){
+			grpl.scoring.update(data)
+			.then(function(data){
+				socket.broadcast.emit('scoring_update', data);
+				if(cb)
+					cb(data);
+			}).fail(function(err){
+				socket.emit('error', err.msg);
+			});	
+		})
+
+
+		/*
 		 *	DATA API
 		*/
 		// gets all of the league nights for the season, including a totals
 		socket.on('leaguenight', function(cb){
-			console.log('answered by '+cluster.worker.id);
 			grpl.leaguenight.getAllForSeason(season_id)
 			.then(function(nights){
 				var totals = new grpl.leaguenight.LeagueNight({
@@ -126,7 +305,7 @@ if (cluster.isMaster) {
 					
 					if(machine_list.length == 0){			
 						// if machines aren't set yet show all the machines played less than twice
-						grpl.machine.getMachinesPlayedLessThanXTimes(season_id, 2, 50)
+						grpl.machine.getPlayedLessThanXTimes(season_id, 2, 50)
 						.then(function(machine_list){
 							night.machines = machine_list;
 							night.machines_note = 'Machines Played Less Than Twice';
@@ -141,7 +320,10 @@ if (cluster.isMaster) {
 						cb(null, night);
 					}
 
-				}).fail(function(err){ cb(err); }).done();
+				}).fail(function(err){ 
+					console.log(err);
+					cb(err); 
+				}).done();
 
 			}).fail(function(err){ cb(err); }).done();
 		});
@@ -214,6 +396,12 @@ if (cluster.isMaster) {
 		});
 
 		
+		/*
+		 *	Random Utility Functions
+		*/
+		socket.on('echo', function(str){
+			console.log(str);
+		});
 
 	});// end connect
 

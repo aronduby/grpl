@@ -35,11 +35,10 @@ var User = $.extend({}, $.PubSub, {
 			hash = $.cookie('user_hash');
 
 		if(hash != undefined){
-			Socket.emit('loginFromHash', hash, function(player){
-				if(player == false){
-					dfd.reject('User not found for that hash.');
+			Socket.emit('user.loginFromHash', hash, function(err, player){
+				if(err){
+					dfd.reject('User not found for that hash: '+err);
 				} else {
-					console.log('auto logged in from cookie');
 					dfd.resolve(player);
 				}
 			});
@@ -57,7 +56,7 @@ var User = $.extend({}, $.PubSub, {
 		window.fbAsyncInit = function() {
 			FB.init({
 				appId: '554891544539566', // App ID
-				channelUrl : 'http://duby.is-a-geek.com/grpl/channel.html', // Channel File
+				channelUrl : 'http://www.grpl.info/channel.html', // Channel File
 				status: true, // check login status
 				cookie: true, // enable cookies to allow the server to access the session
 				xfbml: true  // parse XFBML
@@ -65,9 +64,9 @@ var User = $.extend({}, $.PubSub, {
 
 			FB.getLoginStatus(function(rsp) {
 				if (rsp.status === 'connected') {
-					Socket.emit('loginFromAccessToken', rsp.authResponse.accessToken, function(player){
-						if(player == false){
-							dfd.reject('Facebook id doesn\'t match a known user');
+					Socket.emit('user.loginFromAccessToken', rsp.authResponse.accessToken, function(err, player){
+						if(err){
+							dfd.reject('Facebook id doesn\'t match a known user: '+err);
 						} else {
 							console.log('auto logged in from facebook');
 							dfd.resolve(player);
@@ -96,8 +95,8 @@ var User = $.extend({}, $.PubSub, {
 
 		FB.login(function(rsp){
 			if (rsp.authResponse) {
-				Socket.emit('loginFromAccessToken', rsp.authResponse.accessToken, function(player){
-					if(player == false){
+				Socket.emit('user.loginFromAccessToken', rsp.authResponse.accessToken, function(err, player){
+					if(err){
 						dialog({
 							title: 'User Not Found',
 							headline: 'Are you sure you exist?',
@@ -127,8 +126,8 @@ var User = $.extend({}, $.PubSub, {
 	loginWithForm: function(email, password){
 		var self = this;
 		App.loading.show();
-		Socket.emit('loginFromForm', email, password, function(player){
-			if(player == false){
+		Socket.emit('user.loginFromForm', email, password, function(err, player){
+			if(err){
 				App.loading.hide();
 				dialog({
 					title: 'User Not Found',
@@ -187,7 +186,6 @@ $(document).ready(function(){
 
 
 	User.add('login', function(user){
-		console.log('login complete', user);
 		$('#login-panel').data('popup').close();
 		$('button.login').hide();
 		$('.user-area').append('<p class="welcome-msg">Welcome '+user.first_name+'</p>').delay(2000).fadeOut(function(){

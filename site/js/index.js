@@ -36,19 +36,18 @@ $(document).ready(function(){
 			if($(self).data('hash') == data.starts){
 				for(name_key in data.players){
 					var p = $('.player-holder li[data-name_key="'+name_key+'"]', self),
-						night_total = 0,
-						season_total = Number(p.data('pre_total'));
+						night_total = Scoring.players[ Scoring.name_key_to_index[name_key] ].night_score,
+						season_total = Number(p.data('pre_total')) + night_total;
 
+					// nigh the machines
+					// update the totals for night and season
 					$('.player-machine[data-abbv="'+data.abbv+'"] .machine-points', p).text(data.players[name_key]);
-					$('.machine-points', p).each(function(){
-						var t = $(this).text()
-						night_total += t == '-' ? 0 : Number(t);
-					});
-					season_total += night_total;
-
 					$('.score',p)
 						.find('span:eq(0)').text(night_total).end()
 						.find('span:eq(1)').text(season_total);
+
+					// wiggle it
+					p.addClass('wiggle');
 				}
 			}
 		});
@@ -60,7 +59,6 @@ $(document).ready(function(){
 
 	// redraw our interface on hash change
 	$('.page[data-route="index"]').on("change", function(e, hash) {
-		console.log('index on change');
 		
 		// make sure hash is an available night
 		if(App.league_nights[hash] == undefined)
@@ -89,7 +87,6 @@ $(document).ready(function(){
 		}
 		var dfd = Api.get(method, arg, {
 			success: function(night){
-				console.log(night);
 				// MACHINES
 				if(night.machines.length > 0){
 					var machine_list = $('<ul></ul>');
@@ -120,6 +117,13 @@ $(document).ready(function(){
 					var p = night.players[i],
 						machine_points = false;
 
+					// if scoring has started and it's the same night override the machine with the data from scoring
+					if(Scoring.started == true && Scoring.starts == night.starts){
+						var scoring_player = Scoring.players[ Scoring.name_key_to_index[p.name_key] ];
+						p.machines = scoring_player.machines;
+						p.night_score = scoring_player.night_score ? scoring_player.night_score : '';
+					}
+
 					// machine places
 					if(p.machines != undefined){
 						machine_points = $('<div></div>');
@@ -132,21 +136,12 @@ $(document).ready(function(){
 					}
 
 					var score = [p.score],
-						pre_total = p.night_score;
+						pre_total = p.score;
 
 					if(p.night_score != undefined){
-						score[0] = score[0] + p.night_score;
+						score[0] = Number(score[0]) + Number(p.night_score);
 						score.unshift(p.night_score);						
 					}
-					// if there's two scores the first is the total from the night
-					// the second score is the total up to that night
-					// so for the total at the end of the night add the two together
-					/*
-					if(score.length > 1){
-						pre_total = score[1];
-						score[1] = Number(score[0]) + Number(score[1]);
-					}
-					*/
 
 					group_holder.append(
 						'<li data-name_key="'+p.name_key+'" data-pre_total="'+pre_total+'" '+(User.logged_in==true && User.name_key == p.name_key ? 'class="user" ' : '')+'>' +
@@ -178,6 +173,7 @@ $(document).ready(function(){
 			error: function(error){
 				console.log(error);
 				alert('Sorry, we could not load the data. Please check your data connection.');
+				App.loading.hide();
 			},
 			complete: function(){
 				// App.loading.hide();
@@ -187,7 +183,7 @@ $(document).ready(function(){
 		// when live starts for today add the class, update the title, and add the machines
 		// but don't set it up until the data is loaded
 		dfd.then(function(){
-			Scoring.add('started', function(){
+			Scoring.add('started', function(data){
 				if(Scoring.starts == hash){
 					var player_holder = $('.player-holder', page),
 						listview = $('.listview', player_holder);

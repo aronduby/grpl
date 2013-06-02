@@ -44,7 +44,7 @@ $(document).ready(function(){
 
 			// hookup scoring actions
 			$('.prepare-scoring', ap).click(function(){
-				Scoring.prepare($(this).data('starts'));
+				Scoring.start($(this).data('starts'));
 			});
 			$('.stop-scoring', ap).click(function(){
 				Scoring.stop();
@@ -57,39 +57,60 @@ $(document).ready(function(){
 
 				// build up the group progress section
 				var group_list = $('<ul></ul>'),
-					p = $('<p class="machines"></p>');
+					machines = $('<p class="machines"></p>');
 
-				for(i in Scoring.machines){
-					p.append('<span class="abbv" data-abbv="'+Scoring.machines[i].abbv+'">'+Scoring.machines[i].abbv+'</span>');
+				for(var i in Scoring.machines){
+					machines.append('<span class="abbv" data-abbv="'+Scoring.machines[i].abbv+'">'+Scoring.machines[i].abbv+'</span>');
 				}
 
-				for(i in Scoring.groups){
-					var players = Scoring.groups[i].players,
-						name_keys = [],
-						li = $('<li></li>'),
-						a = $('<a></a>'),
-						h = $('<h3></h3>');
+				for(var i in Scoring.players){
+					if(i%4==0){
+						if(i != 0){
+							li.attr('data-name_keys', name_keys.join(' '));
+							a.append(h).append(scored_machines).append('<span class="status-indicator off" data-status="'+group_status+'"></span>');
+							li.append(a).appendTo(group_list);
+						}
+						var name_keys = [],
+							li = $('<li/>'),
+							a = $('<a/>'),
+							h = $('<h3/>'),
+							scored_machines = machines.clone(),
+							scored_machines_count = 0,
+							group_status = 'off';
 
-					a.attr({
-						href: '#/admin/scoring/'+players[0].nameKey,
-						title: 'edit scoring'
-					});
+						a.attr({
+							href: '#/admin/scoring/'+Scoring.players[i].name_key,
+							title: 'edit scoring'
+						});
 
-					// create the heading with the group number and initials
-					h.append('#'+(Number(i)+1));
-					for(j in players){
-						h.append(' '+players[j].initials);
-						name_keys.push(players[j].nameKey);
+						for(var machine_i in Scoring.machines){
+							if(Scoring.players[i].machines[ Scoring.machines[machine_i].abbv ]){
+								scored_machines.find('span[data-abbv="'+Scoring.machines[machine_i].abbv+'"]').addClass('done');
+								scored_machines_count++;
+							}
+						}
+						if(scored_machines_count>0){
+							if(scored_machines_count == Scoring.machines.length)
+								group_status = 'on';
+							else
+								group_status = 'half';
+						}
+						
+						// create the heading with the group number and initials
+						h.append('#'+(Number(i)/4 + 1));
 					}
-					li.attr('data-name_keys', name_keys.join(' '));
 
-					a.append(h).append(p.clone()).append('<span class="status-indicator off" data-status="off"></span>');
-					li.append(a).appendTo(group_list);
+					h.append(' '+Scoring.players[i].initials);
+					name_keys.push(Scoring.players[i].name_key);
 				}
-				$('.scoring-groups', ap).empty().append(group_list);
-			}).add('updated', function(data){
-				console.log('admin - scoring updated', data);
+				// add our last group
+				li.attr('data-name_keys', name_keys.join(' '));
+				a.append(h).append(scored_machines).append('<span class="status-indicator off" data-status="'+group_status+'"></span>');
+				li.append(a).appendTo(group_list);
 
+				$('.scoring-groups', ap).empty().append(group_list);
+
+			}).add('updated', function(data){
 				var one_player;
 
 				for(name_key in data.players){
@@ -174,38 +195,42 @@ $(document).ready(function(){
 			// FORM SUBMISSION
 			$('form.user-form', this).on('submit', function(){
 				var	form = $(this),
-					name_key = $('input[name="name_key"]', this).val(),
-					first_name = $('input[name="first_name"]', this).val(),
-					last_name = $('input[name="last_name"]', this).val(),
-					facebook_id = $('input[name="facebook_id"]', this).val(),
-					email = $('input[name="email"]', this).val(),
-					password = $('input[name="password"]', this).val();
+					data = {
+						name_key: $('input[name="name_key"]', this).val(),
+						first_name: $('input[name="first_name"]', this).val(),
+						last_name: $('input[name="last_name"]', this).val(),
+						facebook_id: $('input[name="facebook_id"]', this).val(),
+						email: $('input[name="email"]', this).val(),
+						password: $('input[name="password"]', this).val()
+					};
 
-				if(name_key == '')
-					name_key = first_name+last_name;
+				if(data.name_key == '')
+					data.name_key = data.first_name+data.last_name;
 
 				App.loading.show();
-				Socket.emit('registerUser', name_key, first_name, last_name, facebook_id, email, password, function(success){
-					App.players[name_key] = {
-						'name_key': name_key,
-						'first_name': first_name,
-						'last_name': last_name,
-						'facebook_id': facebook_id,
-						'email': email,
-						'admin': App.players[name_key].admin
-					};					
+				Api.get('user.register', data, {
+					success: function(success){
+						App.players[name_key] = {
+							'name_key': data.name_key,
+							'first_name': data.first_name,
+							'last_name': data.last_name,
+							'facebook_id': data.facebook_id,
+							'email': data.email,
+							'admin': App.players[name_key].admin
+						};					
 
-					dialog({
-						title: 'User updated',
-						headline: 'User data has been saved',
-						msg: '<p>The user\'s data has been successfully saved, they should now be able to login with the credentials that were supplied</p>'
-					});
+						dialog({
+							title: 'User updated',
+							headline: 'User data has been saved',
+							msg: '<p>The user\'s data has been successfully saved, they should now be able to login with the credentials that were supplied</p>'
+						});
 
-					$('input', form).val('');
-					$('header h1', form).text('Choose a User');
-					$('.listview ul', form).html($('#user_admin-users-panel ul').html());
+						$('input', form).val('');
+						$('header h1', form).text('Choose a User');
+						$('.listview ul', form).html($('#user_admin-users-panel ul').html());
 
-					App.loading.hide();
+						App.loading.hide();
+					}
 				});
 
 
