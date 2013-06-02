@@ -86,7 +86,9 @@ var Scoring = $.extend({}, $.PubSub, {
 // join our socket and scoring
 Socket.add('scoring_started', function(data){ Scoring.whenStarted.apply(Scoring, data); });
 Socket.add('scoring_stopped', function(data){ Scoring.stopped.apply(Scoring, data); });
-Socket.add('scoring_logged_in', function(data){ Scoring.logged_in.apply(Scoring, data); });
+Socket.add('scoring_logged_in', function(data){ 
+	Scoring.logged_in.apply(Scoring, [data]); 
+});
 Socket.add('scoring_update', function(data){ Scoring.callbacks.updated.fire(data); });
 
 Scoring.add('updated', function(data){
