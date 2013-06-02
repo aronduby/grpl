@@ -376,4 +376,12 @@ Popup.prototype.remove = function(){
 	this.$o.remove();
 }
 
-if (typeof console == 'undefined' || typeof console.log == 'undefined') { console = { log : function (text) { return false; } } }
+if (typeof console == 'undefined' || typeof console.log == 'undefined' || typeof console.groupCollapsed == 'undefined') { 
+	var temp = { 
+		log : function (text) { return false; },
+		groupCollapsed: function(){	console.log('groupStart'); console.log(arguments); },
+		groupEnd: function(){ console.log('groupEnd'); }
+	}
+
+	console = $.extend({}, console, temp);
+}
