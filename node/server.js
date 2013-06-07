@@ -1,3 +1,6 @@
+/*
+// Unfortunately cluster bombed horribly on the VPS, so disabled
+// at least for now
 var cluster = require('cluster'),
 	numCPUs = require('os').cpus().length;
 
@@ -15,7 +18,7 @@ if (cluster.isMaster) {
 	});
 
 } else {
-
+*/
 	var grpl = require('grpl'),
 		io = require('socket.io').listen(834,{
 			'close timeout': 2700, // 45 minutes to re-open a closed connection
@@ -406,4 +409,4 @@ if (cluster.isMaster) {
 	});// end connect
 
 
-}
+// }
