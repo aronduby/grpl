@@ -47,7 +47,7 @@ if (cluster.isMaster) {
 
 	io.sockets.on('connection', function(socket){
 
-		console.log('connected to '+ cluster.worker.id);
+		// console.log('connected to '+ cluster.worker.id);
 
 		/*
 		 *	LOGIN METHODS
