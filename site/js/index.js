@@ -144,7 +144,7 @@ $(document).ready(function(){
 					}
 
 					group_holder.append(
-						'<li data-name_key="'+p.name_key+'" data-pre_total="'+pre_total+'" '+(User.logged_in==true && User.name_key == p.name_key ? 'class="user" ' : '')+'>' +
+						'<li data-name_key="'+p.name_key+'" data-pre_total="'+pre_total+'" data-scoring_string="'+p.scoring_string+'" '+(User.logged_in==true && User.name_key == p.name_key ? 'class="user" ' : '')+'>' +
 							'<a href="#/players/'+p.name_key+'" title="view player info">' +
 								'<h3>' +
 									p.first_name+' '+p.last_name +
@@ -158,6 +158,14 @@ $(document).ready(function(){
 					j++;
 				}
 				player_holder.append(group_holder);
+
+				// add our tied class to the proper people
+				player_holder.find('li').filter(function(){
+					var sstr = $(this).attr('data-scoring_string');
+					if(sstr == 'undefined')
+						return false;
+					return $('li[data-scoring_string="'+sstr+'"]', player_holder).length > 1;
+				}).addClass('tied');
 
 				// NOTES
 				$('.notes', page).html(night.note);

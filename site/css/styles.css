@@ -187,6 +187,18 @@
   margin-right:5px;
 }
 
+/* if there's any ties highlight them */
+.player-holder li.tied a:before{
+  content:'tied';
+  text-transform:uppercase;
+  font-size:18px;
+  font-weight:bold;
+  color:#ee7c0b;
+  text-shadow:1px 1px 1px rgba(0,0,0,.4);
+  float:left;
+  margin:4px 5px 0 -5px;
+}
+
 /* highlight the live night on index */
 #nights-panel .listview li.live a:before{
   content:'';
@@ -565,6 +577,7 @@ label.confirmed{
   50%{ left:-5px; } 
   to{ left:5px; }
 }
+
 
 
 
