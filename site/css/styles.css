@@ -298,7 +298,10 @@
   margin-top:-9px;
 }
 
-
+/* admin panel ties */
+#admin-panel section.ties{
+  display:none;
+}
 
 
 
@@ -317,7 +320,8 @@
   border-bottom:1px solid #dadada;
 }
 
-#scoring .scoring-form{
+#scoring .scoring-form,
+#tiebreaker .tiebreaker-form{
   margin-bottom:40px;
 }
 
@@ -337,7 +341,8 @@
 
 
 
-#scoring .scoring-form button[type="submit"]{
+#scoring .scoring-form button[type="submit"],
+#tiebreaker .tiebreaker-form button[type="submit"]{
   min-width:100px;
 }
 
@@ -525,6 +530,26 @@ label.confirmed{
   background:#efefef;
 }
 
+/*
+ * Tiebreaker
+*/
+#tiebreaker article{ 
+  padding:2%; 
+}
+#tiebreaker .listview li{
+  padding:12px 15px;
+}
+  #tiebreaker .listview h2{ 
+    float:left !important; 
+  }
+  #tiebreaker .listview fieldset{ 
+    width:auto !important;
+    float:right !important;
+  }
+    #tiebreaker fieldset label{
+      width:auto;
+      padding:10px 30px;
+    }
 
 
 /*

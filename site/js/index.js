@@ -1,5 +1,24 @@
 $(document).ready(function(){
 
+	Socket.add('tiesbroken', function(updated){
+		var cur_night = $('.page#index').data('hash');
+
+		if(cur_night == updated || cur_night == 'totals'){
+			dialog({
+				title: 'New Data Recieved',
+				headline: 'The Ties Have Been Broken',
+				msg: 'The ties have been broken, but we need to refresh the places to get the proper display order. Click "OK" to view the latest listing, or cancel to coninute what you\'re doing',
+				btn:{ 
+					fn: function(){
+						App.loading.show();
+						window.location.hash = '/index/'+updated;
+					}
+				}
+			});
+		}
+
+	});
+
 	$('.page[data-route="index"]').on("init", function() {
 		if($(this).data('inited') == true)
 			return true;
@@ -164,6 +183,7 @@ $(document).ready(function(){
 					var sstr = $(this).attr('data-scoring_string');
 					if(sstr == 'undefined')
 						return false;
+
 					return $('li[data-scoring_string="'+sstr+'"]', player_holder).length > 1;
 				}).addClass('tied');
 

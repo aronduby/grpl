@@ -376,6 +376,64 @@
 
 </div>
 
+<!-- ADMIN - TIE BREAKER -->
+<div class="page" data-route="admin/tiebreaker" data-title="Tiebreaker" id="tiebreaker">
+
+	<header>
+		<div class="left">
+			<button class="admin" title="Open Admin Panel">
+				<span class="title">Admin</span>
+			</button>			
+			<h1 class="hdr-logo"><a href="#/index" title="home">GRPL</a></h1>
+		</div>
+		<div class="right">
+			<section class="user-area">
+				<button class="login" title="Login">
+					<span class="title">Login</span>
+				</button>
+				<button class="scoring" title="Start Scoring">
+					<span class="title">Start Scoring</span>
+				</button>
+			</section>
+		</div>
+		<div class="center">
+			<section class="select-trigger" data-dropdown="nights-popup">
+				<h2>Tie Breaker</h2>
+			</section>
+		</div>
+	</header>
+
+	<article>
+		<form class="tiebreaker-form" autocomplete="off">
+			<input type="hidden" name="starts" value="" />
+
+			<div class="section-holder"></div>
+			<section class="tie-section hidden">
+				<header>
+					<h1>Ties</h1>
+				</header>
+
+				<div class="content">
+					<div class="players listview"><ul></ul></div>
+				</div>
+			</section>
+
+			<section>
+				<label class="content confirmed">
+					<span class="status-indicator confirmed-indicator" data-status="off"></span>
+					<input type="checkbox" name="confirmed" /> Confirmed
+				</label>
+			</section>
+
+			<div class="button-holder right">
+				<button type="submit" class="inline" disabled="disabled">Save</button>
+			</div>
+
+		</form>
+
+	</article>
+
+</div>
 
 
 <div id="overlay"></div>
@@ -418,6 +476,10 @@
 		<h1><a href="#/index" title="Home">Home</a>Admin Panel</h1>
 	</header>
 	<article>
+		<section class="ties">
+			<h1>Ties</h1>
+			<div class="listview tie-groups"></div>
+		</section>
 		<section class="scoring">
 			<h1>Scoring</h1>
 

@@ -1,5 +1,11 @@
 $(document).ready(function(){
 
+	Socket.add('tiesbroken', function(updated){
+		if(User.admin == true){
+			$('#admin-panel section.ties').hide();
+		}
+	});
+
 	$.when( User.callbacks.login, App.ready ).then(function(user){
 		if(user.admin == true){
 			var ap = $('#admin-panel');
@@ -19,6 +25,40 @@ $(document).ready(function(){
 				nights_list.append('<li data-starts="'+night.starts+'"><a href="#/admin/night/'+night.starts+'"><h3>'+night.title+'</h3><p>'+night.desc+'</p></a></li>');
 			}
 			$('.nights .league-nights', ap).empty().append(nights_list);
+
+			Api.get('leaguenight.ties', null, {
+				success: function(ties){
+
+					if(ties.length > 0){
+						$('section.ties', ap).show();
+						var tie_list = $('<ul></ul>');
+
+						for(i in ties){
+							// add a li for every group that is tied
+							// make the text be the initials (or Aron D.)
+							var group = ties[i],
+								li = $('<li></li>'),
+								a = $('<a href="#/admin/tiebreaker/'+ties[i][0].name_key+'"></a>'),
+								h3 = $('<h3></h3>'),
+								names = [];
+
+							for(var j in group){
+								names.push(group[j].first_name+' '+ group[j].last_name[0]+'. ');
+							}
+							h3.text( names.join(' | ') );
+							a.append(h3);
+							li.append(a).appendTo(tie_list);
+						}
+
+						tie_list.appendTo($('.ties .tie-groups', ap));
+					}					
+				},
+				error: function(error){
+					console.log(error);
+					alert('Sorry, we could not load the data. Please check your data connection.');
+					App.loading.hide();
+				}
+			});
 
 
 			// setup the admin panel
@@ -277,5 +317,173 @@ $(document).ready(function(){
 		listview.append('<li><label for="password">Password</label><fieldset><input type="text" id="password" name="password" /></fieldset><p>DO NOT use the same password as anything important</p></li>');
 
 	});
+
+
+	// Tiebreaker
+	$('.page[data-route="admin/tiebreaker"]').on("init", function() {
+		var dfd = $.Deferred();
+
+		if(User.logged_in == false || User.admin == false){
+			dfd.reject({
+				title: 'Admins Only',
+				headline: 'You must be an admin',
+				msg: 'This page is only accessible to the admins, please talk to them if you need help.',
+				btn:{
+					fn: function(){
+						window.location.hash = '/index';
+					}
+				}
+			});
+		} else {
+			if($(this).data('inited') == true)
+				return true;
+
+			var	page = $(this);
+
+			// figure out which league night we should set the starts to
+			// or leave it as null
+			var next,
+				now = new Date(),
+				starts = null;
+
+			// clear the time
+			now.setHours(0);
+			now.setMinutes(0);
+			now.setSeconds(0);
+
+			for(var i=0 in App.league_nights){
+				if( App.league_nights[i].date_obj >= now ){
+					starts = i;
+					break;
+				}
+			}
+			$('input[name="starts"]', this).val(starts);
+
+			Api.get('leaguenight.ties', null, {
+				success: function(ties){
+
+					if(ties.length > 0){
+						for(i in ties){
+							var	group = ties[i],
+								section = $('.tie-section', page).clone(),
+								list = section.find('ul'),
+								places = group.length,
+								names = [];
+
+							for(var j in group){
+								var player = group[j],
+									p = 1;
+								
+								var content = '<li data-namekey="'+player.name_key+'">';
+									content += '<h2>'+player.first_name+' '+player.last_name+'</h2>';
+									content += '<fieldset>';
+										while(p <= places){
+											content += '<label for="'+player.name_key+'_'+p+'" data-player="'+player.name_key+'">'+(p==0 ? 'DNP' : p)+'</label>';
+											content += '<input type="radio" name="players['+player.name_key+']" value="'+p+'" id="'+player.name_key+'_'+p+'" data-player="'+player.name_key+'" />';
+											p++;
+										}
+
+									content += '</fieldset>';
+								content += '</li>';
+								list.append(content);
+
+								names.push(player.first_name+' '+ player.last_name[0]+'. ');
+							}
+							section.find('header h1').text( names.join(' | ') );
+						}
+						section.removeClass('hidden').appendTo( $('.section-holder', page) );
+					}
+				},
+				error: function(error){
+					console.log(error);
+					alert('Sorry, we could not load the data. Please check your data connection.');
+					App.loading.hide();
+				}
+			});
+
+			// confirmed checkbox
+			$('input[name="confirmed"]', this).on('change', function(){
+				var status = $(this).is(':checked') ? 'on' : 'off';
+
+				$('.confirmed-indicator', page).removeClass('on off').addClass(status).attr('data-status', status);
+
+				if(status == 'on'){
+					$('button[type="submit"]', page).removeAttr('disabled');
+				} else {
+					$('button[type="submit"]', page).attr('disabled', 'disabled');
+				}
+			});
+
+			//
+			//	FORM SUBMISSION
+			//
+			$('form.tiebreaker-form', this).on('submit', function(){
+				$('button[type="submit"]', this).attr('disabled', 'disabled');
+				$('input[name="confirmed"]').removeAttr('checked').trigger('change');
+
+				App.loading.show();
+
+				// make sure there aren't any repeated places or not assigned places
+				var errors = [];
+
+				$('.tie-section', this).each(function(){
+					var checked = $('input:checked', this),
+						title = $('h1',this).text();
+
+					// make sure everyone has a score
+					if(checked.length != $('li', this).length)
+						errors.push( title + ' are missing some scores' );
+
+					// make sure they have different values
+					var values = [];
+					checked.each(function(){
+						if( $.inArray($(this).val(), values) >= 0){
+							errors.push( title + ' have some repeated scores' );
+						}
+						values.push( $(this).val() );
+					});
+				});
+
+				if(errors.length > 0){
+					App.loading.hide();
+					dialog({
+						title:'Scoring Error',
+						headline: 'You have the following error(s):',
+						msg: '<ul><li>'+errors.join('</li><li>')+'</li></ul>'
+					});
+					$('button[type="submit"]').removeAttr('disabled');
+					return false;
+				}
+
+				// format our data
+				var d = {
+					starts: $('input[name="starts"]', this).val(),
+					players: []
+				};
+
+				$('input:checked', this).each(function(){
+					d.players.push({
+						'name_key': $(this).data('player'), 
+						'place': $(this).val()
+					});
+				});
+
+				Api.post('tiebreaker', d, {
+					success: function(){
+						window.location.hash = '/index';
+					}
+				});
+
+				return false;
+			});
+
+			dfd.resolve();
+		}
+
+		$(this).data('inited', true);
+		return dfd;
+	});
+
+
 
 });

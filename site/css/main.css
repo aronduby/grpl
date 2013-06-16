@@ -12,7 +12,8 @@ body{
   position:relative;
 }
 
-.json{ display:none; }
+.json,
+.hidden{ display:none; }
 
 .page{
   position:relative;

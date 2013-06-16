@@ -34,7 +34,8 @@ var Socket = $.extend(io.connect('http://grpl.local:834',{
 		scoring_stopped: $.Deferred(),
 		scoring_logged_in: $.Callbacks(),
 		scoring_other_logged_in: $.Callbacks(),
-		scoring_update: $.Callbacks()
+		scoring_update: $.Callbacks(),
+		tiesbroken: $.Callbacks()
 	},
 
 	add: function(e, fn){

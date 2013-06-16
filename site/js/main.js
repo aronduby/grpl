@@ -172,6 +172,16 @@ var router,
 						}
 					}
 				}
+			},
+			'/tiebreaker':{
+				'/([a-zA-z]+)': {
+					on: function(name_key, next){
+						$.when( route_change('admin/tiebreaker', name_key) ).then(next);	
+					}
+				},
+				on: function(next){
+					$.when( route_change('admin/tiebreaker') ).then(next);
+				}
 			}
 		}
 			

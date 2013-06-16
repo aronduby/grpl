@@ -102,6 +102,20 @@ if (cluster.isMaster) {
 			}).done();
 		});
 
+		/*
+		 *	TIEBREAKER
+		*/
+		socket.on('tiebreaker', function(data, cb){
+			grpl.scoring.tiebreaker(data)
+			.then(function(){
+				cb(null, true);
+				io.sockets.emit('tiesbroken', data.starts);
+			})
+			.fail(function(err){
+				cb(err);
+			});
+		});
+
 
 		/*
 		 *	SCORING
@@ -225,7 +239,7 @@ if (cluster.isMaster) {
 			}).fail(function(err){
 				socket.emit('error', err.msg);
 			});	
-		})
+		});
 
 
 		/*
@@ -246,6 +260,17 @@ if (cluster.isMaster) {
 				cb(null, nights);
 			})
 			.fail(function(err){
+				cb(err);
+			}).done();
+		});
+
+		// people who are ties
+		socket.on('leaguenight.ties', function(cb){
+			grpl.playerlist.getTies()
+			.then(function(ties){
+				cb(null, ties);
+			}).fail(function(err){
+				console.log(err);
 				cb(err);
 			}).done();
 		});
