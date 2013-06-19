@@ -165,7 +165,7 @@ if (cluster.isMaster) {
 					})
 					.fail(function(err){
 						console.log(err);
-						socket.emit('error', err.message);
+						socket.emit('error', err);
 					})
 					.done();
 				}

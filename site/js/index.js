@@ -11,7 +11,7 @@ $(document).ready(function(){
 				btn:{ 
 					fn: function(){
 						App.loading.show();
-						window.location.hash = '/index/'+updated;
+						window.location.reload();
 					}
 				}
 			});
