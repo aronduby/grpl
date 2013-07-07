@@ -210,6 +210,23 @@
 }
 
 /*
+ *  A Division & B Division Split
+*/
+.player-holder .listview ul:nth-child(5):before{
+  content:'Tournament Split';
+  height:auto;
+  padding:2px 0;
+  text-align:Center;
+  text-transform:uppercase;
+  font-family:'Roboto Condensed';
+  font-weight:bold;
+  font-size:10px;
+  letter-spacing:.02em;
+  color:#777;
+}
+
+
+/*
  * --- ADMIN PANEL ---
 */
 /* panels for categories */
