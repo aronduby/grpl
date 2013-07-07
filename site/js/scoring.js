@@ -382,10 +382,6 @@ $(document).ready(function(){
 							players: {}
 						};
 
-					if(dnps.length > 0){
-						points = [0,7,4,1,0];
-					}
-
 					$('input[type="radio"]:checked').each(function(){
 						d.players[$(this).data('player')] = points[$(this).val()];
 					});

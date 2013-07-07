@@ -55,7 +55,7 @@ $(document).ready(function(){
 			if($(self).data('hash') == data.starts){
 				for(name_key in data.players){
 					var p = $('.player-holder li[data-name_key="'+name_key+'"]', self),
-						night_total = Scoring.players[ Scoring.name_key_to_index[name_key] ].night_score,
+						night_total = Scoring.players[ Scoring.name_key_to_index[name_key] ].night_score + '',
 						season_total = Number(p.data('pre_total')) + night_total;
 
 					// nigh the machines
