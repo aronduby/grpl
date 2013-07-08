@@ -78,6 +78,29 @@ $(document).ready(function(){
 
 	// redraw our interface on hash change
 	$('.page[data-route="index"]').on("change", function(e, hash) {
+
+		// if hash is undefined and scoring has started
+		// redirect to the night that is being scored
+		if(hash == undefined){
+			if(Scoring.started == true)
+				hash = Scoring.starts;
+			else{
+				var now = new Date();
+
+				now.setHours(0);
+				now.setMinutes(0);
+				now.setSeconds(0);
+				now.setMilliseconds(0);
+				now = now.getTime();
+
+				for(i in App.league_nights){
+					if(App.league_nights[i].date_obj){
+						if(App.league_nights[i].date_obj.getTime() >= now)
+							hash = i;
+					}
+				}
+			}
+		}
 		
 		// make sure hash is an available night
 		if(App.league_nights[hash] == undefined)
