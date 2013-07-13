@@ -278,18 +278,18 @@ if (cluster.isMaster) {
 		// get the information for totals
 		socket.on('leaguenight.totals', function(cb){
 			Q.all([
-				grpl.playerlist.getRankings(),
-				grpl.machine.getPlayedLessThanXTimes(season_id, 2, 50)
+				grpl.playerlist.getRankings()// ,
+				// grpl.machine.getPlayedLessThanXTimes(season_id, 2, 50)
 			])
-			.spread(function(player_list, machine_list){
+			.spread(function(player_list){//, machine_list){
 				var night = new grpl.leaguenight.LeagueNight({
 					starts: 'totals',
 					night_id: 'totals',
 					title: 'Totals to Date',				
 					note: '',
 					players: player_list.players,
-					machines: machine_list,
-					machines_note: 'Machines Played Less Than Twice'
+					machines: [], // machine_list,
+					machines_note: 'no machines for totals' //'Machines Played Less Than Twice'
 				});
 				cb(null, night);
 			})
