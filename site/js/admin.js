@@ -191,7 +191,6 @@ $(document).ready(function(){
 	$('.page[data-route="admin/night"]').on('init', function(){
 		var dfd = $.Deferred();
 
-		/*
 		if(User.logged_in == false || User.admin == false){
 			dfd.reject({
 				title: 'Admins Only',
@@ -204,7 +203,6 @@ $(document).ready(function(){
 				}
 			});
 		} else {
-		*/
 			if($(this).data('inited') == true)
 				return true;
 
@@ -283,7 +281,7 @@ $(document).ready(function(){
 				return false;
 			});
 
-		// }
+		}
 
 		return dfd;
 	});
@@ -341,8 +339,7 @@ $(document).ready(function(){
 			.find('input[name="night_id"]').val(night.night_id).end()
 			.find('input[name="season_id"]').val(App.season_id).end()
 			.find('input[name="title"]').val(night.title).end()
-			.find('select[name="starts[month]"] option:selected').removeAttr('selected').end()
-			.find('select[name="starts[month]"] option[value="'+(night.date_obj.getMonth()+1)+'"]').attr('selected','selected').end().end()
+			.find('select[name="starts[month]"]').val(night.date_obj.getMonth()+1).end()
 			.find('input[name="starts[day]"]').val(night.date_obj.getDate()).end()
 			.find('input[name="starts[year]"]').val(night.date_obj.getFullYear()).end()
 			.find('input[name="note"]').val(night.note).end();
