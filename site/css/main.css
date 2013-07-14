@@ -810,7 +810,8 @@ form .listview fieldset input[type="checkbox"]{
   z-index:9;
 }
 
-form .listview fieldset input{
+form .listview fieldset input,
+form .listview fieldset select{
   border-radius:5px;
   width:98%;
   border:none;
@@ -819,6 +820,46 @@ form .listview fieldset input{
   padding:1%;
   color:#666;
 }
+  form .listview fieldset select{
+    width:100%;
+  }
+
+
+/* multiple fieldset */
+form .listview fieldset.multiple input,
+form .listview fieldset.multiple select{
+  float:left;
+  width:auto;
+  border-radius:0;
+  border-right:1px solid #bcbcbc;
+}
+  form .listview fieldset.multiple input:first-child,
+  form .listview fieldset.multiple select:first-child{
+    border-radius:5px 0 0 5px;
+  }
+  form .listview fieldset.multiple input:last-child,
+  form .listview fieldset.multiple select:last-child{
+    border-radius:0 5px 5px 0;
+    border-right:0;
+  }
+
+  form .listview fieldset.multiple *{
+    box-sizing: border-box; /* css3 rec */
+    -moz-box-sizing: border-box; /* ff2 */
+    -ms-box-sizing: border-box; /* ie8 */
+    -webkit-box-sizing: border-box; /* safari3 */
+    -khtml-box-sizing: border-box; /* konqueror */    
+  }
+
+
+
+
+
+
+
+
+
+
 
 @media only screen and (max-width: 767px){
   form .listview li h2,
@@ -830,7 +871,3 @@ form .listview fieldset input{
   form .listview li h2,
   form .listview li > label{ margin:0 0 8px 0 !important; }
 }
-
-
-
-

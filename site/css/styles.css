@@ -53,7 +53,8 @@
   #nights-panel,
   #scoring-machine-panel,
   #players-panel,
-  #user_admin-users-panel{
+  #user_admin-users-panel,
+  #night_admin-night-panel{
     display:block !important;
     margin:0;
     top:70px; left:1%;
@@ -67,23 +68,28 @@
     #players-panel .pointer,
     #players-panel .close,
     #user_admin-users-panel .pointer,
-    #user_admin-users-panel .close{
+    #user_admin-users-panel .close,
+    #night_admin-night-panel .pointer,
+    #night_admin-night-panel .close{
      display:none; 
    }
    #nights-panel header,
    #scoring-machine-panel header,
    #players-panel header,
-   #user_admin-users-panel header{ padding:15px; }
+   #user_admin-users-panel header,
+   #night_admin-night-panel header{ padding:15px; }
 
    #nights-panel header h1,
    #scoring-machine-panel header h1,
    #players-panel header h1,
-   #user_admin-users-panel header h1{ font-size:20px; }
+   #user_admin-users-panel header h1,
+   #night_admin-night-panel header h1{ font-size:20px; }
 
    #nights-panel article,
    #scoring-machine-panel article,
    #players-panel article,
-   #user_admin-users-panel article{ padding-bottom:10px; }
+   #user_admin-users-panel article,
+   #night_admin-night-panel article{ padding-bottom:10px; }
   
   #index .machine-holder,
   #players .nights-holder{
@@ -97,7 +103,8 @@
   }
   
   #scoring .scoring-form,
-  #user_admin .user-form{
+  #user_admin .user-form,
+  #night_admin .night-form{
     margin:auto 2% auto 23%;
   }
  
@@ -567,6 +574,33 @@ label.confirmed{
       width:auto;
       padding:10px 30px;
     }
+
+
+
+/*
+ *  Admin - Nights
+*/
+#night_admin .machinelist-holder p{
+  clear:both;
+}
+
+#night_admin .night-form fieldset.multiple input,
+#night_admin .night-form fieldset.multiple select{
+  width:33.3%;
+}
+  #night_admin .night-form fieldset.multiple select{
+    height:32px;
+  }
+
+#night_admin #machinelist{
+  clear:both;
+  position:relative;
+  margin:10px;
+  background:#f7f7f7;
+  border:1px solid #c6c6c6;
+  border-radius:5px;
+}
+
 
 
 /*

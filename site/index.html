@@ -368,12 +368,145 @@
 	<div id="user_admin-users-panel" class="popup center show-header">
 		<header>
 			<span class="pointer"></span>
-			<h1>Choose a Player</h1>
+			<h1>Choose a User</h1>
 			<a class="close" href="#">Close</a>
 		</header>
 		<article class="listview">
 			<!--article content injected here -->
 		</article>
+	</div>
+
+</div>
+
+<!-- NIGHT ADMIN -->
+<div class="page" data-route="admin/night" data-title="Night Admin" id="night_admin">
+
+	<header>
+		<div class="left">
+			<button class="admin" title="Open Admin Panel">
+				<span class="title">Admin</span>
+			</button>			
+			<h1 class="hdr-logo"><a href="#/index" title="home">GRPL</a></h1>
+		</div>
+		<div class="right">
+			<section class="user-area">
+				<button class="login" title="Login">
+					<span class="title">Login</span>
+				</button>
+				<button class="scoring" title="Start Scoring">
+					<span class="title">Start Scoring</span>
+				</button>
+			</section>
+		</div>
+		<div class="center">
+			<section class="night-trigger select-trigger" data-dropdown="nights-popup">
+				<div><!-- hook for the dropdown icon -->
+					<h2>Loading</h2>
+				</div>
+			</section>
+		</div>
+	</header>
+
+	<article>
+		<form class="night-form" autocomplete="off">
+			<section>
+				<header>
+					<h1>Edit This Night</h1>
+				</header>
+				<div class="content">
+					<input type="hidden" name="night_id" id="night_id" value="" />
+					<input type="hidden" name="season_id" id="season_id" value="" />
+					<div class="fields listview"><ul>
+						<li>
+							<label for="title">Title</label>
+							<fieldset><input type="text" name="title" id="title" placeholder="ie. League Night #8" /></fieldset>
+						</li>
+						<li>
+							<label for="starts-month">Starts</label>
+							<fieldset class="multiple">
+								<select name="starts[month]" id="starts-month">
+									<option value="1">Jan</option>
+									<option value="2">Feb</option>
+									<option value="3">Mar</option>
+									<option value="4">Apr</option>
+									<option value="5">May</option>
+									<option value="6">June</option>
+									<option value="7">July</option>
+									<option value="8">Aug</option>
+									<option value="9">Sept</option>
+									<option value="10">Oct</option>
+									<option value="11">Nov</option>
+									<option value="12">Dec</option>
+								</select>
+								<input type="number" name="starts[day]" min="1" max="31" step="1" placeholder="day" />
+								<input type="number" name="starts[year]" min="2013" step="1" placeholder="year" />
+							</fieldset>
+						</li>
+						<li>
+							<label for="note">Note</label>
+							<fieldset><input type="text" name="note" id="note" placeholder="notes" /></fieldset>
+						</li>
+						<li class="machinelist-holder">
+							<h2>Machines</h2><p>Enter machines in the order that the first group will play them</p>
+							<div class="listview" id="machinelist">
+								<ul>
+									<li>
+										<label>First</label>
+										<fieldset>
+											<input type="hidden" name="machines_org[0]" value="" />
+											<select class="machine" name="machines[0]"></select>
+										</fieldset>
+									</li>
+									<li>
+										<label>Second</label>
+										<fieldset>
+											<input type="hidden" name="machines_org[1]" value="" />
+											<select class="machine" name="machines[1]"></select>
+										</fieldset>
+									</li>
+									<li>
+										<label>Third</label>
+										<fieldset>
+											<input type="hidden" name="machines_org[2]" value="" />
+											<select class="machine" name="machines[2]"></select>
+										</fieldset>
+										</fielset>
+									</li>
+									<li>
+										<label>Fourth</label>
+										<fieldset>
+											<input type="hidden" name="machines_org[3]" value="" />
+											<select class="machine" name="machines[3]"></select>
+										</fieldset>
+										</fielset>
+									</li>
+									<li>
+										<label>Fifth</label>
+										<fieldset>
+											<input type="hidden" name="machines_org[4]" value="" />
+											<select class="machine" name="machines[4]"></select>
+										</fieldset>
+										</fielset>
+									</li>
+								</ul>
+							</div>
+						</li>
+					</ul></div>
+				</div>
+			</section>
+			<div class="button-holder right">
+				<button type="submit" class="inline">Save</button>
+			</div>
+		</form>
+	</article>
+
+	<div id="night_admin-night-panel" class="popup center show-header">
+		<header>
+			<span class="pointer"></span>
+			<h1>Edit a Night</h1>
+			<a class="close" href="#">Close</a>
+		</header>
+		<article class="listview"></article>
 	</div>
 
 </div>
@@ -509,11 +642,9 @@
 		<section class="nights">
 			<h1>League Nights</h1>
 
-			<!-- not in use yet
 			<button class="new-league-night blue plus">
 				<span class="title">New League Night</span>
 			</button>
-			-->
 
 			<h2>All Nights</h2>
 

@@ -82,6 +82,11 @@ $(document).ready(function(){
 				window.location.hash = '/admin/users';
 			});
 
+			// manage nights button
+			$('.new-league-night', ap).click(function(){
+				window.location.hash = '/admin/night/new';
+			});
+
 			// hookup scoring actions
 			$('.prepare-scoring', ap).click(function(){
 				Scoring.start($(this).data('starts'));
@@ -182,6 +187,197 @@ $(document).ready(function(){
 	/*
 	 * --- Admin Pages
 	*/
+	// Night Admin
+	$('.page[data-route="admin/night"]').on('init', function(){
+		var dfd = $.Deferred();
+
+		/*
+		if(User.logged_in == false || User.admin == false){
+			dfd.reject({
+				title: 'Admins Only',
+				headline: 'You must be an admin',
+				msg: 'This page is only accessible to the admins, please talk to them if you need help.',
+				btn:{
+					fn: function(){
+						window.location.hash = '/index';
+					}
+				}
+			});
+		} else {
+		*/
+			if($(this).data('inited') == true)
+				return true;
+
+			var	page = $(this);
+
+			// setup out players panel
+			$('#night_admin-night-panel', page).data('popup', new Popup($('#night_admin-night-panel')));
+			$('#night_admin-night-panel', page).on('click', 'li[data-starts] a', function(){
+				$('#night_admin-night-panel').data('popup').close();
+			});
+
+			// handle clicks to the players btn to open our popup
+			$('.night-trigger', page).on('click', function(){
+				$('#night_admin-night-panel').data('popup').open();
+			});
+
+			// setup our panel
+			var night_list = $('<ul></ul>');
+			night_list.append('<li data-starts="new"><a href="#/admin/night/new"><h2>New Night</h2><p>Create a new night</p></a></li>');
+			for(starts in App.league_nights){
+				if(starts=='totals')
+					continue;
+
+				var n = App.league_nights[starts];
+				night_list.append('<li data-starts="'+starts+'"><a href="#/admin/night/'+starts+'"><h2>'+n.title+'</h2><p>'+n.desc+'</p></a></li>');
+			}
+
+			$('#night_admin-night-panel article', page).empty().append(night_list);
+
+			// update our fake select button
+			$('.night-trigger', this)
+				.find('h2').text('Choose a Night').end();
+			
+			page.data('inited', true);
+
+			Api.get('machine', App.season_id, {
+				success: function(machines){
+					var opts = '<option></option>';
+
+					for(var i in machines){
+						var mac = machines[i];
+						opts += '<option value="'+mac.abbv+'">'+mac.abbv+': '+mac.name+'</option>';
+					}
+
+					$('select.machine', page).html(opts);
+
+					dfd.resolve();
+				}
+			});
+
+			// FORM
+			$('form.night-form', page).on('submit', function(){
+				App.loading.show();
+
+				var	form = $(this),
+					data = {
+						night_id: form.find('input[name="night_id"]').val(),
+						season_id: form.find('input[name="season_id"]').val(),
+						starts: {
+							month: form.find('select[name="starts[month]"]').val(),
+							day: form.find('input[name="starts[day]"]').val(),
+							year: form.find('input[name="starts[year]"]').val()
+						},
+						note: form.find('input[name="note"]').val(),
+						machines: [],
+						machines_org: []
+					};
+				$('select.machine', form).each(function(){
+					data.machines.push( $(this).val() );
+					data.machines_org.push( $(this).prev('input[type="hidden"]').val() );
+				});
+
+				console.log(data);
+
+				App.loading.hide();
+				return false;
+			});
+
+		// }
+
+		return dfd;
+	});
+
+	$('.page[data-route="admin/night"]').on('change', function(e, starts){
+		if(starts == undefined){
+			return true;
+		} else if($(this).data('starts') == starts){
+			return true;
+		} else {
+			$(this).data('starts', starts);
+		}
+
+		var dfd = $.Deferred();
+			page = this,
+			form = $('form.night-form', this);
+
+		if(starts == 'new'){
+			var night = {
+				night_id: null,
+				title: 'New Night',
+				date_obj: new Date(),
+				note: null
+			};
+			night.date_obj.setHours(0);
+			night.date_obj.setMinutes(0);
+			night.date_obj.setSeconds(0);
+			night.date_obj.setMilliseconds(0);
+
+
+		} else if(starts in App.league_nights){
+			var night = App.league_nights[starts];
+		} else {
+			dfd.reject({
+				title: 'Night Not Found',
+				headline: 'Couldn\'t find that night',
+				msg: 'A night could not be found for the passed in hash.',
+				btn:{
+					fn: function(){
+						window.location.hash = '/index';
+					}
+				}
+			});
+			return dfd;
+		}
+
+
+		$(this).attr('data-title', 'Night Admin | '+night.title+' | ');
+		$('.night-trigger', this)
+			.find('h2').text(night.title).end();
+		$('.night-form section header h1', page).text('Edit '+night.title);
+
+		// general night info
+		form
+			.find('input[name="night_id"]').val(night.night_id).end()
+			.find('input[name="season_id"]').val(App.season_id).end()
+			.find('input[name="title"]').val(night.title).end()
+			.find('select[name="starts[month]"] option:selected').removeAttr('selected').end()
+			.find('select[name="starts[month]"] option[value="'+(night.date_obj.getMonth()+1)+'"]').attr('selected','selected').end().end()
+			.find('input[name="starts[day]"]').val(night.date_obj.getDate()).end()
+			.find('input[name="starts[year]"]').val(night.date_obj.getFullYear()).end()
+			.find('input[name="note"]').val(night.note).end();
+
+		// disable the machines if it's in the past
+		var now = new Date();
+		if(night.night_id != null && night.date_obj < now){
+			$('select.machine', form).attr('disabled','disabled');
+		} else {
+			$('select.machine', form).removeAttr('disabled');
+		}
+
+		// machines for an existing night
+		if(night.night_id !== null){
+			Api.get('leaguenight.starts.machines', night.starts, {
+				success: function(machines){
+					for(var i in machines){
+						form
+							.find('input[name="machines_org['+i+']"]').val(machines[i].abbv).end()
+							.find('select[name="machines['+i+']"]')
+								.find('option[value="'+machines[i].abbv+'"]').attr('selected','selected');
+					}
+
+					dfd.resolve();
+				}
+			});
+		} else {
+			form.find('option[selected]').removeAttr('selected');
+			dfd.resolve();
+		}
+
+		return dfd;
+
+	});
+
 	// User Admin
 	$('.page[data-route="admin/users"]').on("init", function() {
 		var dfd = $.Deferred();
@@ -283,7 +479,6 @@ $(document).ready(function(){
 	});
 
 	$('.page[data-route="admin/users"]').on("change", function(e, name_key) {
-		console.log('admin/users on change');
 
 		if(name_key == undefined){
 			return true;
@@ -297,8 +492,6 @@ $(document).ready(function(){
 			user = App.players[name_key],
 			form = $('form.user-form', this),
 			listview = $('.listview ul', form).empty();
-
-		console.log(user);
 
 		$(this).attr('data-title', 'User Admin | '+user.first_name+' '+user.last_name+' | ');
 

@@ -182,6 +182,13 @@ var router,
 				on: function(next){
 					$.when( route_change('admin/tiebreaker') ).then(next);
 				}
+			},
+			'/night':{
+				'/(new|[\\d-]+)': {
+					on: function(starts, next){
+						$.when( route_change('admin/night', starts) ).then(next);
+					}
+				}
 			}
 		}
 			
