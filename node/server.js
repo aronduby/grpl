@@ -330,23 +330,8 @@ if (cluster.isMaster) {
 				Q.all(promises)
 				.spread(function( player_list, machine_list){
 					night.players = player_list.players;
-					
-					if(machine_list.length == 0){			
-						// if machines aren't set yet show all the machines played less than twice
-						grpl.machine.getPlayedLessThanXTimes(season_id, 2, 50)
-						.then(function(machine_list){
-							night.machines = machine_list;
-							night.machines_note = 'Machines Played Less Than Twice';
-							cb(null, night);
-
-						}).fail(function(err){
-							cb(err);
-						}).done();
-
-					} else {
-						night.machines = machine_list;
-						cb(null, night);
-					}
+					night.machines = machine_list;
+					cb(null, night);
 
 				}).fail(function(err){ 
 					console.log(err);
