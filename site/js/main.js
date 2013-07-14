@@ -100,12 +100,14 @@ var router,
 
 		new_route = page;
 		$.when( $('.page[data-route="'+page+'"]').triggerHandler('init', data) ).then(function(){
-			// console.log('inited', data, dfd);
 			$.when( $('.page[data-route="'+page+'"]').triggerHandler('change', data) )
 				.then(function(){
 					// console.log('changed', data, dfd);
 					document.title = $('.page[data-route="'+page+'"]').attr('data-title')+' GRPL';
 					dfd.resolve();
+				}).fail(function(err){
+					App.loading.hide();
+					dialog(err);
 				});
 		}).fail(function(err){
 			App.loading.hide();

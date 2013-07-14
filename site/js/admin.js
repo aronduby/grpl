@@ -312,8 +312,23 @@ $(document).ready(function(){
 			night.date_obj.setMilliseconds(0);
 
 
+		// SCORING HAS STARTED?
+		} else if(Scoring.started && Scoring.starts==starts){
+			dfd.reject({
+				title: 'I\'m Afraid I Can\'t Let You Do That',
+				headline: 'Scoring Already Started',
+				msg: 'Scoring has already started for that night, so you could break lots of things. Instead, talk to Aron about what you need to do and he\'ll handle it',
+				btn:{
+					fn: function(){
+						window.location.hash = '/index';
+					}
+				}
+			});
+			return dfd;
+
 		} else if(starts in App.league_nights){
 			var night = App.league_nights[starts];
+
 		} else {
 			dfd.reject({
 				title: 'Night Not Found',
@@ -345,8 +360,12 @@ $(document).ready(function(){
 			.find('input[name="note"]').val(night.note).end();
 
 		// disable the machines if it's in the past
-		var now = new Date();
-		if(night.night_id != null && night.date_obj < now){
+		var today = new Date();
+		today.setHours(0);
+		today.setMinutes(0);
+		today.setSeconds(0);
+		today.setMilliseconds(0);
+		if(night.night_id != null && night.date_obj < today){
 			$('select.machine', form).attr('disabled','disabled');
 		} else {
 			$('select.machine', form).removeAttr('disabled');

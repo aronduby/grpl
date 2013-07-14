@@ -42,7 +42,8 @@ if (cluster.isMaster) {
 		redisSub : sub,
 		RedisClient : client
 	}));
-	io.set('log level',2);
+	if(process.argv[2] != 'DEV')
+		io.set('log level',2);
 
 
 	io.sockets.on('connection', function(socket){

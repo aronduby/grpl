@@ -703,6 +703,7 @@ body.loading{
   }
 
 .popup.dialog{
+  position:fixed;
   width:auto;
   max-width:500px;
 }
