@@ -261,21 +261,24 @@ $(document).ready(function(){
 					data = {
 						night_id: form.find('input[name="night_id"]').val(),
 						season_id: form.find('input[name="season_id"]').val(),
+						title: form.find('input[name="title"]').val(),
 						starts: {
 							month: form.find('select[name="starts[month]"]').val(),
 							day: form.find('input[name="starts[day]"]').val(),
 							year: form.find('input[name="starts[year]"]').val()
 						},
 						note: form.find('input[name="note"]').val(),
-						machines: [],
-						machines_org: []
+						machines: []
 					};
 				$('select.machine', form).each(function(){
 					data.machines.push( $(this).val() );
-					data.machines_org.push( $(this).prev('input[type="hidden"]').val() );
 				});
 
-				console.log(data);
+				Api.post('leaguenight.update', data, {
+					success: function(d){
+						console.log(d);
+					}
+				})
 
 				App.loading.hide();
 				return false;
@@ -366,9 +369,9 @@ $(document).ready(function(){
 		today.setSeconds(0);
 		today.setMilliseconds(0);
 		if(night.night_id != null && night.date_obj < today){
-			$('select.machine', form).attr('disabled','disabled');
+			$('select.machine, input[name^="starts"], select[name^="starts"]', form).attr('disabled','disabled');
 		} else {
-			$('select.machine', form).removeAttr('disabled');
+			$('select.machine, input[name^="starts"], select[name^="starts"]', form).removeAttr('disabled');
 		}
 
 		// machines for an existing night
@@ -377,7 +380,6 @@ $(document).ready(function(){
 				success: function(machines){
 					for(var i in machines){
 						form
-							.find('input[name="machines_org['+i+']"]').val(machines[i].abbv).end()
 							.find('select[name="machines['+i+']"]')
 								.find('option[value="'+machines[i].abbv+'"]').attr('selected','selected');
 					}

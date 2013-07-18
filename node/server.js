@@ -246,6 +246,41 @@ if (cluster.isMaster) {
 		/*
 		 *	DATA API
 		*/
+		socket.on('leaguenight.update', function(data, cb){
+			var start_str = data.starts.year + '-' +  ('0'+data.starts.month).slice(-2) + '-' +  ('0'+data.starts.day).slice(-2);
+				d = new Date(data.starts.year, data.starts.month-1, data.starts.day),
+				night = null;
+			
+			data.starts = start_str;
+			night = new grpl.leaguenight.LeagueNight(data);
+			console.log(data);
+			night.save()
+			.then(function(night){
+
+				var today = new Date();
+				today.setHours(0);
+				today.setMinutes(0);
+				today.setSeconds(0);
+				today.setMilliseconds(0);
+				if(today >= d){
+					var mtln = new grpl.machinetoleaguenight.MachineToLeagueNight(night.starts);
+					for(var display_order in data.machines){
+						var abbv = data.machines[display_order];
+						if(abbv != ''){
+							mtln.add(abbv, display_order);
+						}
+					}
+					mtln.save();	
+				}
+
+				cb(null, true);
+
+			}).fail(function(err){
+				cb(err);
+			}).done();
+			
+		});
+
 		// gets all of the league nights for the season, including a totals
 		socket.on('leaguenight', function(cb){
 			grpl.leaguenight.getAllForSeason(season_id)
