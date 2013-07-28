@@ -26,13 +26,25 @@ $(document).ready(function(){
 			}
 			$('.nights .league-nights', ap).empty().append(nights_list);
 
+			// list all of the players for editing
+			var players_list = $('<ul></ul>');
+			for(var name_key in App.players){
+				var p = App.players[name_key];
+				players_list.append('<li><a href="#/admin/users/'+name_key+'"><h3>'+p.first_name+' '+p.last_name+'</h3></a></li>');
+			}
+			$('.users .edit-user-list', ap).empty().append(players_list);
+
+
+			// add any ties to the panel
 			Api.get('leaguenight.ties', null, {
 				success: function(ties){
 
 					if(ties.length > 0){
 						$('section.ties', ap).show();
-						var tie_list = $('<ul></ul>');
 
+						$('section.ties header', ap).prepend('<span class="count red">'+ties.length+'</span>');
+
+						var tie_list = $('<ul></ul>');
 						for(i in ties){
 							// add a li for every group that is tied
 							// make the text be the initials (or Aron D.)
@@ -63,15 +75,23 @@ $(document).ready(function(){
 
 			// setup the admin panel
 			ap.data('popup', new Popup(ap));
-			$('button.admin, #admin-panel').on('click', function(){
-				$('#admin-panel').data('popup').toggle();
-			});
 
 			// show admin btn instead of logo
 			$('h1.hdr-logo').hide()
 			$('button.admin').show();
 
-			// close the panel when you click something
+
+			$('button.admin, #admin-panel').on('click', function(){
+				$('#admin-panel').data('popup').toggle();
+			});
+
+			// don't close the panel when you click on collapsible headers
+			ap.on('click', '.collapsible header', function(e){
+				e.stopPropagation();
+				return false;
+			});
+
+			// close the panel when you click a button
 			ap.on('click', 'button', function(){
 				ap.data('popup').close();
 				return false;
@@ -154,7 +174,6 @@ $(document).ready(function(){
 				li.append(a).appendTo(group_list);
 
 				$('.scoring-groups', ap).empty().append(group_list);
-
 			}).add('updated', function(data){
 				var one_player;
 

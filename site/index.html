@@ -619,45 +619,59 @@
 		<h1><a href="#/index" title="Home">Home</a>Admin Panel</h1>
 	</header>
 	<article>
-		<section class="ties">
-			<h1>Ties</h1>
-			<div class="listview tie-groups"></div>
-		</section>
-		<section class="scoring">
-			<h1>Scoring</h1>
-
-			<button class="stop-scoring red" disabled="disabled">
-				<span class="title">Stop Scoring</span>
-			</button>
-
-			<button class="prepare-scoring green" disabled="disabled">
-				<span class="title">Start Scoring</span>
-			</button>
-
-			<h2>Group Progress</h2>
-
-			<div class="listview scoring-groups"></div>
-
+		<section class="ties collapsible closed">
+			<header>
+				<h1>Ties</h1>
+			</header>
+			<div class="listview tie-groups content"></div>
 		</section>
 
-		<section class="user">
-			<h1>Users</h1>
-			<button class="admin-users blue admin">
-				<span class="title">Manage Users</span>
-			</button>
+		<section class="scoring collapsible closed">
+			<header>
+				<h1>Scoring</h1>
+			</header>
+			<section class="content">
+				<button class="stop-scoring red" disabled="disabled">
+					<span class="title">Stop Scoring</span>
+				</button>
+
+				<button class="prepare-scoring green" disabled="disabled">
+					<span class="title">Start Scoring</span>
+				</button>
+
+				<h2>Group Progress</h2>
+
+				<div class="listview scoring-groups"></div>
+			</section>
 		</section>
 
-		<section class="nights">
-			<h1>League Nights</h1>
+		<section class="nights collapsible closed">
+			<header>
+				<h1>League Nights</h1>
+			</header>
+			<section class="content">
+				<button class="new-league-night blue plus">
+					<span class="title">New League Night</span>
+				</button>
 
-			<button class="new-league-night blue plus">
-				<span class="title">New League Night</span>
-			</button>
+				<h2>All Nights</h2>
 
-			<h2>All Nights</h2>
+				<div class="listview league-nights"></div>
+			</section>
+		</section>
 
-			<div class="listview league-nights"></div>
+		<section class="users collapsible closed">
+			<header>
+				<h1>Users</h1>
+			</header>
+			<section class="content">
+				<button class="admin-users blue admin">
+					<span class="title">Manage Users</span>
+				</button>
 
+				<h2>Edit a User</h2>
+				<div class="listview edit-user-list"></div>
+			</section>
 		</section>
 
 	</article>

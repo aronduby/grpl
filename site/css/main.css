@@ -165,8 +165,9 @@ h1, h2, h3, h4, h5{
   .page article section .content:first-child{ border-radius:5px; }
 
   /*--- COLLAPSIBLES - default is open ---*/
-  .page article section.collapsible header{
-    cursor:pointer;
+  .page article section.collapsible header,
+  .popup article .collapsible header{
+    cursor:pointer !important;
     border-color:#2290c4;
     background: #5cc8f5; /* Old browsers */
     background: -moz-linear-gradient(top,  #5cc8f5 0%, #0ba4ee 100%); /* FF3.6+ */
@@ -177,7 +178,8 @@ h1, h2, h3, h4, h5{
     background: linear-gradient(to bottom,  #5cc8f5 0%,#0ba4ee 100%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#5cc8f5', endColorstr='#0ba4ee',GradientType=0 ); /* IE6-9 */    
   }
-    .page article section.collapsible header h1:before{
+    .page article section.collapsible header h1:before,
+    .popup article .collapsible header h1:before{
       content:'-';
       display:block;
       float:left;
@@ -198,8 +200,12 @@ h1, h2, h3, h4, h5{
       background: linear-gradient(to bottom,  #b89470 0%,#894e14 100%); /* W3C */
       filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b89470', endColorstr='#894e14',GradientType=0 ); /* IE6-9 */
     }
-      .page article section.collapsible.closed header h1:before{ content:'+'; }
-      .page article section.collapsible.closed .content{
+      .page article section.collapsible.closed header h1:before,
+      .popup article .collapsible.closed header h1:before{ 
+        content:'+'; 
+      }
+      .page article section.collapsible.closed .content,
+      .popup article .collapsible.closed .content{
         display:none;
       }
 
