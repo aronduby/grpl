@@ -117,7 +117,9 @@
 
 
 
-
+strong{ 
+  font-weight:bold; 
+}
 
 /* hide scoring to start */
 .page > header button.scoring,

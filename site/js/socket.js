@@ -29,6 +29,8 @@ var Socket = $.extend(io.connect('http://'+window.location.host+':834',{
 		echo: $.Callbacks(),
 		error: $.Callbacks(),
 
+		leaguenight_updated: $.Callbacks(),
+
 		// scoring related
 		scoring_started: $.Deferred(),
 		scoring_stopped: $.Deferred(),

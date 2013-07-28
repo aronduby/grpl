@@ -291,7 +291,10 @@ if (cluster.isMaster) {
 
 						Q.all(defers)
 						.then(function(){
-							cb(null, night)
+							cb(null, night);
+							// send the event to everyone, including the person who sent it
+							io.sockets.emit('leaguenight_updated', night);
+
 						}).fail(function(err){
 							cb(err);
 						}).done();
