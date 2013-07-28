@@ -661,6 +661,17 @@ label.confirmed{
   padding:8px;
 }
 
+  /* make phones stack the inputs vertically */
+  @media only screen and (max-width: 767px){
+    #sublist fieldset select,
+    #sublist fieldset input{
+      width:100%;
+    }
+    #sublist fieldset input{
+      margin-bottom:5px;
+    }
+  }
+
 /*
  *  Wiggle Animation
 */
