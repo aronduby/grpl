@@ -205,7 +205,8 @@ h1, h2, h3, h4, h5{
         content:'+'; 
       }
       .page article section.collapsible.closed .content,
-      .popup article .collapsible.closed .content{
+      .popup article .collapsible.closed .content,
+      .popup article .collapsible.closed .collapsible-content{
         display:none;
       }
 
