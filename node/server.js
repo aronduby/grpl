@@ -263,7 +263,9 @@ if (cluster.isMaster) {
 					night = new grpl.leaguenight.LeagueNight(data);
 					night.save()
 					.then(function(night){
+						var defers = [];
 						
+						// only update the machines if it's a night in the future
 						var today = new Date();
 						today.setHours(0);
 						today.setMinutes(0);
@@ -277,10 +279,22 @@ if (cluster.isMaster) {
 									mtln.add(abbv, display_order);
 								}
 							}
-							mtln.save();	
+							defers.push( mtln.save() );
 						}
 
-						cb(null, night);
+						// update the subs
+						var sublist = new grpl.playersublist.PlayerSubList(night.starts);
+						for(var i in data.subs){
+							sublist.add(data.subs[i]);
+						}
+						defers.push( sublist.save() );
+
+						Q.all(defers)
+						.then(function(){
+							cb(null, night)
+						}).fail(function(err){
+							cb(err);
+						}).done();
 
 					}).fail(function(err){
 						cb(err);

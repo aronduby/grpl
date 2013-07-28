@@ -191,7 +191,7 @@ $(document).ready(function(){
 	$('.page[data-route="admin/night"]').on('init', function(){
 		var dfd = $.Deferred();
 
-		if(User.logged_in == false || User.admin == false){
+		if( false ){ // User.logged_in == false || User.admin == false ){
 			dfd.reject({
 				title: 'Admins Only',
 				headline: 'You must be an admin',
@@ -236,8 +236,8 @@ $(document).ready(function(){
 			$('.night-trigger', this)
 				.find('h2').text('Choose a Night').end();
 			
-			page.data('inited', true);
-
+			
+			// machine selects			
 			Api.get('machine', App.season_id, {
 				success: function(machines){
 					var opts = '<option></option>';
@@ -253,7 +253,35 @@ $(document).ready(function(){
 				}
 			});
 
+			// player selects
+			var player_opts = '<option></option>';
+			for(var name_key in App.players){
+				player_opts += '<option value="'+name_key+'">'+App.players[name_key].first_name+' '+App.players[name_key].last_name+'</option>';
+			}
+			$('select[name="player"]', page).html(player_opts);
+			$('#sublist', page).on('click', '.remove', function(){
+				$(this).parents('li:eq(0)').remove();
+
+				return false;
+			});
+
+			page.data('inited', true);
+
 			// FORM
+			$('form.night-form', page).on('addSub', function(e, sub){
+				var c = $(this).find('#sublist li.copy').clone();
+
+				c.find('input[name="sub_id"]').val(sub.sub_id);
+				c.find('select[name="player"]').val(sub.name_key);
+				c.find('input[name="sub"]').val(sub.sub);
+
+				c.removeClass('hidden copy');
+				c.appendTo('#sublist ul');
+			});
+			$('form.night-form', page).on('click', '.add-sub', function(){
+				$(this).trigger('addSub', {});
+				return false;
+			});
 			$('form.night-form', page).on('submit', function(){
 				App.loading.show();
 
@@ -268,10 +296,25 @@ $(document).ready(function(){
 							year: form.find('input[name="starts[year]"]').val()
 						},
 						note: form.find('input[name="note"]').val(),
-						machines: []
+						machines: [],
+						subs: []
 					};
 				$('select.machine', form).each(function(){
 					data.machines.push( $(this).val() );
+				});
+
+				$('#sublist li', form).each(function(){
+					var name_key = $(this).find('select[name="player"]').val();
+
+					if(name_key != ''){
+						var sub = {
+							'name_key': name_key,
+							'sub_id': $(this).find('input[name="sub_id"]').val(),
+							'sub': $(this).find('input[name="sub"]').val()
+						};
+
+						data.subs.push(sub);
+					}
 				});
 
 				Api.post('leaguenight.update', data, {
@@ -308,13 +351,13 @@ $(document).ready(function(){
 				night_id: null,
 				title: 'New Night',
 				date_obj: new Date(),
-				note: null
+				note: null,
+				subs: {}
 			};
 			night.date_obj.setHours(0);
 			night.date_obj.setMinutes(0);
 			night.date_obj.setSeconds(0);
 			night.date_obj.setMilliseconds(0);
-
 
 		// SCORING HAS STARTED?
 		} else if(Scoring.started && Scoring.starts==starts){
@@ -375,21 +418,34 @@ $(document).ready(function(){
 			$('select.machine, input[name^="starts"], select[name^="starts"]', form).removeAttr('disabled');
 		}
 
-		// machines for an existing night
+		// existing night, load machines and subs
 		form.find('option[selected]').removeAttr('selected');
+		form.find('#sublist li').not('.copy').remove();
 		if(night.night_id !== null){
-			Api.get('leaguenight.starts.machines', night.starts, {
-				success: function(machines){
-					for(var i in machines){
+			Api.get('leaguenight.starts', night.starts, {
+				success: function(night){
+
+					// machines
+					for(var i in night.machines){
 						form
 							.find('select[name="machines['+i+']"]')
-								.find('option[value="'+machines[i].abbv+'"]').attr('selected','selected');
+								.find('option[value="'+night.machines[i].abbv+'"]').attr('selected','selected');
 					}
+
+					// subs
+					i = false;
+					for(i in night.subs){
+						form.triggerHandler('addSub', night.subs[i]);
+					}
+					if(i === false)
+						form.triggerHandler('addSub', {});
+
 
 					dfd.resolve();
 				}
 			});
-		} else {			
+		} else {
+			form.triggerHandler('addSub', {});		
 			dfd.resolve();
 		}
 
