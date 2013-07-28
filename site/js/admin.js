@@ -276,11 +276,12 @@ $(document).ready(function(){
 
 				Api.post('leaguenight.update', data, {
 					success: function(d){
-						console.log(d);
+						// console.log(d);
+						window.location.hash = '/index';
+						App.loading.hide();
 					}
-				})
+				});
 
-				App.loading.hide();
 				return false;
 			});
 
@@ -375,6 +376,7 @@ $(document).ready(function(){
 		}
 
 		// machines for an existing night
+		form.find('option[selected]').removeAttr('selected');
 		if(night.night_id !== null){
 			Api.get('leaguenight.starts.machines', night.starts, {
 				success: function(machines){
@@ -387,8 +389,7 @@ $(document).ready(function(){
 					dfd.resolve();
 				}
 			});
-		} else {
-			form.find('option[selected]').removeAttr('selected');
+		} else {			
 			dfd.resolve();
 		}
 
