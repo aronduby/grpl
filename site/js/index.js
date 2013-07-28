@@ -7,7 +7,7 @@ $(document).ready(function(){
 			dialog({
 				title: 'New Data Recieved',
 				headline: 'The Ties Have Been Broken',
-				msg: 'The ties have been broken, but we need to refresh the places to get the proper display order. Click "OK" to view the latest listing, or cancel to coninute what you\'re doing',
+				msg: 'The ties have been broken, but we need to refresh the places to get the proper display order. <strong>Click "OK" to view the latest listing</strong>, or cancel to coninute what you\'re doing',
 				btn:{ 
 					fn: function(){
 						App.loading.show();
@@ -16,7 +16,20 @@ $(document).ready(function(){
 				}
 			});
 		}
+	});
 
+	Socket.add('leaguenight_updated', function(night){
+		dialog({
+			title: 'New Data Recieved',
+			headline: '"' + night.title + '" Has Been Updated',
+			msg: night.title + ' has been edited, that means what you see may now be out of date until you refresh. Press <strong>OK to refresh</strong> and get the latest info or cancel to contiue without refreshing',
+			btn:{ 
+				fn: function(){
+					App.loading.show();
+					window.location.reload();
+				}
+			}
+		});
 	});
 
 	$('.page[data-route="index"]').on("init", function() {

@@ -246,6 +246,66 @@ if (cluster.isMaster) {
 		/*
 		 *	DATA API
 		*/
+		socket.on('leaguenight.update', function(data, cb){
+			socket.get('user.admin', function(err, admin){
+				if(admin != true && admin != 'true'){
+					socket.emit('error', {
+						title:'Error',
+						headline: 'Nope...',
+						msg: '<p>Only Admins can edit league nights. If you think you should be an admin talk to the people in charge.</p>'
+					});
+				} else {
+					var start_str = data.starts.year + '-' +  ('0'+data.starts.month).slice(-2) + '-' +  ('0'+data.starts.day).slice(-2);
+						d = new Date(data.starts.year, data.starts.month-1, data.starts.day),
+						night = null;
+					
+					data.starts = start_str;
+					night = new grpl.leaguenight.LeagueNight(data);
+					night.save()
+					.then(function(night){
+						var defers = [];
+						
+						// only update the machines if it's a night in the future
+						var today = new Date();
+						today.setHours(0);
+						today.setMinutes(0);
+						today.setSeconds(0);
+						today.setMilliseconds(0);
+						if(today <= d){
+							var mtln = new grpl.machinetoleaguenight.MachineToLeagueNight(night.starts);
+							for(var display_order in data.machines){
+								var abbv = data.machines[display_order];
+								if(abbv != ''){
+									mtln.add(abbv, display_order);
+								}
+							}
+							defers.push( mtln.save() );
+						}
+
+						// update the subs
+						var sublist = new grpl.playersublist.PlayerSubList(night.starts);
+						for(var i in data.subs){
+							sublist.add(data.subs[i]);
+						}
+						defers.push( sublist.save() );
+
+						Q.all(defers)
+						.then(function(){
+							cb(null, night);
+							// send the event to everyone, including the person who sent it
+							io.sockets.emit('leaguenight_updated', night);
+
+						}).fail(function(err){
+							cb(err);
+						}).done();
+
+					}).fail(function(err){
+						cb(err);
+					}).done();
+				}
+			});			
+		});
+
 		// gets all of the league nights for the season, including a totals
 		socket.on('leaguenight', function(cb){
 			grpl.leaguenight.getAllForSeason(season_id)

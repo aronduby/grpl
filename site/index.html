@@ -446,50 +446,58 @@
 							<label for="note">Note</label>
 							<fieldset><input type="text" name="note" id="note" placeholder="notes" /></fieldset>
 						</li>
-						<li class="machinelist-holder">
+						<li class="machinelist-holder subsection">
 							<h2>Machines</h2><p>Enter machines in the order that the first group will play them</p>
 							<div class="listview" id="machinelist">
 								<ul>
 									<li>
 										<label>First</label>
 										<fieldset>
-											<input type="hidden" name="machines_org[0]" value="" />
 											<select class="machine" name="machines[0]"></select>
 										</fieldset>
 									</li>
 									<li>
 										<label>Second</label>
 										<fieldset>
-											<input type="hidden" name="machines_org[1]" value="" />
 											<select class="machine" name="machines[1]"></select>
 										</fieldset>
 									</li>
 									<li>
 										<label>Third</label>
 										<fieldset>
-											<input type="hidden" name="machines_org[2]" value="" />
 											<select class="machine" name="machines[2]"></select>
-										</fieldset>
 										</fielset>
 									</li>
 									<li>
 										<label>Fourth</label>
 										<fieldset>
-											<input type="hidden" name="machines_org[3]" value="" />
 											<select class="machine" name="machines[3]"></select>
-										</fieldset>
 										</fielset>
 									</li>
 									<li>
 										<label>Fifth</label>
 										<fieldset>
-											<input type="hidden" name="machines_org[4]" value="" />
 											<select class="machine" name="machines[4]"></select>
-										</fieldset>
 										</fielset>
 									</li>
 								</ul>
 							</div>
+						</li>
+						<li class="sublist-holder subsection">
+							<h2>Subs</h2><p>Enter any subbed players</p>
+							<div class="listview" id="sublist">
+								<ul>
+									<li class="hidden copy">
+										<input type="hidden" name="sub_id" value"" />
+										<button class="remove red">-</button>
+										<fieldset>
+											<select name="player"></select>
+											<input type="text" name="sub" placeholder="subs name" />
+										</fieldset>
+									</li>
+								</ul>
+							</div>
+							<button class="blue add-sub">add sub</button>
 						</li>
 					</ul></div>
 				</div>

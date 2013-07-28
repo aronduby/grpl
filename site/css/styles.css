@@ -117,7 +117,9 @@
 
 
 
-
+strong{ 
+  font-weight:bold; 
+}
 
 /* hide scoring to start */
 .page > header button.scoring,
@@ -580,19 +582,10 @@ label.confirmed{
 /*
  *  Admin - Nights
 */
-#night_admin .machinelist-holder p{
-  clear:both;
+.listview .subsection > p{
+  clear:left;
 }
-
-#night_admin .night-form fieldset.multiple input,
-#night_admin .night-form fieldset.multiple select{
-  width:33.3%;
-}
-  #night_admin .night-form fieldset.multiple select{
-    height:32px;
-  }
-
-#night_admin #machinelist{
+.listview .subsection .listview{
   clear:both;
   position:relative;
   margin:10px;
@@ -602,6 +595,53 @@ label.confirmed{
 }
 
 
+#night_admin .night-form fieldset.multiple input,
+#night_admin .night-form fieldset.multiple select{
+  width:33.3%;
+}
+  #night_admin .night-form fieldset.multiple select{
+    height:32px;
+  }
+
+#sublist li{
+  padding-right:15px;
+}
+#sublist button.remove{
+  float:right;
+  line-height:.8em;
+}
+#sublist fieldset{
+  position:relative;
+  width:auto;
+  box-shadow:none;
+  float:none;
+  margin-right:45px;
+}
+
+  #sublist fieldset select,
+  #sublist fieldset input{
+    padding:5px;
+    box-shadow:0 0 2px rgba(0,0,0,.6);
+    box-sizing: border-box; /* css3 rec */
+    -moz-box-sizing: border-box; /* ff2 */
+    -ms-box-sizing: border-box; /* ie8 */
+    -webkit-box-sizing: border-box; /* safari3 */
+    -khtml-box-sizing: border-box; /* konqueror */ 
+  }
+
+  #sublist fieldset select{
+    width:39%;
+  }
+  #sublist fieldset input{
+    width:60%;
+  }
+
+.sublist-holder button.add-sub{
+  float:right;
+  margin-right:10px;
+  font-size:16px;
+  padding:8px;
+}
 
 /*
  *  Wiggle Animation
