@@ -458,10 +458,11 @@ if (cluster.isMaster) {
 				data.place = player.place;
 				data.total_points = player.score;
 
-				Q.all([ player.getNightTotals(season_id), player.getMachinePoints(season_id) ])
-				.spread(function(nights, machines){
+				Q.all([ player.getNightTotals(season_id), player.getMachinePoints(season_id), player.getNightPlace(season_id) ])
+				.spread(function(nights, machines, places){
 					data.nights = nights;
 					data.machines = machines;
+					data.places = places;
 
 					cb(null, data);
 

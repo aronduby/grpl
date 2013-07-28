@@ -118,23 +118,36 @@ $(document).ready(function(){
 					total_points = data.total_points,
 					machines = data.machines,
 					nights = data.nights,
+					places = data.places,
 					nights_holder = $('.nights-holder', page),
 					machine_holder = $('.machine-holder', page);
 
 				nights_holder
 					.find('fieldset.points span').text(total_points).end()
-					.find('fieldset.place span').text(place).end();
+					.find('fieldset.place span').text($.jqplot.ordinal('',place)).end();
 
 				// nights chart
 				var points = {
 						player: [],
-						sub: []
+						sub: [],
+						places: []
 					},
 					months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
 					j = 1,
 					night_list = $('<ul></ul>');
 				for(i in nights.reverse()){
+					console.log(i, j);
 					points.player.push([j, Number(nights[i].points)]);
+					
+					// figure out the place we ended up in at the end of the night
+					var end_place = 0;
+					if(nights[j] == undefined){
+						end_place = places.totals;
+					} else {
+						end_place = places[nights[j].starts];
+					}
+					points.places.push([j, end_place]);
+
 
 					// if there's a sub for this week treat it as a part of the second series
 					if(nights[i].sub != null)
@@ -149,10 +162,15 @@ $(document).ready(function(){
 								(nights[i].sub != null ? '<span class="sub" title="sub">'+nights[i].sub+'</span>' : '') +
 							'</h2>' +
 							'<p>'+(months[dateobj.getUTCMonth()] + ' ' + dateobj.getUTCDate().cardinal() + ', ' + dateobj.getUTCFullYear())+'</p>' +
-							'<span class="score right">'+nights[i].points+'</span>' +
+							'<span class="score right double">' +
+								'<span>'+nights[i].points+'</span>' +
+								'<span>'+$.jqplot.ordinal('', end_place)+'</span>' +
+							'</span>' +
 						'</a></li>');
 					j++;
 				}
+				// points.places.push([++i, places.totals]);
+				// points.places.shift();
 				// charts have to be drawn when shown so dump the data as json into the chart div
 				$('#players-nights-chart-data').empty().text(JSON.stringify(points));
 				$('.listview', nights_holder).empty().append(night_list);
@@ -202,9 +220,9 @@ $(document).ready(function(){
 	$('.page[data-route="players"]').on('show', function(){
 		var points = JSON.parse($('#players-nights-chart-data').text());
 		$('#players-nights-chart').empty();
-		$.jqplot('players-nights-chart', [points.player, points.sub], {
+		$.jqplot('players-nights-chart', [points.places, points.player, points.sub], {
 			title: {
-				text: 'POINTS PER LEAGUE NIGHT',
+				text: 'POINTS/PLACE PER LEAGUE NIGHT',
 				fontFamily: 'Roboto Condensed',
 				fontWeight: 'bold',
 				textColor: '#515151'
@@ -213,8 +231,28 @@ $(document).ready(function(){
 				pointLabels: { show:true }
 			},
 			series:[
-				{}, // default for first series
-				// series 2 is sub points so style it different
+				// series 1 is the place at the end of that night
+				{
+					yaxis: 'y2axis',
+					color: '#D3C9A9',
+					lineWidth: 4,
+					shadow: false,
+					markerOptions: {
+						show: true,
+						size: 8,
+						shadow: false
+					},
+					pointLabels: {
+						location: 's',
+						formatString: '%s (%%)',
+						formatter: $.jqplot.ordinal
+					}
+				},
+				// series 2 - points for that night
+				{
+					color: '#699DB1'
+				},
+				// series 3 is sub points so style it different
 				{
 					pointLabels: {show: false},
 					showLine: false,
@@ -229,6 +267,14 @@ $(document).ready(function(){
 						showGridline: false
 					},
 					showTicks: false
+				},
+				y2axis: {
+					min: 33,
+					max: 0,
+					showTicks: false,
+					tickOptions: {
+						showGridline: false
+					}
 				}
 			},
 			grid: {
@@ -248,3 +294,12 @@ $(document).ready(function(){
 	
 
 });
+
+(function($){
+	$.jqplot.ordinal = function(format, val){
+		// from http://ecommerce.shopify.com/c/ecommerce-design/t/ordinal-number-in-javascript-1st-2nd-3rd-4th-29259
+		var s=["th","st","nd","rd"],
+			v=val%100;
+		return val+(s[(v-20)%10]||s[v]||s[0]);
+	};
+})(jQuery);
