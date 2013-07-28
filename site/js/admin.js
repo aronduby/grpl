@@ -210,7 +210,7 @@ $(document).ready(function(){
 	$('.page[data-route="admin/night"]').on('init', function(){
 		var dfd = $.Deferred();
 
-		if( false ){ // User.logged_in == false || User.admin == false ){
+		if( User.logged_in == false || User.admin == false ){
 			dfd.reject({
 				title: 'Admins Only',
 				headline: 'You must be an admin',
