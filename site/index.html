@@ -284,7 +284,7 @@
 					<thead>
 						<tr>
 							<th colspan="2">
-								<label for="machines-compare-to">Compare To:</label><select id="machines-compare-to"><option value=""></option></select>
+								<label for="machines-compare-to">Compare To:</label><select id="machines-compare-to"><option value="">&nbsp;</option></select>
 								<div class="legend">
 									<p class="player">Player</p>
 									<p class="compared-to">Compared To</p>
@@ -292,7 +292,12 @@
 							</th>
 						</tr>
 					</thead>
-					<tbody></tbody>
+					<tbody>
+						<tr>
+							<td></td>
+							<td></td>
+						</tr>
+					</tbody>
 					<tfoot></tfoot>
 				</table>
 				<div class="listview">
@@ -466,19 +471,19 @@
 										<label>Third</label>
 										<fieldset>
 											<select class="machine" name="machines[2]"></select>
-										</fielset>
+										</fieldset>
 									</li>
 									<li>
 										<label>Fourth</label>
 										<fieldset>
 											<select class="machine" name="machines[3]"></select>
-										</fielset>
+										</fieldset>
 									</li>
 									<li>
 										<label>Fifth</label>
 										<fieldset>
 											<select class="machine" name="machines[4]"></select>
-										</fielset>
+										</fieldset>
 									</li>
 								</ul>
 							</div>
@@ -488,7 +493,7 @@
 							<div class="listview" id="sublist">
 								<ul>
 									<li class="hidden copy">
-										<input type="hidden" name="sub_id" value"" />
+										<input type="hidden" name="sub_id" value="" />
 										<button class="remove red">-</button>
 										<fieldset>
 											<input type="text" name="sub" placeholder="subs name" />
@@ -598,7 +603,7 @@
 		<form class="login-form">
 			<section class="listview">
 				<ul>
-					<li><button class="blue login fb_login"><span class="title">Login with Facebook</button><h2>OR</h2></li>
+					<li><button class="blue login fb_login"><span class="title">Login with Facebook</span></button><h2>OR</h2></li>
 					<li><label>Email</label><fieldset><input type="email" name="email" /></fieldset></li>
 					<li><label>Password</label><fieldset><input type="password" name="password" /></fieldset></li>
 				</ul>
