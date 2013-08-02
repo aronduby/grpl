@@ -2,7 +2,11 @@
     PHONES BOTH ORIENTATIONS
 */
 @media only screen and (max-width: 767px){
-  
+  .page footer,
+  #index .notes{
+    margin:20px 2% 40px 2%;
+    text-align:center;
+  }
 }
 
 /*
@@ -31,8 +35,9 @@
       width:60%;
     }
 
-  #index .notes{
-    margin:15px 0;
+  .page footer,
+  .page article .notes{
+    margin:20px 2% 40px 2%;
     text-align:center;
   }
 }
@@ -44,6 +49,12 @@
   .page > article{
     margin:0;
     padding-top:15px;
+  }
+
+  .page footer,
+  .page article .notes{
+    margin:20px 2% 40px 22%;
+    text-align:center;
   }
   
   /* break the nights panel out of a popup */
@@ -136,6 +147,33 @@ strong{
 .listview li span.sub:before{
   content:'*';
 }
+
+
+.page article .notes{
+  color:#e1e1e1;
+  font-size:14px;
+  line-height:18px;
+  text-shadow:1px 1px 3px rgba(0,0,0,.4);
+}
+/*
+ *  footer and links
+*/
+  .page footer nav li{
+    display:inline-block;
+    margin-right:10px;
+  }
+    .page footer nav li a{
+      color:#eee;
+      padding:5px 8px;
+      text-decoration:none;
+      letter-pacing:-.04em;
+      border-radius:5px;
+      background:rgba(0,0,0,.1); 
+    }
+    .page footer nav li a:hover{
+      background:rgba(0,0,0,.2);
+    }
+
 
 
 /*
