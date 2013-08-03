@@ -12,7 +12,7 @@ $app->add(new \Slim\Middleware\SessionCookie([
 
 // sets it to output json content type
 $res = $app->response();
-//$res['Content-Type'] = 'application/json';
+$res['Content-Type'] = 'application/json';
 
 
 
