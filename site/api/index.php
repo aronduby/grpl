@@ -20,7 +20,7 @@ $res['Content-Type'] = 'application/json';
 
 $app->post('/postcommit', function(){
 	
-	$data_string = file_get_contents('php://input');
+	$data_string = $_POST['payload'];
 	$data = json_decode($data_string);
 
 	// save to the changelog
