@@ -151,6 +151,12 @@ var router,
 			}
 		},
 
+		'/changelog': {
+			on: function(next){
+				$.when( route_change('changelog') ).then(next);
+			}
+		},
+
 		'/admin':{
 			'/users':{
 				'/(.+)': {

@@ -470,6 +470,13 @@ if (cluster.isMaster) {
 			}).fail(function(err){ console.log(err); cb(err); }).done();
 		});
 
+		socket.on('changelog', function(cb){
+			grpl.changelog.get()
+			.then(function(data){
+				cb(null, data);
+			}).fail(function(err){ cb(err); }).done();
+		});
+
 		
 		/*
 		 *	Random Utility Functions

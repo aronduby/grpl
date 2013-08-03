@@ -43,6 +43,7 @@
 	<script src="js/scoring.js"></script>
 	<script src="js/players.js"></script>
 	<script src="js/index.js"></script>
+	<script src="js/changelog.js"></script>
 
 	<!-- icons -->
 	<link rel="shortcut icon" type="image/x-icon" href="icons/favicon.ico" />
@@ -122,6 +123,7 @@
 			<ul>
 				<li><a href="https://www.facebook.com/groups/GrandRapidsPinballLeague/" title="facebook group" target="_blank">Facebook Group</a></li>
 				<li><a href="mailto:grpinbal@gmail.com" title="grpinball@gmail.com" target="_blank">Email Us</a></li>
+				<li><a href="#/changelog" title="Change Log">Change Log</a></li>
 			</ul>
 		</nav>
 	</footer>
@@ -327,6 +329,73 @@
 		</header>
 		<article class="listview">
 			<!--article content injected here -->
+		</article>
+	</div>
+
+</div>
+
+<!-- CHANGELOG -->
+<div class="page" data-route="changelog" data-title="Changelog" id="changelog">
+
+	<header>
+		<div class="left">
+			<button class="admin" title="Open Admin Panel">
+				<span class="title">Admin</span>
+			</button>
+			
+			<h1 class="hdr-logo"><a href="#/index" title="home">GRPL</a></h1>
+		</div>
+
+		<div class="right">
+			<section class="user-area">
+				<button class="login" title="Login">
+					<span class="title">Login</span>
+				</button>
+				<button class="scoring" title="Start Scoring">
+					<span class="title">Start Scoring</span>
+				</button>
+			</section>
+		</div>
+
+		<div class="center">
+			<section class="nights-trigger select-trigger" data-dropdown="nights-popup">
+				<div><!-- hook for the dropdown icon -->
+					<h2>Change Log</h2>
+					
+				</div>
+			</section>
+		</div>
+
+	</header>
+
+	<article>		
+
+		<section class="log collapsible">
+			<header>
+				<h1>Change Log</h1>
+			</header>
+			<div class="content">
+				<div class="pushed hidden">
+					<h2>Pushed Date</h2>
+					<section class="listview">
+						<ul></ul>
+					</section>
+				</div>
+			</div>
+		</section>
+
+	</article>
+
+	<div id="changelog-panel" class="popup center show-header">
+		<header>
+			<span class="pointer"></span>
+			<h1>This is Boring</h1>
+			<a class="close" href="#">Close</a>
+		</header>
+		<article class="listview">
+			<ul>
+				<li><a href="#/index" title="scoring"><h2>Home</h2></a></li>
+			</ul>
 		</article>
 	</div>
 
