@@ -15,9 +15,11 @@ $res = $app->response();
 $res['Content-Type'] = 'application/json';
 
 
-
-
-
+/*
+ *	Handler for the post-receive git webhook
+ *	inserts the commit messages into the changelog
+ *	forwards info on to the bugify commit handler
+*/
 $app->post('/postcommit', function(){
 	
 	$data_string = $_POST['payload'];
@@ -45,12 +47,8 @@ $app->post('/postcommit', function(){
 	// post to bugify
 	$ch = curl_init('http://bugify.aronduby.com/commits/post/e81a4337cbd23476e95596b9034d0761dbb3d9b6');
 	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $_POST);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-		'Content-Type: application/json',
-		'Content-Length: ' . strlen($data_string))
-	);
 
 	$rsp = curl_exec($ch);
 
