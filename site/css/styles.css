@@ -292,6 +292,7 @@ strong{
 /*
  *  A Division & B Division Split
 */
+/*
 .player-holder .listview ul:nth-child(5):before{
   content:'Tournament Split';
   height:auto;
@@ -304,6 +305,7 @@ strong{
   letter-spacing:.02em;
   color:#777;
 }
+*/
 
 /*
  *  ChangeLog

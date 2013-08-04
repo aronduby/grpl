@@ -2,7 +2,7 @@ var App = {
 
 	league_nights: {}, // all of the league nights
 	players: {},
-	season_id: 2,
+	season_id: 3,
 	ready: $.Deferred(), // triggered once we have all of our needed info loaded
 
 	init: function(){
