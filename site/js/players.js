@@ -135,8 +135,8 @@ $(document).ready(function(){
 					months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
 					j = 1,
 					night_list = $('<ul></ul>');
-				for(i in nights.reverse()){
-					console.log(i, j);
+
+				if(nights.length){ for(i in nights.reverse()){
 					points.player.push([j, Number(nights[i].points)]);
 					
 					// figure out the place we ended up in at the end of the night
@@ -168,9 +168,10 @@ $(document).ready(function(){
 							'</span>' +
 						'</a></li>');
 					j++;
+				}} else {
+					night_list.append('<li><p>no nights played yet</p></li>');
 				}
-				// points.places.push([++i, places.totals]);
-				// points.places.shift();
+
 				// charts have to be drawn when shown so dump the data as json into the chart div
 				$('#players-nights-chart-data').empty().text(JSON.stringify(points));
 				$('.listview', nights_holder).empty().append(night_list);
@@ -179,7 +180,7 @@ $(document).ready(function(){
 				// machines chart
 				var chart = $('#players-machines-chart tbody').empty(),
 					machine_list = $('<ul></ul>');
-				for(i in machines){
+				if(machines.length){ for(i in machines){
 					var tr = $('tr.'+machines[i].abbv, chart);
 
 					if(tr.length ==0){
@@ -198,6 +199,8 @@ $(document).ready(function(){
 						'<p>'+(months[dateobj.getUTCMonth()] + ' ' + dateobj.getUTCDate().cardinal() + ', ' + dateobj.getUTCFullYear())+'</p>' +
 						'<span class="score right">'+machines[i].points+'</span>' +
 					'</li>');
+				}} else {
+					machine_list.append('<li><p>no machines played yet</p></li>');
 				}
 				
 				$('.listview', machine_holder).empty().append(machine_list);
@@ -220,68 +223,72 @@ $(document).ready(function(){
 	$('.page[data-route="players"]').on('show', function(){
 		var points = JSON.parse($('#players-nights-chart-data').text());
 		$('#players-nights-chart').empty();
-		$.jqplot('players-nights-chart', [points.places, points.player, points.sub], {
-			title: {
-				text: 'POINTS/PLACE PER LEAGUE NIGHT',
-				fontFamily: 'Roboto Condensed',
-				fontWeight: 'bold',
-				textColor: '#515151'
-			},
-			seriesDefaults: {
-				pointLabels: { show:true }
-			},
-			series:[
-				// series 1 is the place at the end of that night
-				{
-					yaxis: 'y2axis',
-					color: '#D3C9A9',
-					lineWidth: 4,
-					shadow: false,
-					markerOptions: {
-						show: true,
-						size: 8,
-						shadow: false
+		try{		
+			$.jqplot('players-nights-chart', [points.places, points.player, points.sub], {
+				title: {
+					text: 'POINTS/PLACE PER LEAGUE NIGHT',
+					fontFamily: 'Roboto Condensed',
+					fontWeight: 'bold',
+					textColor: '#515151'
+				},
+				seriesDefaults: {
+					pointLabels: { show:true }
+				},
+				series:[
+					// series 1 is the place at the end of that night
+					{
+						yaxis: 'y2axis',
+						color: '#D3C9A9',
+						lineWidth: 4,
+						shadow: false,
+						markerOptions: {
+							show: true,
+							size: 8,
+							shadow: false
+						},
+						pointLabels: {
+							location: 's',
+							formatString: '%s (%%)',
+							formatter: $.jqplot.ordinal
+						}
 					},
-					pointLabels: {
-						location: 's',
-						formatString: '%s (%%)',
-						formatter: $.jqplot.ordinal
-					}
-				},
-				// series 2 - points for that night
-				{
-					color: '#699DB1'
-				},
-				// series 3 is sub points so style it different
-				{
-					pointLabels: {show: false},
-					showLine: false,
-					markerOptions:{
-						color:'#8DB27B'
-					}
-				}
-			],
-			axes:{
-				xaxis: {
-					tickOptions: {
-						showGridline: false
+					// series 2 - points for that night
+					{
+						color: '#699DB1'
 					},
-					showTicks: false
-				},
-				y2axis: {
-					min: 33,
-					max: 0,
-					showTicks: false,
-					tickOptions: {
-						showGridline: false
+					// series 3 is sub points so style it different
+					{
+						pointLabels: {show: false},
+						showLine: false,
+						markerOptions:{
+							color:'#8DB27B'
+						}
 					}
+				],
+				axes:{
+					xaxis: {
+						tickOptions: {
+							showGridline: false
+						},
+						showTicks: false
+					},
+					y2axis: {
+						min: 33,
+						max: 0,
+						showTicks: false,
+						tickOptions: {
+							showGridline: false
+						}
+					}
+				},
+				grid: {
+					shadow:false,
+					background: 'transparent'
 				}
-			},
-			grid: {
-				shadow:false,
-				background: 'transparent'
-			}
-		});
+			});
+		}catch(e){
+			$('#players-nights-chart').hide();
+		}
 	});
 
 
