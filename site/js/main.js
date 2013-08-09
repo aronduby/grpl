@@ -219,6 +219,7 @@ router.configure({
 		}
 		page.triggerHandler('show');
 		window.scrollTo(0,0);
+		$('body > footer').show();
 		App.loading.hide();
 	},
 	// recurse: 'forward',

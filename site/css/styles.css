@@ -190,6 +190,9 @@ strong{
 /*
  *  footer and links
 */
+body > footer{
+  display:none;  
+}
   body > footer nav li{
     display:inline-block;
     margin-right:10px;
