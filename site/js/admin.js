@@ -628,7 +628,6 @@ $(document).ready(function(){
 			var	page = $(this);
 
 			// figure out which league night we should set the starts to
-			// or leave it as null
 			var next,
 				now = new Date(),
 				starts = null;
@@ -644,49 +643,21 @@ $(document).ready(function(){
 					break;
 				}
 			}
-			$('input[name="starts"]', this).val(starts);
-
-			Api.get('leaguenight.ties', null, {
-				success: function(ties){
-
-					if(ties.length > 0){
-						for(i in ties){
-							var	group = ties[i],
-								section = $('.tie-section', page).clone(),
-								list = section.find('ul'),
-								places = group.length,
-								names = [];
-
-							for(var j in group){
-								var player = group[j],
-									p = 1;
-								
-								var content = '<li data-namekey="'+player.name_key+'">';
-									content += '<h2>'+player.first_name+' '+player.last_name+'</h2>';
-									content += '<fieldset>';
-										while(p <= places){
-											content += '<label for="'+player.name_key+'_'+p+'" data-player="'+player.name_key+'">'+(p==0 ? 'DNP' : p)+'</label>';
-											content += '<input type="radio" name="players['+player.name_key+']" value="'+p+'" id="'+player.name_key+'_'+p+'" data-player="'+player.name_key+'" />';
-											p++;
-										}
-
-									content += '</fieldset>';
-								content += '</li>';
-								list.append(content);
-
-								names.push(player.first_name+' '+ player.last_name[0]+'. ');
-							}
-							section.find('header h1').text( names.join(' | ') );
+			// starts can't be null
+			if(starts == null){
+				dfd.reject({
+					title: 'Cant\'t Break Ties',
+					headline: 'No Usable League Night Found to Break Ties',
+					msg: 'You have to have an upcoming night to be able to break ties. Enter one into the system before trying to do this again.',
+					btn:{
+						fn: function(){
+							window.location.hash = '/index';
 						}
-						section.removeClass('hidden').appendTo( $('.section-holder', page) );
 					}
-				},
-				error: function(error){
-					console.log(error);
-					alert('Sorry, we could not load the data. Please check your data connection.');
-					App.loading.hide();
-				}
-			});
+				});
+				return dfd;
+			}
+			$('input[name="starts"]', this).val(starts);
 
 			// confirmed checkbox
 			$('input[name="confirmed"]', this).on('change', function(){
@@ -765,9 +736,95 @@ $(document).ready(function(){
 			});
 
 			dfd.resolve();
+			$(this).data('inited', true);
 		}
 
-		$(this).data('inited', true);
+		return dfd;
+	});
+
+	$('.page[data-route="admin/tiebreaker"]').on("change", function(e, name_key){
+		var dfd = $.Deferred(),
+			page = this;
+
+		Api.get('leaguenight.ties', null, {
+			success: function(ties){
+				if(ties.length > 0){
+					var group;
+
+					// find the group specified by the name_key
+					group_finder:
+					for(var i in ties){
+						for(var j in ties[i]){
+							if(ties[i][j].name_key == name_key){
+								group = ties[i];
+								break group_finder;
+							}
+						}
+					}
+
+					if(group != undefined){
+						var	section = $('.tie-section.hidden', page).clone(),
+							list = section.find('ul'),
+							places = group.length,
+							names = [];
+
+						for(var j in group){
+							var player = group[j],
+								p = 1;
+							
+							var content = '<li data-namekey="'+player.name_key+'">';
+								content += '<h2>'+player.first_name+' '+player.last_name+'</h2>';
+								content += '<fieldset>';
+									while(p <= places){
+										content += '<label for="'+player.name_key+'_'+p+'" data-player="'+player.name_key+'">'+(p==0 ? 'DNP' : p)+'</label>';
+										content += '<input type="radio" name="players['+player.name_key+']" value="'+p+'" id="'+player.name_key+'_'+p+'" data-player="'+player.name_key+'" />';
+										p++;
+									}
+
+								content += '</fieldset>';
+							content += '</li>';
+							list.append(content);
+
+							names.push(player.first_name+' '+ player.last_name[0]+'. ');
+						}
+						section.find('header h1').text( names.join(' | ') );
+						$('.section-holder', page).empty();
+						section.removeClass('hidden').appendTo( $('.section-holder', page) );
+
+						dfd.resolve();
+
+					} else {
+						dfd.reject({
+							title: 'Group Not Found',
+							headline: 'Group Not Found',
+							msg: 'We did not find anyone tied with that user, did you choose the wrong person? Click OK to head back to the homepage and try again.',
+							btn:{
+								fn: function(){
+									window.location.hash = '/index';
+								}
+							}
+						});
+					}
+				} else {
+					dfd.reject({
+						title: 'No Ties',
+						headline: 'The Server Didn\'t Report Any Ties',
+						msg: 'The server said no one is tied, are you here by mistake? Click OK to go back to the homepage.',
+						btn:{
+							fn: function(){
+								window.location.hash = '/index';
+							}
+						}
+					});
+				}
+			},
+			error: function(error){
+				console.log(error);
+				alert('Sorry, we could not load the data. Please check your data connection.');
+				App.loading.hide();
+			}
+		});
+
 		return dfd;
 	});
 
