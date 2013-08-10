@@ -150,11 +150,6 @@
   #changelog .log{
     width:75%;
   }
- 
-  abbv{
-    cursor:help;
-    border-bottom:1px dotted #aaa;
-  }
   
 }
 
@@ -162,6 +157,11 @@
 
 strong{ 
   font-weight:bold; 
+}
+
+abbv{
+  cursor:help;
+  border-bottom:1px dotted #aaa;
 }
 
 /* hide scoring to start */
@@ -180,13 +180,13 @@ strong{
   content:'*';
 }
 
-
 .page article .notes{
   color:#e1e1e1;
   font-size:14px;
   line-height:18px;
   text-shadow:1px 1px 3px rgba(0,0,0,.4);
 }
+
 /*
  *  footer and links
 */

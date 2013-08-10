@@ -262,6 +262,11 @@ $(document).ready(function() {
 		$(this).removeClass('wiggle');
 	});
 
+	// when an abbv is clicked do an alert
+	$('body').on('click', 'abbv[title]', function(){
+		alert($(this).text()+': '+$(this).attr('title'));
+	});
+
 
 	// add a generic echo callback
 	Socket.add('echo', function(msg){

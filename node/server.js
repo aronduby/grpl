@@ -71,7 +71,8 @@ if (cluster.isMaster) {
 					// copy the data from the previous id into the new one
 					// don't delete because then we'll have issues with multi devices
 					client.hgetall(prev_socket_id, function(err, data){
-						client.hmset(socket.id, data);
+						if(data != null)
+							client.hmset(socket.id, data);
 					});
 				}
 			});
