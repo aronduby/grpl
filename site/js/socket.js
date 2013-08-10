@@ -1,6 +1,8 @@
 
 var Socket = $.extend(io.connect('http://'+window.location.host+':834',{
-		'sync disconnect on unload': true
+		'sync disconnect on unload': true,
+		'max reconnection attempts': 5
+
 	}), $.PubSub, {
 
 	// some predefined events
@@ -8,11 +10,16 @@ var Socket = $.extend(io.connect('http://'+window.location.host+':834',{
 	// I don't remember why events has to have the $ prepended (also in add)
 	// but getting events from the server doesn't work without it
 	$events: {
+		/*
 		connect: function(){
 			this.callbacks.connect.resolve(arguments);
 		},
 		disconnect: function(){
 			this.callbacks.disconnect.resolve(arguments);
+		},
+		*/
+		reconnect_failed: function(){
+			this.callbacks.reconnect_failed.resolve(arguments);
 		},
 		scoring_started: function(){
 			this.callbacks.scoring_started.resolve(arguments);
@@ -22,8 +29,10 @@ var Socket = $.extend(io.connect('http://'+window.location.host+':834',{
 		}
 	},
 	callbacks: {
-		connect: $.Deferred(),
-		disconnect: $.Deferred(),
+		connect: $.Callbacks(),
+		disconnect: $.Callbacks(),
+		reconnect_failed: $.Deferred(),
+
 
 		message: $.Callbacks(),
 		echo: $.Callbacks(),

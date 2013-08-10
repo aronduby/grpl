@@ -21,7 +21,7 @@ if (cluster.isMaster) {
 */
 	var grpl = require('grpl'),
 		io = require('socket.io').listen(834,{
-			'close timeout': 2700, // 45 minutes to re-open a closed connection
+			'close timeout': 3600, // 60 minutes to re-open a closed connection
 			'browser client minification': true,
 			'browser client etag': true,
 			'browser client gzip': true
@@ -45,10 +45,37 @@ if (cluster.isMaster) {
 	if(process.argv[2] != 'DEV')
 		io.set('log level',2);
 
+	io.configure(function (){
+		io.set('authorization', function (handshakeData, callback) {
+			var cookies = {};
+			if(handshakeData.headers.cookie != undefined){
+				handshakeData.headers.cookie && handshakeData.headers.cookie.split(';').forEach(function( cookie ) {
+					var parts = cookie.split('=');
+					cookies[ parts.shift().trim() ] = ( parts.join('=') || '' ).trim();
+				});
+			}
+			if(cookies.user_hash != undefined)
+				handshakeData.user_hash = cookies.user_hash;			
+
+			callback(null, true); // error first callback style 
+		});
+	});
+
 
 	io.sockets.on('connection', function(socket){
 
 		// console.log('connected to '+ cluster.worker.id);
+		if(socket.handshake.user_hash != undefined){
+			client.getset('uh'+socket.handshake.user_hash, socket.id, function(err, prev_socket_id){
+				if(prev_socket_id != undefined){
+					// copy the data from the previous id into the new one
+					// don't delete because then we'll have issues with multi devices
+					client.hgetall(prev_socket_id, function(err, data){
+						client.hmset(socket.id, data);
+					});
+				}
+			});
+		}
 
 		/*
 		 *	LOGIN METHODS
@@ -59,6 +86,7 @@ if (cluster.isMaster) {
 			.then(function(player){
 				socket.set('user.name_key', player.name_key);
 				socket.set('user.admin', player.admin);
+				client.set('uh'+player.hash, socket.id);
 				cb(null, player);
 			})
 			.fail(function(err){
@@ -72,6 +100,7 @@ if (cluster.isMaster) {
 			.then(function(player){
 				socket.set('user.name_key', player.name_key);
 				socket.set('user.admin', player.admin);
+				client.set('uh'+player.hash, socket.id);
 				cb(null, player);
 			})
 			.fail(function(err){
@@ -85,6 +114,7 @@ if (cluster.isMaster) {
 			.then(function(player){
 				socket.set('user.name_key', player.name_key);
 				socket.set('user.admin', player.admin);
+				client.set('uh'+player.hash, socket.id);
 				cb(null, player);
 			})
 			.fail(function(err){

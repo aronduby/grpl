@@ -159,7 +159,9 @@ var User = $.extend({}, $.PubSub, {
 
 // use a Deferred Object to call our Users login after socket has connected
 Socket.add('connect', function(socket_rsp){
-	User.tryLogin();
+	console.log('Socket connected, and user '+(User.logged_in?'IS':'IS NOT')+' logged in');
+	if(User.logged_in == false)
+		User.tryLogin();
 });
 
 $(document).ready(function(){

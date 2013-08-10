@@ -267,6 +267,13 @@ $(document).ready(function() {
 	Socket.add('echo', function(msg){
 		console.log(msg);
 	}).add('error', function(err){
+		// ignore the error caused by the connection being closed
+		if(
+			err.eventPhase == err.currentTarget.CLOSED
+			|| err.eventPhase == err.currentTarget.CLOSING
+		)
+			return true;
+
 		var dialog_opts = {
 			title: 'Error',
 			headline: 'Server reported the following error',
@@ -280,11 +287,18 @@ $(document).ready(function() {
 			dialog_opts = $.extend(true, dialog_opts, err);
 		}
 		dialog(dialog_opts);
+	}).add('connect', function(){
+		$('#reconnect_msg').slideUp();
+
 	}).add('disconnect', function(){
+		$('#reconnect_msg').slideDown();
+
+	}).add('reconnect_failed', function(){
+		$('#reconnect_msg').slideUp();
 		dialog({
 			title: 'Disconnected',
 			headline: 'Connection to the server lost',
-			msg: 'You\'ve been disconnected from the server. Click "OK" to refresh and try to reconnect.',
+			msg: 'You\'ve been disconnected from the server and we can\'t get it back. I\'ve given up on it. You can click OK below to refresh and try again.',
 			btn:{ 
 				fn: function(){
 					App.loading.show();
