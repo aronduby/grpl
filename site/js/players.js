@@ -88,6 +88,22 @@ $(document).ready(function(){
 	// redraw our interface on hash change
 	$('.page[data-route="players"]').on("change", function(e, name_key) {
 
+		if(App.players[name_key] == undefined){
+			var dfd = $.Deferred();
+			dfd.reject({
+				title: 'Player Not Found',
+				headline: 'We Couldn\'t Find That Player',
+				msg: 'That player could not be found in the season you are viewing. Either they didn\'t play that season or you followed a bad link. Click OK to return to the homepage.',
+				btn: {
+					text: 'Ok',
+					fn: function(){
+						window.location.hash = '/index';
+					}
+				}
+			});
+			return dfd;
+		}
+
 		if($(this).data('name_key') == name_key){
 			App.loading.hide();
 			return true;

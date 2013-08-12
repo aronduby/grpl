@@ -7,6 +7,20 @@
     margin:20px 2% 40px 2%;
     text-align:center;
   }
+
+  #season-notifier p{
+    font-size:1em !important;
+  }
+  #season-notifier p:before{
+    display:none !important;
+  }
+  #season-notifier button{
+    position:relative;
+    display:block;
+    margin:10px 0 5px -93px !important;
+    left:50%;
+    font-size:1.2142em !important;
+  }
 }
 
 /*

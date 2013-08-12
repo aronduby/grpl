@@ -26,6 +26,10 @@ var Socket = $.extend(io.connect('http://'+window.location.host+':834',{
 		},
 		scoring_stopped: function(){
 			this.callbacks.scoring_stopped.resolve(arguments);
+		},
+		// add an event which just writes cookies
+		write_cookie: function(key, value){
+			$.cookie(key, value, {expires: 30});
 		}
 	},
 	callbacks: {

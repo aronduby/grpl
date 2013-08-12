@@ -54,8 +54,13 @@ if (cluster.isMaster) {
 					cookies[ parts.shift().trim() ] = ( parts.join('=') || '' ).trim();
 				});
 			}
-			if(cookies.user_hash != undefined)
-				handshakeData.user_hash = cookies.user_hash;			
+			if(cookies.user_hash != undefined){
+				handshakeData.user_hash = cookies.user_hash;
+			} else {
+				// else step them up with an anonymous hash
+				// this way we can keep track of season data
+				handshakeData.user_hash = 'ANON'+(+new Date()).toString(36);
+			}
 
 			callback(null, true); // error first callback style 
 		});
@@ -74,6 +79,14 @@ if (cluster.isMaster) {
 						if(data != null)
 							client.hmset(socket.id, data);
 					});
+				} else {
+					// else tell the front-end to save the anonymous cookie
+					// do this here because it's the first we'll have the connection
+					// but make sure to differiate between someone who has a legit user_hash but doesn't have a previous socket
+					// and the actual anonymous hash otherwise we'll be logging people out with a fake cookie
+					if(socket.handshake.user_hash.substr(0, 4) == 'ANON'){
+						socket.emit('write_cookie', 'user_hash', socket.handshake.user_hash);
+					}
 				}
 			});
 		}
@@ -88,6 +101,13 @@ if (cluster.isMaster) {
 				socket.set('user.name_key', player.name_key);
 				socket.set('user.admin', player.admin);
 				client.set('uh'+player.hash, socket.id);
+
+				// remove our anon hash and update the handshake data
+				if(socket.handshake.user_hash.substr(0, 4) == 'ANON'){
+					client.del('uh'+socket.handshake.user_hash);
+					socket.handshake.user_hash = player.hash;
+				}
+
 				cb(null, player);
 			})
 			.fail(function(err){
@@ -102,6 +122,13 @@ if (cluster.isMaster) {
 				socket.set('user.name_key', player.name_key);
 				socket.set('user.admin', player.admin);
 				client.set('uh'+player.hash, socket.id);
+
+				// remove our anon hash and update the handshake data
+				if(socket.handshake.user_hash.substr(0, 4) == 'ANON'){
+					client.del('uh'+socket.handshake.user_hash);
+					socket.handshake.user_hash = player.hash;
+				}
+
 				cb(null, player);
 			})
 			.fail(function(err){
@@ -116,6 +143,13 @@ if (cluster.isMaster) {
 				socket.set('user.name_key', player.name_key);
 				socket.set('user.admin', player.admin);
 				client.set('uh'+player.hash, socket.id);
+
+				// remove our anon hash and update the handshake data
+				if(socket.handshake.user_hash.substr(0, 4) == 'ANON'){
+					client.del('uh'+socket.handshake.user_hash);
+					socket.handshake.user_hash = player.hash;
+				}
+
 				cb(null, player);
 			})
 			.fail(function(err){
