@@ -56,6 +56,10 @@
 <body>
 <div id="fb-root"></div>
 
+<header id="season-notifier" class="hidden">
+	<p>You are currently viewing archived season <span class="active">3</span> and the current season is <span class="current">3</span>. <button>View Current Season</button></p>
+</header>
+
 <!-- INDEX -->
 <div class="page" data-route="index" data-title="" id="index">
 
@@ -132,7 +136,7 @@
 </div>
 
 <!-- SCORING -->
-<div class="page" data-route="scoring" data-title="Scoring" id="scoring">
+<div class="page" data-route="scoring" data-title="Scoring" id="scoring" data-current-season-only>
 	
 	<header>
 		<div class="left">
@@ -393,7 +397,7 @@
 
 
 <!-- USER ADMIN -->
-<div class="page" data-route="admin/users" data-title="User Admin" id="user_admin">
+<div class="page" data-route="admin/users" data-title="User Admin" id="user_admin" data-current-season-only>
 
 	<header>
 		<div class="left">
@@ -452,7 +456,7 @@
 </div>
 
 <!-- NIGHT ADMIN -->
-<div class="page" data-route="admin/night" data-title="Night Admin" id="night_admin">
+<div class="page" data-route="admin/night" data-title="Night Admin" id="night_admin" data-current-season-only>
 
 	<header>
 		<div class="left">
@@ -593,7 +597,7 @@
 </div>
 
 <!-- ADMIN - TIE BREAKER -->
-<div class="page" data-route="admin/tiebreaker" data-title="Tiebreaker" id="tiebreaker">
+<div class="page" data-route="admin/tiebreaker" data-title="Tiebreaker" id="tiebreaker" data-current-season-only>
 
 	<header>
 		<div class="left">
@@ -651,6 +655,7 @@
 
 </div>
 
+
 <footer>
 	<nav>
 		<ul>
@@ -659,7 +664,14 @@
 			<li><a href="#/changelog" title="Change Log">Change Log</a></li>
 		</ul>
 	</nav>
+	<section id="season-changer">
+		<label for="season-changer-select">Switch Seasons:</label>
+		<select id="season-changer-select">
+		</select> 
+	</section>
 </footer>
+
+
 
 <div id="reconnect_msg" class="hidden">
 	<p><img src="layout_imgs/grey-block-loading.gif" alt="working" />Connection to the server has been lost, please wait while we try to reconnect you.</p>

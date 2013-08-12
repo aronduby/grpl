@@ -277,6 +277,28 @@ if (cluster.isMaster) {
 		/*
 		 *	DATA API
 		*/
+		socket.on('changeSeason', function(season_id, cb){
+			socket.set('season_id', season_id);
+			cb(season_id);
+		});
+		socket.on('getSeason', function(cb){
+			socket.get('season_id', function(err, season_id){
+				if(err)
+					cb(err);
+				else
+					cb(null, season_id);
+			});
+		});
+
+		socket.on('season.getAll', function(cb){
+			grpl.season.getAll()
+			.then(function(seasons){
+				cb(null, seasons);	
+			}).fail(function(err){
+				cb(err);
+			}).done();
+		})
+
 		socket.on('leaguenight.update', function(data, cb){
 			socket.get('user.admin', function(err, admin){
 				if(admin != true && admin != 'true'){
@@ -339,63 +361,86 @@ if (cluster.isMaster) {
 
 		// gets all of the league nights for the season, including a totals
 		socket.on('leaguenight', function(cb){
-			grpl.leaguenight.getAllForSeason(season_id)
-			.then(function(nights){
-				var totals = new grpl.leaguenight.LeagueNight({
-					'season_id': season_id,
-					starts: 'totals',
-					night_id: 'totals',
-					title: 'Totals to Date',				
-					note: ''
-				});
-				nights.unshift(totals);
-				cb(null, nights);
-			})
-			.fail(function(err){
-				cb(err);
-			}).done();
+			socket.get('season_id', function(err, socket_season_id){
+				if(err || socket_season_id == null)
+					socket_season_id = season_id;
+
+				grpl.leaguenight.getAllForSeason(socket_season_id)
+				.then(function(nights){
+					var totals = new grpl.leaguenight.LeagueNight({
+						'season_id': socket_season_id,
+						starts: 'totals',
+						night_id: 'totals',
+						title: 'Totals to Date',				
+						note: ''
+					});
+					nights.unshift(totals);
+					cb(null, nights);
+				})
+				.fail(function(err){
+					cb(err);
+				}).done();
+			});
+			
 		});
 
 		// people who are ties
 		socket.on('leaguenight.ties', function(cb){
-			grpl.playerlist.getTies()
-			.then(function(ties){
-				cb(null, ties);
-			}).fail(function(err){
-				console.log(err);
-				cb(err);
-			}).done();
+			socket.get('season_id', function(err, socket_season_id){
+				if(err || socket_season_id == null)
+					socket_season_id = season_id;
+
+				grpl.playerlist.getTies(socket_season_id)
+				.then(function(ties){
+					cb(null, ties);
+				}).fail(function(err){
+					console.log(err);
+					cb(err);
+				}).done();
+			});
+			
 		});
 
 		// get the information for totals
 		socket.on('leaguenight.totals', function(cb){
-			Q.all([
-				grpl.playerlist.getRankings()// ,
-				// grpl.machine.getPlayedLessThanXTimes(season_id, 2, 50)
-			])
-			.spread(function(player_list){//, machine_list){
-				var night = new grpl.leaguenight.LeagueNight({
-					starts: 'totals',
-					night_id: 'totals',
-					title: 'Totals to Date',				
-					note: '',
-					players: player_list.players,
-					machines: [], // machine_list,
-					machines_note: 'no machines for totals' //'Machines Played Less Than Twice'
-				});
-				cb(null, night);
-			})
-			.fail(function(err){
-				cb(err);
-			}).done();
+			socket.get('season_id', function(err, socket_season_id){
+				if(err || socket_season_id == null)
+					socket_season_id = season_id;
+
+				Q.all([
+					grpl.playerlist.getRankings(socket_season_id)
+				])
+				.spread(function(player_list){//, machine_list){
+					var night = new grpl.leaguenight.LeagueNight({
+						starts: 'totals',
+						night_id: 'totals',
+						title: 'Totals to Date',				
+						note: '',
+						players: player_list.players,
+						machines: [], // machine_list,
+						machines_note: 'no machines for totals' //'Machines Played Less Than Twice'
+					});
+					cb(null, night);
+				})
+				.fail(function(err){
+					cb(err);
+				}).done();
+			});
+			
 		});
 
 		// get all the players and the current rankings
 		socket.on('leaguenight.totals.players', function(cb){
-			grpl.playerlist.getRankings()
-			.then(function(player_list){
-				cb(null, player_list.players);
-			}).fail(function(err){ cb(err); }).done();
+			socket.get('season_id', function(err, socket_season_id){
+				if(err || socket_season_id == null)
+					socket_season_id = season_id;
+
+				grpl.playerlist.getRankings(socket_season_id)
+				.then(function(player_list){
+					cb(null, player_list.players);
+				}).fail(function(err){ cb(err); }).done();
+			});
+			
 		});
 
 		socket.on('leaguenight.totals.machines', function(cb){
@@ -404,49 +449,60 @@ if (cluster.isMaster) {
 
 		// information for a specific league night
 		socket.on('leaguenight.starts', function(starts, cb){
-			grpl.leaguenight.getByStarts(starts)
-			.then(function(night){
-				var promises = [];
+			socket.get('season_id', function(err, socket_season_id){
+				if(err || socket_season_id == null)
+					socket_season_id = season_id;
+
+				grpl.leaguenight.getByStarts(starts)
+				.then(function(night){
+					var promises = [];
+					
+					// get player points
+					if(new Date(night.starts).getTime() <= new Date().getTime()){
+						promises.push( grpl.playerlist.getPointsForNight(socket_season_id, starts) );
+					} else {
+						promises.push( grpl.playerlist.getRankings(socket_season_id, starts) );
+					}
+
+					// get machines
+					promises.push( grpl.machine.getForLeagueNight(starts) );
+
+					// wait for both machines and players to be done
+					Q.all(promises)
+					.spread(function( player_list, machine_list){
+						night.players = player_list.players;
+						night.machines = machine_list;
+						cb(null, night);
+
+					}).fail(function(err){ 
+						console.log(err);
+						cb(err); 
+					}).done();
+
+				}).fail(function(err){ cb(err); }).done();
+			});
 				
-				// get player points
-				if(new Date(night.starts).getTime() <= new Date().getTime()){
-					promises.push( grpl.playerlist.getPointsForNight(starts) );
-				} else {
-					promises.push( grpl.playerlist.getRankings(starts) );
-				}
-
-				// get machines
-				promises.push( grpl.machine.getForLeagueNight(starts) );
-
-				// wait for both machines and players to be done
-				Q.all(promises)
-				.spread(function( player_list, machine_list){
-					night.players = player_list.players;
-					night.machines = machine_list;
-					cb(null, night);
-
-				}).fail(function(err){ 
-					console.log(err);
-					cb(err); 
-				}).done();
-
-			}).fail(function(err){ cb(err); }).done();
 		});
 
 		// get players and rankings for a specific night
 		socket.on('leaguenight.starts.players', function(starts, cb){
-			var promise;
+			socket.get('season_id', function(err, socket_season_id){
+				if(err || socket_season_id == null)
+					socket_season_id = season_id;
 
-			if(new Date(night.starts).getTime() <= new Date().getTime()){
-				promise =  grpl.playerlist.getPointsForNight(starts);
-			} else {
-				promise = grpl.playerlist.getRankings(starts);
-			}
+				var promise;
+				if(new Date(night.starts).getTime() <= new Date().getTime()){
+					promise =  grpl.playerlist.getPointsForNight(socket_season_id, starts);
+				} else {
+					promise = grpl.playerlist.getRankings(socket_season_id, starts);
+				}
 
-			promise
-			.then(function(player_list){
-				cb(null, player_list.players);
-			}).fail(function(err){ cb(err); }).done();
+				promise
+				.then(function(player_list){
+					cb(null, player_list.players);
+				}).fail(function(err){ cb(err); }).done();
+			});
+				
 		});
 
 		socket.on('leaguenight.starts.machines', function(starts, cb){
@@ -457,10 +513,16 @@ if (cluster.isMaster) {
 		});
 
 		socket.on('machine', function(season_id, cb){
-			grpl.machine.getForSeason(season_id)
-			.then(function(machines){
-				cb(null, machines);
-			}).fail(function(err){ cb(err); }).done();
+			socket.get('season_id', function(err, socket_season_id){
+				if(err || socket_season_id == null)
+					socket_season_id = season_id;
+
+				grpl.machine.getForSeason(socket_season_id)
+				.then(function(machines){
+					cb(null, machines);
+				}).fail(function(err){ cb(err); }).done();
+			});
+				
 		});
 
 		socket.on('machine.abbv', function(abbv, cb){
@@ -471,34 +533,46 @@ if (cluster.isMaster) {
 		});
 
 		socket.on('players', function(season_id, cb){
-			grpl.playerlist.getForSeason(season_id)
-			.then(function(playerlist){
-				cb(null, playerlist.players);
-			}).fail(function(err){ cb(err); }).done();
+			socket.get('season_id', function(err, socket_season_id){
+				if(err || socket_season_id == null)
+					socket_season_id = season_id;
+
+				grpl.playerlist.getForSeason(socket_season_id)
+				.then(function(playerlist){
+					cb(null, playerlist.players);
+				}).fail(function(err){ cb(err); }).done();
+			});
+				
 		});
 
 		socket.on('players.namekey', function(name_key, cb){
-			var data = {};
+			socket.get('season_id', function(err, socket_season_id){
+				if(err || socket_season_id == null)
+					socket_season_id = season_id;
 
-			grpl.playerlist.getRankings()
-			.then(function(list){
-				var player = list.getPlayer(name_key),
-					promises = [];
+				var data = {};
 
-				data.player = player;
-				data.place = player.place;
-				data.total_points = player.score;
+				grpl.playerlist.getRankings(socket_season_id)
+				.then(function(list){
+					var player = list.getPlayer(name_key),
+						promises = [];
 
-				Q.all([ player.getNightTotals(season_id), player.getMachinePoints(season_id), player.getNightPlace(season_id) ])
-				.spread(function(nights, machines, places){
-					data.nights = nights;
-					data.machines = machines;
-					data.places = places;
+					data.player = player;
+					data.place = player.place;
+					data.total_points = player.score;
 
-					cb(null, data);
+					Q.all([ player.getNightTotals(socket_season_id), player.getMachinePoints(socket_season_id), player.getNightPlace(socket_season_id) ])
+					.spread(function(nights, machines, places){
+						data.nights = nights;
+						data.machines = machines;
+						data.places = places;
 
+						cb(null, data);
+
+					}).fail(function(err){ console.log(err); cb(err); }).done();
 				}).fail(function(err){ console.log(err); cb(err); }).done();
-			}).fail(function(err){ console.log(err); cb(err); }).done();
+			});
+				
 		});
 
 		socket.on('changelog', function(cb){

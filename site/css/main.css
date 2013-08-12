@@ -12,6 +12,15 @@ body{
   position:relative;
 }
 
+input,
+select,
+textarea{
+  font-family:'Roboto Condensed';
+  font-size:14px;
+  color:#515151;
+  position:relative;
+}
+
 .json,
 .hidden{ display:none; }
 

@@ -3,6 +3,7 @@ var App = {
 	league_nights: {}, // all of the league nights
 	players: {},
 	season_id: 3,
+	active_season_id: 3,
 	ready: $.Deferred(), // triggered once we have all of our needed info loaded
 
 	init: function(){
@@ -69,8 +70,27 @@ var App = {
 			}
 		});
 
+		// get the socket's active season_id
+		var gs = Api.get('getSeason', {
+			success: function(sid){
+				if(sid==undefined)
+					sid = App.season_id;
+
+				if(App.active_season_id != sid){
+					App.active_season_id = sid;
+					if(App.active_season_id != App.season_id){
+						$('#season-notifier')
+							.find('span.active').text(App.active_season_id).end()
+							.find('span.current').text(App.season_id).end()
+							.slideDown();
+					} else {
+						$('#season-notifier').slideUp();
+					}
+				}	
+			}
+		});
 		
-		$.when( lnl, pl ).then(function(){
+		$.when( lnl, pl, gs ).then(function(){
 			App.ready.resolve(); 
 		});
 
@@ -78,7 +98,16 @@ var App = {
 		
 	}, // end init
 
+	changeSeason: function(season_id){
+		var self = this;
 
+		if(self.active_season_id != season_id){
+			self.loading.show();
+			Socket.emit('changeSeason', season_id, function(){
+				window.location.reload();
+			});
+		}
+	},
 
 	// handle the loading animation
 	loading: {
@@ -96,14 +125,30 @@ var router,
 	current_route = '',
 	route_change = function(page, data){
 		App.loading.show();
-		var dfd = $.Deferred();
+		var dfd = $.Deferred(),
+			$page = $('.page[data-route="'+page+'"]');
+
+		if($page.data('current-season-only') != undefined && App.season_id != App.active_season_id){
+			App.loading.hide();
+			dialog({
+				title: 'I\'m sorry I can\'t allow you to do that',
+				headline: 'Current Season Only',
+				msg: 'This page is unavailable when you are in a past season. To view the current season click the button in the big red header.',
+				btn: {
+					fn: function(){
+						window.location.hash = '/index';
+					}
+				}
+			});
+			dfd.reject();
+			return dfd;
+		}
 
 		new_route = page;
-		$.when( $('.page[data-route="'+page+'"]').triggerHandler('init', data) ).then(function(){
-			$.when( $('.page[data-route="'+page+'"]').triggerHandler('change', data) )
+		$.when( $page.triggerHandler('init', data) ).then(function(){
+			$.when( $page.triggerHandler('change', data) )
 				.then(function(){
-					// console.log('changed', data, dfd);
-					document.title = $('.page[data-route="'+page+'"]').attr('data-title')+' GRPL';
+					document.title = $page.attr('data-title')+' GRPL';
 					dfd.resolve();
 				}).fail(function(err){
 					App.loading.hide();
@@ -265,6 +310,25 @@ $(document).ready(function() {
 	// when an abbv is clicked do an alert
 	$('body').on('click', 'abbv[title]', function(){
 		alert($(this).text()+': '+$(this).attr('title'));
+	});
+
+	// SEASON CHANGER
+	// get all of the seasons
+	Api.get('season.getAll', {
+		success: function(seasons){
+			var select = $('#season-changer-select');
+			for(var i in seasons){
+				select.prepend('<option value="'+seasons[i].season_id+'" '+(seasons[i].season_id==App.active_season_id?'selected="selected"':'')+'">'+seasons[i].title+(seasons[i].season_id==App.season_id?' - Current':'')+'</option>');
+			}
+			select.on('change', function(){
+				App.changeSeason($(this).val());
+				return false;
+			})
+		}
+	});
+	$('#season-notifier button').on('click', function(){
+		App.changeSeason(App.season_id);
+		return false;
 	});
 
 
