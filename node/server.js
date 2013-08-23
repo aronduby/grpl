@@ -419,12 +419,12 @@ if (cluster.isMaster) {
 		});
 
 		// people who are ties
-		socket.on('leaguenight.ties', function(cb){
+		socket.on('leaguenight.ties', function(starts, cb){
 			socket.get('season_id', function(err, socket_season_id){
 				if(err || socket_season_id == null)
 					socket_season_id = season_id;
 
-				grpl.playerlist.getTies(socket_season_id)
+				grpl.playerlist.getTies(socket_season_id, starts)
 				.then(function(ties){
 					cb(null, ties);
 				}).fail(function(err){

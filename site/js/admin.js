@@ -36,7 +36,7 @@ $(document).ready(function(){
 
 
 			// add any ties to the panel
-			Api.get('leaguenight.ties', null, {
+			Api.get('leaguenight.ties', App.next_or_most_recent_night.starts, {
 				success: function(ties){
 
 					if(ties.length > 0){
@@ -746,7 +746,7 @@ $(document).ready(function(){
 		var dfd = $.Deferred(),
 			page = this;
 
-		Api.get('leaguenight.ties', null, {
+		Api.get('leaguenight.ties', App.next_or_most_recent_night.starts, {
 			success: function(ties){
 				if(ties.length > 0){
 					var group;
