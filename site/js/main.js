@@ -4,6 +4,7 @@ var App = {
 	players: {},
 	season_id: 3,
 	active_season_id: 3,
+	next_or_most_recent_night: null,
 	ready: $.Deferred(), // triggered once we have all of our needed info loaded
 
 	init: function(){
@@ -15,6 +16,11 @@ var App = {
 			success: function(nights){
 				var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
 					today = new Date();
+
+				today.setHours(0);
+				today.setMinutes(0);
+				today.setSeconds(0);
+				today.setMilliseconds(0);
 
 				for(i in nights){
 					var night = nights[i],
@@ -36,8 +42,11 @@ var App = {
 						);
 						if(is_today == true){
 							night.today = true;
+							App.next_or_most_recent_night = night;
 						} else {
 							night.today = false;
+							if(App.next_or_most_recent_night == undefined || starts.getTime() > today.getTime())
+								App.next_or_most_recent_night = night;
 						}
 					}
 
@@ -347,8 +356,11 @@ $(document).ready(function() {
 	}).add('error', function(err){
 		// ignore the error caused by the connection being closed
 		if(
-			err.eventPhase == err.currentTarget.CLOSED
-			|| err.eventPhase == err.currentTarget.CLOSING
+			err.eventPhase != undefined
+			&& (
+				err.eventPhase == err.currentTarget.CLOSED
+				|| err.eventPhase == err.currentTarget.CLOSING
+			)
 		)
 			return true;
 

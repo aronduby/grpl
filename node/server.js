@@ -173,9 +173,9 @@ if (cluster.isMaster) {
 		*/
 		socket.on('tiebreaker', function(data, cb){
 			grpl.scoring.tiebreaker(data)
-			.then(function(){
-				cb(null, true);
-				io.sockets.emit('tiesbroken', data.starts);
+			.then(function(name_key){
+				cb(null, name_key);
+				io.sockets.emit('tiesbroken', data.starts, name_key);
 			})
 			.fail(function(err){
 				cb(err);
@@ -225,7 +225,7 @@ if (cluster.isMaster) {
 						socket.emit('error', 'You must supply a date for the scoring system');
 						return false;
 					}
-					grpl.scoring.start(starts)
+					grpl.scoring.start(season_id, starts)
 					.then(function(data){
 						io.sockets.emit('scoring_started', data);
 					})
@@ -419,12 +419,12 @@ if (cluster.isMaster) {
 		});
 
 		// people who are ties
-		socket.on('leaguenight.ties', function(cb){
+		socket.on('leaguenight.ties', function(starts, cb){
 			socket.get('season_id', function(err, socket_season_id){
 				if(err || socket_season_id == null)
 					socket_season_id = season_id;
 
-				grpl.playerlist.getTies(socket_season_id)
+				grpl.playerlist.getTies(socket_season_id, starts)
 				.then(function(ties){
 					cb(null, ties);
 				}).fail(function(err){
