@@ -347,8 +347,11 @@ $(document).ready(function() {
 	}).add('error', function(err){
 		// ignore the error caused by the connection being closed
 		if(
-			err.eventPhase == err.currentTarget.CLOSED
-			|| err.eventPhase == err.currentTarget.CLOSING
+			err.eventPhase != undefined
+			&& (
+				err.eventPhase == err.currentTarget.CLOSED
+				|| err.eventPhase == err.currentTarget.CLOSING
+			)
 		)
 			return true;
 

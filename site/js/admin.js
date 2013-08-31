@@ -1,8 +1,15 @@
 $(document).ready(function(){
 
-	Socket.add('tiesbroken', function(updated){
+	Socket.add('tiesbroken', function(updated, name_key){
+		console.log(updated, name_key);
 		if(User.admin == true){
-			$('#admin-panel section.ties').hide();
+			$('#admin-panel section.ties').find('li[data-name_key="'+name_key+'"]').remove();
+			var count = $('#admin-panel section.ties .tie-groups li').length;
+			if(count == 0){
+				$('#admin-panel section.ties').hide();
+			} else {
+				$('#admin-panel section.ties header .count').text(count);
+			}
 		}
 	});
 
@@ -59,7 +66,7 @@ $(document).ready(function(){
 							}
 							h3.text( names.join(' | ') );
 							a.append(h3);
-							li.append(a).appendTo(tie_list);
+							li.attr('data-name_key', group[0].name_key).append(a).appendTo(tie_list);
 						}
 
 						tie_list.appendTo($('.ties .tie-groups', ap));
@@ -630,6 +637,7 @@ $(document).ready(function(){
 			// figure out which league night we should set the starts to
 			var next,
 				now = new Date(),
+				future = [],
 				starts = null;
 
 			// clear the time
@@ -638,11 +646,13 @@ $(document).ready(function(){
 			now.setSeconds(0);
 
 			for(var i=0 in App.league_nights){
+				console.log( App.league_nights[i].date_obj );
 				if( App.league_nights[i].date_obj >= now ){
-					starts = i;
-					break;
+					future.push( i );
 				}
 			}
+			starts = future.pop();
+
 			// starts can't be null
 			if(starts == null){
 				dfd.reject({
