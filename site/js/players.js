@@ -79,6 +79,21 @@ $(document).ready(function(){
 		});
 
 		$('#players-panel article', page).empty().append(player_list);
+
+		// toggle visibility of the chart plots
+		$('fieldset.points, fieldset.place', page).on('click', function(){
+			var chart = $('#players-nights-chart').data('chart');
+				show = !$(this).data('visible'),
+				series = ($(this).data('series')+'').split(','); // make sure it treats it like a string
+
+			for(i in series){
+				chart.series[series[i]].show = show;
+			}
+			$(this).data('visible', show);
+			$(this).attr('data-visible', show);
+			chart.replot();
+
+		});
 		
 		page.data('inited', true);
 
@@ -126,6 +141,11 @@ $(document).ready(function(){
 		$('#machines-compare-to')
 			.find('option[disabled]').removeAttr('disabled').end()
 			.find('option[value="'+name_key+'"]').attr('disabled','disabled');
+
+
+		// set our chart togglers to on
+		$('fieldset', page).data('visible', true);
+		$('fieldset', page).attr('data-visible', true);
 
 		var dfd = Api.get('players.namekey', name_key, {
 			success: function(data){
@@ -240,7 +260,7 @@ $(document).ready(function(){
 		var points = JSON.parse($('#players-nights-chart-data').text());
 		$('#players-nights-chart').empty();
 		try{		
-			$.jqplot('players-nights-chart', [points.places, points.player, points.sub], {
+			var chart = $.jqplot('players-nights-chart', [points.places, points.player, points.sub], {
 				title: {
 					text: 'POINTS/PLACE PER LEAGUE NIGHT',
 					fontFamily: 'Roboto Condensed',
@@ -302,8 +322,10 @@ $(document).ready(function(){
 					background: 'transparent'
 				}
 			});
+			$('#players-nights-chart').data('chart', chart);
 		}catch(e){
 			$('#players-nights-chart').hide();
+			console.log(e);
 		}
 	});
 

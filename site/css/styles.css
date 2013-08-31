@@ -679,11 +679,20 @@ label.confirmed{
   width:100%;  
 }
 
+#players .nights-holder p.note{
+  text-align:center;
+  font-weight:300;
+  color:#aaa;
+  font-size:.9em;
+  margin-bottom:10px;
+}
+
 #players .nights-holder fieldset{
+  position:relative;
   display:inline-block;
   width:48%;
   text-align:center;
-  margin:10px 0 20px 1%;
+  margin:10px 0 10px 1%;
   padding:15px 0;
   font-family:'Roboto Condensed';
   font-size:18px;
@@ -691,6 +700,7 @@ label.confirmed{
   border-radius:5px;
   background:#fff;
   box-shadow:0 0 1px #8b8b8b;
+  cursor:pointer;
 }
   #players .nights-holder .points{
     margin-left:1%;
@@ -705,6 +715,31 @@ label.confirmed{
     background:#8b8b8b;
     color:#fff;
   }
+
+#players .nights-holder fieldset:before{
+  content:' ';
+  position:absolute;
+  top:0;
+  left:0;
+  bottom:0;
+  width:10px;
+  border-radius:5px 0 0 5px;  
+  opacity:.8;
+}
+  #players .nights-holder fieldset.points:before{
+    background:#699DB1;
+  }
+  #players .nights-holder fieldset.place:before{
+    background:#D3C9A9;
+  }
+
+#players .nights-holder fieldset[data-visible="true"]{
+  opacity:1;
+}
+#players .nights-holder fieldset[data-visible="false"]{
+  opacity:.5;
+}
+
 
 #players .nights-holder .listview{
   border-top:1px solid #dadada;
