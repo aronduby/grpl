@@ -163,6 +163,11 @@ var router,
 
 	}
 	router = Router({
+		'/home': {
+			on: function(next){
+				$.when( route_change('home') ).then(next);
+			}
+		},
 		'/index': {
 			'/(totals|[\\d-]+)': {
 				on: function(night, next){
@@ -274,7 +279,11 @@ router.configure({
 $(document).ready(function() {
 
 	$.when( App.init() ).then(function(){
-		router.init('/index');
+		if($.cookie('skiphome')=='1'){
+			router.init('/index');
+		} else {
+			router.init('/home');
+		}
 	});
 
 

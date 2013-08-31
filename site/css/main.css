@@ -340,7 +340,8 @@ h1, h2, h3, h4, h5{
   text-align:right;
 }
 
-button{
+button,
+a.button{
   border:1px solid #498723;
   border-radius:5px;
   padding:10px;
@@ -361,18 +362,21 @@ button{
   background: linear-gradient(to bottom,  #85af3f 0%,#3a691c 100%); /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#85af3f', endColorstr='#3a691c',GradientType=0 ); /* IE6-9 */
 }
-  button:before{
+  button:before,
+  a.button:before{
     content:' ';
     background-image:url(/layout_imgs/mobile_sprite.png);
     background-repeat:no-repeat;
     display:inline-block;
     vertical-align:middle;
   }
-  button span.title{
+  button span.title,
+  a.button span.title{
     margin-left:5px;
   }
 
-  button.blue{
+  button.blue,
+  a.button.blue{
     background: #a3cae0; /* Old browsers */
     background: -moz-linear-gradient(top,  #a3cae0 0%, #569dc6 100%); /* FF3.6+ */
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#a3cae0), color-stop(100%,#569dc6)); /* Chrome,Safari4+ */
@@ -384,7 +388,8 @@ button{
     border-color:#4989ad;
   }
 
-  button.yellow{
+  button.yellow,
+  a.button.yellow{
     background: #f4c95b; /* Old browsers */
     background: -moz-linear-gradient(top,  #f4c95b 0%, #eea80c 100%); /* FF3.6+ */
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f4c95b), color-stop(100%,#eea80c)); /* Chrome,Safari4+ */
@@ -395,7 +400,8 @@ button{
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f4c95b', endColorstr='#eea80c',GradientType=0 ); /* IE6-9 */
     border-color:#db9b0c;
   }
-  button.red{
+  button.red,
+  a.button.red{
     background: #ba2626; /* Old browsers */
     background: -moz-linear-gradient(top,  #ba2626 0%, #7d1010 100%); /* FF3.6+ */
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ba2626), color-stop(100%,#7d1010)); /* Chrome,Safari4+ */
@@ -406,7 +412,8 @@ button{
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ba2626', endColorstr='#7d1010',GradientType=0 ); /* IE6-9 */
     border-color:#981313;
   }
-  button.green{
+  button.green,
+  a.button.green{
     background: #85af3f; /* Old browsers */
     background: -moz-linear-gradient(top,  #85af3f 0%, #38681b 100%); /* FF3.6+ */
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#85af3f), color-stop(100%,#38681b)); /* Chrome,Safari4+ */
@@ -417,7 +424,8 @@ button{
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#85af3f', endColorstr='#38681b',GradientType=0 ); /* IE6-9 */
     border-color:#509527;
   }
-  button[disabled]{
+  button[disabled],
+  a.button.disabled{
     cursor:default !important;
     background: #d1d1d1 !important; /* Old browsers */
     background: -moz-linear-gradient(top,  #d1d1d1 0%, #b3b3b3 100%) !important; /* FF3.6+ */
@@ -431,38 +439,45 @@ button{
     color:#dedede !important;
     text-shadow:none !important;
   }
-  button[disabled]:before{
+  button[disabled]:before,
+  a.button.disabled:before{
     opacity:.3;
     filter:alpha(opacity=30);
   }
 
 /*--- Button Icons ---*/
-button.scoring:before{
+button.scoring:before,
+a.button.scoring:before{
   width:26px;
   height:32px;
   background-position:0 -38px;
 }
-button.admin:before{
+button.admin:before,
+a.button.admin:before{
   width:25px;
   height:25px;
   background-position:0 -70px;
 }
-button.login:before{
+button.login:before,
+a.button.login:before{
   width:20px;
   height:28px;
   background-position:0 -95px;
 }
-button.plus:before{
+button.plus:before,
+a.button.plus:before{
   width:21px;
   height:22px;
   background-position:0 -122px;
 }
-button.x:before{
+button.x:before,
+a.button.x:before{
   width:19px;
   height:20px;
   background-position:0 -144px;
 }
-button.live:before{
+button.live:before,
+a.button.live:before{
   width:16px;
   height:28px;
   background-position:0 -164px;

@@ -36,7 +36,8 @@
   #index .player-holder,
   #players .nights-holder,
   #players .machine-holder,
-  #changelog .log{
+  #changelog .log,
+  #home article > section{
     display:inline-block;
     vertical-align:top;
   }
@@ -56,7 +57,8 @@
     text-align:center;
   }
 
-  #changelog-panel{
+  #changelog-panel,
+  #homepage-panel{
     display:block !important;
     margin:0;
     top:70px; left:1%;
@@ -64,14 +66,17 @@
     z-index:auto;
   }
     #changelog-panel .pointer,
-    #changelog-panel .close{
+    #changelog-panel .close,
+    #homepage-panel .pointer,
+    #homepage-panel .close{
       display:none;
     }
     #changelog-panel header{ padding:15px; }
     #changelog-panel header h1{ font-size:20px; }
     #changelog-panel article{ padding-bottom:10px; }
 
-  #changelog .log{
+  #changelog .log,
+  #home article > section{
     margin:auto 2% auto 23%;
     width:75%;
   }
@@ -101,7 +106,8 @@
   #players-panel,
   #changelog-panel,
   #user_admin-users-panel,
-  #night_admin-night-panel{
+  #night_admin-night-panel,
+  #homepage-panel{
     display:block !important;
     margin:0;
     top:70px; left:1%;
@@ -119,7 +125,9 @@
     #user_admin-users-panel .pointer,
     #user_admin-users-panel .close,
     #night_admin-night-panel .pointer,
-    #night_admin-night-panel .close{
+    #night_admin-night-panel .close,
+    #homepage-panel .pointer,
+    #homepage-panel .close{
      display:none; 
    }
    #nights-panel header,
@@ -127,21 +135,24 @@
    #players-panel header,
    #changelog-panel header,
    #user_admin-users-panel header,
-   #night_admin-night-panel header{ padding:15px; }
+   #night_admin-night-panel header,
+   #homepage-panel header{ padding:15px; }
 
    #nights-panel header h1,
    #scoring-machine-panel header h1,
    #players-panel header h1,
    #changelog-panel header h1,
    #user_admin-users-panel header h1,
-   #night_admin-night-panel header h1{ font-size:20px; }
+   #night_admin-night-panel header h1,
+   #homepage-panel header h1{ font-size:20px; }
 
    #nights-panel article,
    #scoring-machine-panel article,
    #players-panel article,
    #changelog-panel article,
    #user_admin-users-panel article,
-   #night_admin-night-panel article{ padding-bottom:10px; }
+   #night_admin-night-panel article,
+   #homepage-panel article{ padding-bottom:10px; }
   
   #index .machine-holder,
   #players .nights-holder{
@@ -157,11 +168,13 @@
   #scoring .scoring-form,
   #user_admin .user-form,
   #night_admin .night-form,
-  #changelog .log{
+  #changelog .log,
+  #home article > section{
     margin:auto 2% auto 23%;
   }
 
-  #changelog .log{
+  #changelog .log,
+  #home article > section{
     width:75%;
   }
   
@@ -199,6 +212,56 @@ abbv{
   font-size:14px;
   line-height:18px;
   text-shadow:1px 1px 3px rgba(0,0,0,.4);
+}
+
+/*
+ *  Homepage
+*/
+#home .content #banner{
+  background:#000;
+  margin:-10px -15px 10px -15px;
+  border-radius:5px 5px 0 0;
+  background: #5a5a5a; /* Old browsers */
+  background: -moz-linear-gradient(top,  #5a5a5a 0%, #2f2f2f 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#5a5a5a), color-stop(100%,#2f2f2f)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  #5a5a5a 0%,#2f2f2f 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  #5a5a5a 0%,#2f2f2f 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  #5a5a5a 0%,#2f2f2f 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  #5a5a5a 0%,#2f2f2f 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#5a5a5a', endColorstr='#2f2f2f',GradientType=0 ); /* IE6-9 */
+}
+  #home #banner img{
+    width:100%;
+    max-width:350px;
+    margin:5px;
+  }
+
+#home .content p{
+  font-weight:300;
+  font-size:1.1428em;
+  line-height:1.45em;
+  margin-bottom:.8em;
+}
+
+#home .content h1,
+#home .content h2{
+  font-size:1.4285em;
+  color:#707070;
+  margin-bottom:.25em;
+}
+#home .content h2{
+  font-size:1.2857em;
+}
+#home .content a{
+  color:#6A9FB4;
+}
+
+#home .content .view-rankings{
+  display:block;
+  color:#fff;
+  text-decoration:none;
+  margin:20px 0 0 0;
+  padding:15px 10px;
 }
 
 /*
@@ -257,8 +320,10 @@ body > footer{
   body > footer nav li{
     display:inline-block;
     margin-right:10px;
+    margin-bottom:10px;
   }
     body > footer nav li a{
+      display:inline-block;
       color:#eee;
       padding:5px 8px;
       text-decoration:none;

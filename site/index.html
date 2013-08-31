@@ -38,6 +38,7 @@
 	<script src="jqplot/jqplot.pointLabels.min.js"></script>
 	<script src="js/jquery.cookie.js"></script>
 
+	<script src="js/home.js"></script>
 	<script src="js/user.js"></script>
 	<script src="js/admin.js"></script>
 	<script src="js/scoring.js"></script>
@@ -57,8 +58,78 @@
 <div id="fb-root"></div>
 
 <header id="season-notifier" class="hidden">
-	<p>Currently viewing archived season <span class="active">3</span>, the current season is <span class="current">3</span>. <button>View Current Season</button></p>
+	<p>Viewing archived season <span class="active">3</span>, the current season is <span class="current">3</span>. <button>View Current Season</button></p>
 </header>
+
+<!-- HOMEPAGE -->
+<div class="page" data-route="home" data-title="" id="home">
+	<header>
+		<div class="left">
+			<button class="admin" title="Open Admin Panel">
+				<span class="title">Admin</span>
+			</button>
+			
+			<h1 class="hdr-logo"><a href="#/index" title="home">GRPL</a></h1>
+		</div>
+
+		<div class="right">
+			<section class="user-area">
+				<button class="login" title="Login">
+					<span class="title">Login</span>
+				</button>
+				<button class="scoring" title="Start Scoring">
+					<span class="title">Start Scoring</span>
+				</button>
+			</section>
+		</div>
+
+		<div class="center">
+			<section>
+				<div class="select-trigger"><!-- hook for the dropdown icon -->
+					<h2>GRPL</h2>
+					<p>Grand Rapids Pinball League</p>
+				</div>
+			</section>
+		</div>
+	</header>
+
+	<article>
+		<section>
+			<div class="content">
+				<div id="banner">
+					<img src="layout_imgs/banner.png" alt="Grand Rapids Pinball League" />
+				</div>
+				<h1>About the League</h1>
+				<p>The Grand Rapids Pinball League was started in November 2012 by Rodney Minch to provide an opportunity for individuals to play competitive pinball in a fun and friendly enviroement. The league is open to anyone who has an interest in playing pinball and all skill levels are welcome.</p>
+
+				<p>We are currently in our third season with 28 players. A season has 8 league nights for 4 consecutive months. League nights are the 1st and 3rd Wednesday of each month at 7pm. League nights take place at Pyramid Scheme which is located at 68 Commerce Ave SW. Players are welcome and encouraged to come early and/or stay late to practice and socialize.</p>
+				 
+				<h2>The Venue</h2>
+				<p>Pyramid Scheme has 22 pinball machines available for play 7 days a week from 4pm - 2am. All machines are set to $.50/play and includes such classics as Twilight Zone, Attack From Mars, Medieval Madness, The Addams Family, Whitewater, Scared Stiff and newer Stern machines such as Lord of the Rings, The Simpsons Pinball Party, X-Men LE and Metallica.</p>
+
+				<h2>Join</h2>
+				<p>If you are interested in joining the pinball league or have any questions, please check out the <a href="https://www.facebook.com/groups/GrandRapidsPinballLeague/" target="_blank">Grand Rapids Pinball League group on Facebook</a> or contact Rodney Minch at <a href="mailto:grpinball@gmail.com">grpinball@gmail.com</a>.</p>
+
+				<a class="view-rankings button green" href="#/index">View current rankings</a>
+			</div>
+		</section>
+
+	</article>
+
+	<div id="homepage-panel" class="popup center show-header">
+		<header>
+			<span class="pointer"></span>
+			<h1>Rankings</h1>
+			<a class="close" href="#">Close</a>
+		</header>
+		<article class="listview">
+			<ul>
+				<li><a href="#/index" title="scoring"><h2>Current Rankings</h2></a></li>
+			</ul>
+		</article>
+	</div>
+
+</div>
 
 <!-- INDEX -->
 <div class="page" data-route="index" data-title="" id="index">
@@ -659,6 +730,7 @@
 <footer>
 	<nav>
 		<ul>
+			<li><a href="#/home" title="About">About</a></li>
 			<li><a href="https://www.facebook.com/groups/GrandRapidsPinballLeague/" title="facebook group" target="_blank">Facebook Group</a></li>
 			<li><a href="mailto:grpinbal@gmail.com" title="grpinball@gmail.com" target="_blank">Email Us</a></li>
 			<li><a href="#/changelog" title="Change Log">Change Log</a></li>
