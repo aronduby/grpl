@@ -147,7 +147,7 @@ $(document).ready(function(){
 					var machine_list = $('<ul></ul>');
 					for(i in night.machines){
 						var machine = night.machines[i];
-						machine_list.append('<li><a href="'+machine.url+'"><img src="'+machine.image+'" /><h3>'+machine.name+'</h3><p>'+machine.abbv+'</p></a></li>');
+						machine_list.append('<li><img src="'+machine.image+'" /><h3>'+machine.name+'</h3><p>'+machine.abbv+'</p></li>');
 					}
 					$('.machine-holder .listview', page).empty().append(machine_list);
 					if(night.machines_note){
