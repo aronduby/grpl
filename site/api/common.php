@@ -80,7 +80,7 @@ spl_autoload_register('defaultAutoLoad');
 
 
 
-$season = Season::create(2);
+$season = Season::create(4);
 $player = Player::create('AronDuby');
 
 

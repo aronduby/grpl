@@ -28,7 +28,7 @@ if (cluster.isMaster) {
 		}),
 		https = require('https'),
 		Q = require('q'),
-		season_id = 3;
+		season_id = 4;
 
 
 	var RedisStore = require('socket.io/lib/stores/redis'),
