@@ -2,8 +2,8 @@ var App = {
 
 	league_nights: {}, // all of the league nights
 	players: {},
-	season_id: 3,
-	active_season_id: 3,
+	season_id: 4,
+	active_season_id: 4,
 	next_or_most_recent_night: null,
 	ready: $.Deferred(), // triggered once we have all of our needed info loaded
 
