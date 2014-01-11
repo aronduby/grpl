@@ -429,7 +429,10 @@ body > footer{
   float:left;
   margin:4px 5px 0 -5px;
 }
-
+  .player-holder li.tied[data-tied_count='even'] a:before{
+    color:#8ad626;
+  }
+  
 /* highlight the live night on index */
 #nights-panel .listview li.live a:before{
   content:'';

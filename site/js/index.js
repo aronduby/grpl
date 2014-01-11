@@ -215,12 +215,21 @@ $(document).ready(function(){
 					player_holder.append(group_holder);
 
 					// add our tied class to the proper people
-					player_holder.find('li').filter(function(){
+					var tied_count = 0;
+					player_holder.find('li').filter(function(index){
+						if($(this).attr('data-tied_count')!=undefined)
+							return true;
+
 						var sstr = $(this).attr('data-scoring_string');
 						if(sstr == 'undefined')
 							return false;
 
-						return $('li[data-scoring_string="'+sstr+'"]', player_holder).length > 1;
+						var tied = $('li[data-scoring_string="'+sstr+'"]', player_holder);
+						if(tied.length > 1){
+							tied.attr('data-tied_count', ++tied_count%2==1?'odd':'even');
+							return true;
+						}
+						return false;
 					}).addClass('tied');
 				} else {
 					$('.player-holder .listview', page).html('<p>No player scores have been posted yet. Check back after the first week</p>');
