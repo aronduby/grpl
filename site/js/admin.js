@@ -644,11 +644,13 @@ $(document).ready(function(){
 			now.setHours(0);
 			now.setMinutes(0);
 			now.setSeconds(0);
+			now.setMilliseconds(0);
+			now = now.getTime();
 
 			for(var i=0 in App.league_nights){
-				console.log( App.league_nights[i].date_obj );
-				if( App.league_nights[i].date_obj >= now ){
-					future.push( i );
+				if(App.league_nights[i].date_obj!=false){
+					if(App.league_nights[i].date_obj.getTime() >= now )
+						future.push( i );
 				}
 			}
 			starts = future.pop();
