@@ -42,7 +42,7 @@ $(document).ready(function(){
 						committed = c.toLocaleString();
 
 					// format #1 to be link to bugify
-					var m = data[i].msg.replace(/#(\d+)/, '<a class="inline" href="http://bugify.aronduby.com/issues/$1" target="_blank">$&</a>');
+					var m = data[i].msg.replace(/#(\d+)/g, '<a class="inline" href="http://bugify.aronduby.com/issues/$1" target="_blank">$&</a>');
 					
 					copy.find('ul').append('<li><h3>'+m+'</h3><p>committed: '+committed+'</p><span class="right">'+data[i].commit_id+'</span></li>');
 
