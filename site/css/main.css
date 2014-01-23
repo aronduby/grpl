@@ -306,6 +306,19 @@ h1, h2, h3, h4, h5{
         background:url(/layout_imgs/mobile_sprite.png) no-repeat 0 -192px;
         clear:both;
       }
+      
+    .listview li a.inline{
+      float:none;
+      width:auto; height:auto;
+      display:inline;
+      margin:0;
+      padding:0;
+      background:none;
+      filter:none;
+    }
+      .listview li a.inline:after{
+        display:none;
+      }
 
   /* clear anything that might be floated in the li */
   .listview li:after{

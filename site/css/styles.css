@@ -252,7 +252,8 @@ abbv{
 #home .content h2{
   font-size:1.2857em;
 }
-#home .content a{
+#home .content a,
+.listview li a.inline{
   color:#6A9FB4;
 }
 
