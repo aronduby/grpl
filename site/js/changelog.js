@@ -23,25 +23,28 @@ $(document).ready(function(){
 
 				var copy = $('.pushed.hidden', self).clone().removeClass('hidden'),
 					months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-					pushed = false;
+					last_pushed = false;
 
 				for(var i in data){
-					if(pushed != data[i].pushed){
-						if(pushed != false){
+					var p = new Date(data[i].pushed),
+						pushed_date = months[p.getMonth()]+' '+p.getDate()+', '+p.getFullYear();
+
+					if(last_pushed != pushed_date){
+						if(last_pushed != false){
 							$('.content', self).append(copy);
 							copy = $('.pushed.hidden', self).clone().removeClass('hidden');
 						}
-
-						var p = new Date(data[i].pushed);
-						copy.find('h2').text( months[p.getMonth()]+' '+p.getDate()+', '+p.getFullYear() );
+						
+						copy.find('h2').text( pushed_date );
 					}
 
 					var	c = new Date(data[i].committed),
-						committed = months[c.getMonth()]+' '+c.getDate()+', '+c.getFullYear()
+						// committed = months[c.getMonth()]+' '+c.getDate()+', '+c.getFullYear()+' @ '+c.getHours()+':'+c.getMinutes();
+						committed = c.toLocaleString();
 					
-					copy.find('ul').append('<li><h3>'+data[i].msg+'</h3><p>created: '+committed+'</p><span class="right">'+data[i].commit_id+'</span></li>');
+					copy.find('ul').append('<li><h3>'+data[i].msg+'</h3><p>committed: '+committed+'</p><span class="right">'+data[i].commit_id+'</span></li>');
 
-					pushed = data[i].pushed;
+					last_pushed = pushed_date;
 				}
 				$('.content', self).append(copy);
 
