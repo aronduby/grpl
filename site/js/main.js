@@ -157,7 +157,7 @@ var router,
 		$.when( $page.triggerHandler('init', data) ).then(function(){
 			$.when( $page.triggerHandler('change', data) )
 				.then(function(){
-					document.title = $page.attr('data-title')+' GRPL';
+					document.title = $page.attr('data-title')+' Grand Rapids Pinball League';
 					dfd.resolve();
 				}).fail(function(err){
 					App.loading.hide();
