@@ -636,20 +636,14 @@ $(document).ready(function(){
 
 			// figure out which league night we should set the starts to
 			var next,
-				now = new Date(),
+				d = new Date(),
+				today = new Date(d.getFullYear(), d.getMonth(), d.getDate()),
 				future = [],
 				starts = null;
 
-			// clear the time
-			now.setHours(0);
-			now.setMinutes(0);
-			now.setSeconds(0);
-			now.setMilliseconds(0);
-			now = now.getTime();
-
 			for(var i=0 in App.league_nights){
 				if(App.league_nights[i].date_obj!=false){
-					if(App.league_nights[i].date_obj.getTime() >= now )
+					if(App.league_nights[i].date_obj.getTime() >= today )
 						future.push( i );
 				}
 			}
