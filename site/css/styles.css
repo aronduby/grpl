@@ -448,7 +448,7 @@ body > footer{
  *  A Division & B Division Split
 */
 /*
-.player-holder .listview ul:nth-child(5):before{
+.player-holder .listview ul:nth-child(4):before{
   content:'Tournament Split';
   height:auto;
   padding:2px 0;
@@ -461,6 +461,25 @@ body > footer{
   color:#777;
 }
 */
+
+.player-holder .listview ul:nth-child(5) li:nth-child(3):before{
+  background:#CACACA;
+  border-top:1px solid #B4B4B4;
+  color:#A3A3A3;
+  content:"Tournament Split";
+  display:block;
+  font-family:'Roboto Condensed';
+  font-size:10px;
+  font-weight:bold;
+  height:34px;
+  letter-spacing:0.02em;
+  margin:-12px -40px -12px -15px;
+  padding:2px 0;
+  position:relative;
+  text-align:center;
+  text-transform:uppercase;
+}
+
 
 /*
  *  ChangeLog
