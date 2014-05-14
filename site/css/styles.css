@@ -41,6 +41,9 @@
     display:inline-block;
     vertical-align:top;
   }
+    #index .randomizer-holder{
+      width:98%;
+    }
     #index .machine-holder,
     #players .nights-holder{
       width:36%;
@@ -153,6 +156,11 @@
    #user_admin-users-panel article,
    #night_admin-night-panel article,
    #homepage-panel article{ padding-bottom:10px; }
+
+   #index .randomizer-holder{
+      width:76%;
+      margin-left:22%;
+   }
   
   #index .machine-holder,
   #players .nights-holder{
@@ -989,6 +997,23 @@ label.confirmed{
     #sublist fieldset input{
       margin-bottom:5px;
     }
+  }
+
+/*
+ *  Radomizer
+*/
+#random-panel{
+  width:80%;
+  margin-left:-40%;
+}
+  #random-panel .listview{
+    margin:-8px -10px 10px -10px;
+  }
+  #random-panel img{
+    background:#000 url(/layout_imgs/grey-block-loading.gif) no-repeat 50%;
+  }
+  #random-panel .order span{
+    margin-left:5px;
   }
 
 /*

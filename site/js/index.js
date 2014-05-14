@@ -84,6 +84,23 @@ $(document).ready(function(){
 			}
 		});
 
+
+		// setup the randomizer
+		$('#random-panel').data('popup', new Popup($('#random-panel')));
+		$('#random-panel button.again').on('click', function(){
+			$('button#randomizer').triggerHandler('click');
+		});
+		$('button#randomizer').on('click', function(){
+			var machine = App.randomMachine(),
+				order = ['1','2','3','4'];
+			$('#random-panel')
+				.find('img').attr('src', machine.image).end()
+				.find('h3').text(machine.name).end()
+				.find('p').text(machine.abbv).end()
+				.find('.order span').text( order.sort(function() { return 0.5 - Math.random() }).join(', ') ).end()
+				.data('popup').open();
+		});
+
 		$(this).data('inited', true);
 
 	});
@@ -280,9 +297,5 @@ $(document).ready(function(){
 		return dfd;
 
 	});
-
-
-
-	
 
 });

@@ -5,6 +5,7 @@ var App = {
 	season_id: 4,
 	active_season_id: 4,
 	next_or_most_recent_night: null,
+	machines: [],
 	ready: $.Deferred(), // triggered once we have all of our needed info loaded
 
 	init: function(){
@@ -96,10 +97,28 @@ var App = {
 						$('#season-notifier').slideUp();
 					}
 				}	
+			},
+			error: function(jqXHR, status, error){
+				console.log(status, error);
+				alert('Sorry, we could not load the data. Please check your data connection.');
 			}
 		});
 		
-		$.when( lnl, pl, gs ).then(function(){
+		// get the machines for this season
+		var m = Api.get('machine', this.season_id, {
+			success: function(machines){
+				App.machines = machines;
+			},
+			error: function(jqXHR, status, error){
+				console.log(status, error);
+				alert('Sorry, we could not load the data. Please check your data connection.');
+			},
+			complete: function(){
+				// App.loading.hide();
+			}
+		});
+
+		$.when( lnl, pl, gs, m ).then(function(){
 			App.ready.resolve(); 
 		});
 
@@ -116,6 +135,10 @@ var App = {
 				window.location.reload();
 			});
 		}
+	},
+
+	randomMachine: function(){
+		return this.machines[Math.floor(Math.random()*(this.machines.length))];
 	},
 
 	// handle the loading animation
@@ -469,6 +492,8 @@ Popup = function(el, opts){
 
 	if(this.$el.hasClass('show-header'))
 		this.$o.addClass('show-header');
+	else
+		this.$o.removeClass('show-header');
 
 	this.$el.on('click', '.close', function(){
 		self.close();

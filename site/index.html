@@ -168,8 +168,10 @@
 
 	</header>
 
-	<article>		
-
+	<article>
+		<section class="randomizer-holder">
+			<button id="randomizer" class="green block">Randomizer</button>
+		</section>
 		<section class="machine-holder collapsible">
 			<header>
 				<h1>Machines</h1>
@@ -784,6 +786,30 @@
 		</div>
 	</article>
 </div>
+
+<div id="random-panel" class="popup center">
+	<header>
+		<h1>Randomizer</h1>
+		<a class="close" href="#">Close</a>
+	</header>
+	<article class="content">
+		<div class="machine listview">
+			<ul>
+				<li>
+					<img src="">
+					<h3>Loading</h3>
+					<p>wait</p>
+				</li>
+			</ul>
+		</div>
+		<div class="order"><strong>Player Order:</strong><span></span></div>
+		<div class="button-holder right">
+			<a class="close" href="#">Close</a>
+			<button class="again"><span class="title">Again</span></button>
+		</div>
+	</article>
+</div>
+
 
 
 <div id="admin-panel" class="popup left show-header">

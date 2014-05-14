@@ -388,6 +388,12 @@ a.button{
     margin-left:5px;
   }
 
+  button.block,
+  a.button.block{
+    display:block;
+    width:100%;    
+  }
+
   button.blue,
   a.button.blue{
     background: #a3cae0; /* Old browsers */
