@@ -382,6 +382,16 @@ $(document).ready(function(){
 							players: {}
 						};
 
+					// do we need to change the points value based on the # of DNPs?
+					switch(dnps.length){
+						case 0:
+							break;
+						case 1:
+						default:
+							points = [0,7,4,1,0];
+							break;
+					}
+
 					$('input[type="radio"]:checked').each(function(){
 						d.players[$(this).data('player')] = points[$(this).val()];
 					});
