@@ -627,4 +627,53 @@ if (cluster.isMaster) {
 	});// end connect
 
 
+
+
+/*
+ *	Add a server for seperate api call for randomizer
+*/
+var server = require('http').createServer(),
+	url = require('url');
+
+server.on('request', function (req, res) {
+	var uri = url.parse(req.url, true),
+		client_updated = uri.query.t == undefined ? new Date(0) : new Date(Number(uri.query.t));
+
+	switch(uri.pathname){
+		case '/randomizer/update':
+			grpl.machine.getLastUpdated()
+			.then(function(server_updated){
+				if(client_updated > server_updated){
+					res.writeHead(304);
+					res.end();
+				} else {
+					grpl.machine.getForSeason(season_id)
+					.then(function(machines){
+						res.writeHead(200, {"Content-Type": "application/json"});
+						res.write(JSON.stringify(machines));
+						res.end();
+					})
+					.fail(function(err){
+						res.writeHead(500, {"Content-Type": "application/json"});
+						res.write(JSON.stringify(err));
+						res.end();
+					}).done();
+				}
+			})
+			.fail(function(err){
+				res.writeHead(500, {"Content-Type": "application/json"});
+				res.write(JSON.stringify(err));
+				res.end();
+			}).done();
+			break;
+		default:
+			res.writeHead(404, {"Content-Type": "text/plain"});
+			res.write("404 Not Found\n");
+			res.end();
+			break;
+	}
+});
+
+server.listen(835);
+
 // }
