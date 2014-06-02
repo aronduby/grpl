@@ -28,7 +28,16 @@ if (cluster.isMaster) {
 		}),
 		https = require('https'),
 		Q = require('q'),
-		season_id = 4;
+		season_id;
+
+	// grab the current season_id
+	grpl.season.getCurrent()
+	.then(function(season){
+		season_id = season.season_id
+	})
+	.fail(function(err){
+		season_id=4;
+	}).done();
 
 
 	var RedisStore = require('socket.io/lib/stores/redis'),
@@ -196,7 +205,6 @@ if (cluster.isMaster) {
 				}
 			})
 			.fail(function(err){
-				console.log(err);
 				socket.emit('error', err);
 			}).done();
 		});
@@ -207,7 +215,6 @@ if (cluster.isMaster) {
 				cb(null, started);
 			})
 			.fail(function(err){
-				console.log(err);
 				cb(err);
 			}).done();
 		});
@@ -230,7 +237,6 @@ if (cluster.isMaster) {
 						io.sockets.emit('scoring_started', data);
 					})
 					.fail(function(err){
-						console.log(err);
 						socket.emit('error', err);
 					})
 					.done();
@@ -315,12 +321,20 @@ if (cluster.isMaster) {
 			socket.set('season_id', season_id);
 			cb(season_id);
 		});
+
 		socket.on('getSeason', function(cb){
-			socket.get('season_id', function(err, season_id){
+			socket.get('season_id', function(err, s_season_id){
 				if(err)
 					cb(err);
-				else
-					cb(null, season_id);
+				else {
+					if(s_season_id == null)
+						s_season_id = season_id;
+
+					cb(null, {
+						'active': s_season_id, 
+						'current': season_id
+					});
+				}
 			});
 		});
 
@@ -331,6 +345,31 @@ if (cluster.isMaster) {
 			}).fail(function(err){
 				cb(err);
 			}).done();
+		});
+
+		socket.on('season.update', function(data, cb){
+			socket.get('user.admin', function(err, admin){
+				if(admin != true && admin != 'true'){
+					socket.emit('error', {
+						title:'Error',
+						headline: 'Nope...',
+						msg: '<p>Only Admins can edit season. If you think you should be an admin talk to the people in charge.</p>'
+					});
+				} else {
+					var season = new grpl.season.Season(data.season_id, data.title);
+					season.current = data.current == true;
+					season.save()
+					.then(function(){
+						if(season.current == true)
+							season_id = season.season_id;
+						
+						cb(null, data);
+						io.sockets.emit('season_updated', season);
+					}).fail(function(err){
+						cb(err);
+					}).done();					
+				}
+			});
 		})
 
 		socket.on('leaguenight.update', function(data, cb){
@@ -555,8 +594,21 @@ if (cluster.isMaster) {
 				.then(function(machines){
 					cb(null, machines);
 				}).fail(function(err){ cb(err); }).done();
-			});
-				
+			});				
+		});
+
+		socket.on('machine.all', function(cb){
+			grpl.machine.getAll()
+			.then(function(machines){
+				cb(null, machines);
+			}).fail(function(err){ cb(err); }).done();
+		});
+
+		socket.on('machine.active', function(cb){
+			grpl.machine.getActive()
+			.then(function(machines){
+				cb(null, machines);
+			}).fail(function(err){ cb(err); }).done();
 		});
 
 		socket.on('machine.abbv', function(abbv, cb){
@@ -564,6 +616,59 @@ if (cluster.isMaster) {
 			.then(function(machine){
 				cb(null, machine);
 			}).fail(function(err){ cb(err); }).done();
+		});
+
+		socket.on('machine.update', function(data, cb){
+			socket.get('user.admin', function(err, admin){
+				if(admin != true && admin != 'true'){
+					socket.emit('error', {
+						title:'Error',
+						headline: 'Nope...',
+						msg: '<p>Only Admins can edit machines. If you think you should be an admin talk to the people in charge.</p>'
+					});
+				} else {
+					var http = require('http'),
+						fs = require('fs'),
+						d = Q.defer();
+
+					var download = function(url, dest, success, error) {
+						var file = fs.createWriteStream(dest);
+
+						var request = http.get(url, function(response) {
+							response.pipe(file);
+							file.on('finish', function() {
+								file.close(success);
+							});
+						}).on('error', function(err) { // Handle errors
+							fs.unlink(dest); // Delete the file async. (But we don't check the result)
+							error(err);
+						});
+					};
+
+					if(data.new_url.length){
+						var u = 'layout_imgs/machines/'+data.abbv+'.jpg';
+						download(data.new_url, '../site/'+u, function(){ d.resolve(u); }, function(err){ d.reject(err); } );
+					} else {
+						d.resolve(data.image);
+					}
+
+					d.promise.then(function(image){
+						data.image = image;
+						var m = new grpl.machine.Machine(data);
+
+						m.save().then(function(m){
+							cb(null, m);
+						}).fail(function(err){ 
+							cb(err); 
+						}).done();
+
+					}).fail(function(err){ 
+						cb(err); 
+					}).done();
+
+
+				}
+			});
 		});
 
 		socket.on('players', function(season_id, cb){
@@ -575,8 +680,21 @@ if (cluster.isMaster) {
 				.then(function(playerlist){
 					cb(null, playerlist.players);
 				}).fail(function(err){ cb(err); }).done();
-			});
-				
+			});				
+		});
+
+		socket.on('players.all', function(cb){
+			grpl.playerlist.getAll()
+			.then(function(playerlist){
+				cb(null, playerlist.players);
+			}).fail(function(err){ cb(err); }).done();
+		});
+
+		socket.on('players.all.namekey', function(name_key, cb){
+			grpl.player.getByNameKey(name_key)
+			.then(function(player){
+				cb(null, player);
+			}).fail(function(err){ cb(err); }).done();
 		});
 
 		socket.on('players.namekey', function(name_key, cb){
@@ -607,6 +725,13 @@ if (cluster.isMaster) {
 				}).fail(function(err){ console.log(err); cb(err); }).done();
 			});
 				
+		});
+
+		socket.on('players.getSeasons', function(name_key, cb){
+			grpl.player.getSeasonsForNameKey(name_key)
+			.then(function(season_ids){
+				cb(null, season_ids);
+			}).fail(function(err){ console.log(err); cb(err); }).done();
 		});
 
 		socket.on('changelog', function(cb){
@@ -647,7 +772,7 @@ server.on('request', function (req, res) {
 					res.writeHead(304);
 					res.end();
 				} else {
-					grpl.machine.getForSeason(season_id)
+					grpl.machine.getActive()
 					.then(function(machines){
 						res.writeHead(200, {"Content-Type": "application/json"});
 						res.write(JSON.stringify(machines));

@@ -673,6 +673,194 @@
 
 </div>
 
+<!-- SEASON ADMIN -->
+<div class="page" data-route="admin/seasons" data-title="Season Admin | " id="season_admin">
+
+	<header>
+		<div class="left">
+			<button class="admin" title="Open Admin Panel">
+				<span class="title">Admin</span>
+			</button>			
+			<h1 class="hdr-logo"><a href="#/index" title="home">GRPL</a></h1>
+		</div>
+		<div class="right">
+			<section class="user-area">
+				<button class="login" title="Login">
+					<span class="title">Login</span>
+				</button>
+				<button class="scoring" title="Start Scoring">
+					<span class="title">Start Scoring</span>
+				</button>
+			</section>
+		</div>
+		<div class="center">
+			<section class="season-trigger select-trigger" data-dropdown="season-popup">
+				<div><!-- hook for the dropdown icon -->
+					<h2>Loading</h2>
+				</div>
+			</section>
+		</div>
+	</header>
+
+	<article>
+		<form class="season-form" autocomplete="off">
+			<section>
+				<header>
+					<h1>Edit This Season</h1>
+				</header>
+				<div class="content">
+					<input type="hidden" name="season_id" id="season_id" value="" />
+					<div class="fields listview"><ul>
+						<li>
+							<label for="title">Title</label>
+							<fieldset><input type="text" name="title" id="title" placeholder="ie. Season 5" /></fieldset>
+						</li>
+						<li>
+							<label for="current">Current</label>
+							<fieldset>
+								<label 
+									for="current_no" 
+									data-player="0"
+								>No
+								</label><input 
+									type="radio" 
+									name="current" 
+									value="0" 
+									id="current_no" 
+									data-player="0" 
+								/><label 
+									for="current_yes" 
+									data-player="0"
+								>Yes
+								</label><input 
+									type="radio" 
+									name="current" 
+									value="1" 
+									id="current_yes" 
+									data-player="0" />
+							</fieldset>
+						</li>
+					</ul></div>
+				</div>
+			</section>
+			<div class="button-holder right">
+				<button type="submit" class="inline">Save</button>
+			</div>
+		</form>
+	</article>
+
+	<div id="season_admin-season-panel" class="popup center show-header">
+		<header>
+			<span class="pointer"></span>
+			<h1>Edit a Season</h1>
+			<a class="close" href="#">Close</a>
+		</header>
+		<article class="listview"></article>
+	</div>
+
+</div>
+
+<!-- MACHINE ADMIN -->
+<div class="page" data-route="admin/machines" data-title="Machine Admin | " id="machine_admin">
+
+	<header>
+		<div class="left">
+			<button class="admin" title="Open Admin Panel">
+				<span class="title">Admin</span>
+			</button>			
+			<h1 class="hdr-logo"><a href="#/index" title="home">GRPL</a></h1>
+		</div>
+		<div class="right">
+			<section class="user-area">
+				<button class="login" title="Login">
+					<span class="title">Login</span>
+				</button>
+				<button class="scoring" title="Start Scoring">
+					<span class="title">Start Scoring</span>
+				</button>
+			</section>
+		</div>
+		<div class="center">
+			<section class="machine-trigger select-trigger" data-dropdown="machine-popup">
+				<div><!-- hook for the dropdown icon -->
+					<h2>Loading</h2>
+				</div>
+			</section>
+		</div>
+	</header>
+
+	<article>
+		<form class="machine-form" autocomplete="off">
+			<section>
+				<header>
+					<h1>Edit This Machine</h1>
+				</header>
+				<div class="content">
+					<input type="hidden" name="machine_id" id="machine_id" value="" />
+					<input type="hidden" name="image" id="image" value="" />
+					<div class="fields listview"><ul>
+						<li>
+							<label for="name">Name</label>
+							<fieldset><input type="text" name="name" id="name" placeholder="ie. Adams Family, The" required /></fieldset>
+						</li>
+						<li>
+							<label for="abbv">Abbv</label>
+							<fieldset><input type="text" name="abbv" id="abbv" placeholder="ie. TAF" required /></fieldset>
+						</li>
+						<li>
+							<label for="image">Image</label>
+							<fieldset class="image"><img class="thumb" src="" /><input type="text" name="new_url" id="new_url" placeholder="url for new image" /></fieldset>
+							<p>Use the search listing image from Pinside</p>
+						</li>
+						<li>
+							<label for="note">Note</label>
+							<fieldset><input type="text" name="note" id="note" placeholder="special instructions" /></fieldset>
+						</li>
+						<li>
+							<label for="active">Active</label>
+							<fieldset>
+								<label 
+									for="active_no" 
+									data-player="0"
+								>No
+								</label><input 
+									type="radio" 
+									name="active" 
+									value="0" 
+									id="active_no" 
+									data-player="0" 
+								/><label 
+									for="active_yes" 
+									data-player="0"
+								>Yes
+								</label><input 
+									type="radio" 
+									name="active" 
+									value="1" 
+									id="active_yes" 
+									data-player="0" />
+							</fieldset>
+						</li>
+					</ul></div>
+				</div>
+			</section>
+			<div class="button-holder right">
+				<button type="submit" class="inline">Save</button>
+			</div>
+		</form>
+	</article>
+
+	<div id="machine_admin-machine-panel" class="popup center show-header">
+		<header>
+			<span class="pointer"></span>
+			<h1>Edit a Machine</h1>
+			<a class="close" href="#">Close</a>
+		</header>
+		<article class="listview"></article>
+	</div>
+
+</div>
+
 <!-- ADMIN - TIE BREAKER -->
 <div class="page" data-route="admin/tiebreaker" data-title="Tiebreaker | " id="tiebreaker" data-current-season-only>
 
@@ -865,12 +1053,40 @@
 				<h1>Users</h1>
 			</header>
 			<section class="collapsible-content">
-				<button class="admin-users blue admin">
-					<span class="title">Manage Users</span>
+				<button class="admin-users blue plus">
+					<span class="title">Add a User</span>
 				</button>
 
 				<h2>Edit a User</h2>
 				<div class="listview edit-user-list"></div>
+			</section>
+		</section>
+
+		<section class="seasons collapsible closed">
+			<header>
+				<h1>Seasons</h2>
+			</header>
+			<section class="collapsible-content">
+				<button class="new-season blue plus">
+					<span class="title">Add a Season</span>
+				</button>
+
+				<h2>Edit a Season</h2>
+				<div class="listview edit-season-list"></div>
+			</section>
+		</section>
+
+		<section class="machines collapsible closed">
+			<header>
+				<h1>Machines</h2>
+			</header>
+			<section class="collapsible-content">
+				<button class="new-machine blue plus">
+					<span class="title">Add a Machine</span>
+				</button>
+
+				<h2>Edit a Machine</h2>
+				<div class="listview edit-machine-list"></div>
 			</section>
 		</section>
 

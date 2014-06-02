@@ -17,7 +17,7 @@ $(document).ready(function(){
 		if(user.admin == true){
 			var ap = $('#admin-panel');
 
-			// add the admin night links to our admin panel
+			// LEAGUE NIGHTS
 			var nights_list = $('<ul></ul>');
 			for(i in App.league_nights){
 				var night = App.league_nights[i];
@@ -32,17 +32,58 @@ $(document).ready(function(){
 				nights_list.append('<li data-starts="'+night.starts+'"><a href="#/admin/night/'+night.starts+'"><h3>'+night.title+'</h3><p>'+night.desc+'</p></a></li>');
 			}
 			$('.nights .league-nights', ap).empty().append(nights_list);
+			
 
-			// list all of the players for editing
-			var players_list = $('<ul></ul>');
-			for(var name_key in App.players){
-				var p = App.players[name_key];
-				players_list.append('<li><a href="#/admin/users/'+name_key+'"><h3>'+p.first_name+' '+p.last_name+'</h3></a></li>');
+			// PLAYERS
+			Api.get('players.all', {
+				success: function(players){
+					var players_list = $('<ul></ul>');
+					for(var i in players){
+						var p = players[i],
+							name_key = p.name_key;
+
+						players_list.append('<li><a href="#/admin/users/'+name_key+'"><h3>'+p.first_name+' '+p.last_name+'</h3></a></li>');			
+					}
+					$('.users .edit-user-list', ap).empty().append(players_list);
+				},
+				error: function(error){
+					console.log(error);
+					alert('Sorry, we could not load the players. Please check your data connection.');
+					App.loading.hide();
+				}
+			});
+			
+
+			// SEASONS
+			var seasons_list = $('<ul></ul>');
+			for(var i in App.seasons){
+				var s = App.seasons[i],
+					cur = s.season_id == App.season_id;
+
+				seasons_list.prepend('<li><a href="#/admin/seasons/'+s.season_id+'"><h3>'+s.title+'</h3>'+(s.season_id == App.season_id ? '<p>current season</p>' : '')+'</a></li>');
 			}
-			$('.users .edit-user-list', ap).empty().append(players_list);
+			$('.seasons .edit-season-list', ap).empty().append(seasons_list);
+
+			// MACHINES
+			Api.get('machine.all', {
+				success: function(machines){
+					var machines_list = $('<ul></ul>');
+					for(var i in machines){
+						var m = machines[i];
+						machines_list.append('<li><a href="#/admin/machines/'+m.abbv+'"><h3>'+m.name+'</h3>'+(m.active==true ? '<p>active</p>' : '')+'</a></li>');
+					}
+					$('.machines .edit-machine-list', ap).empty().append(machines_list);
+				},
+				error: function(error){
+					console.log(error);
+					alert('Sorry, we could not load the machines. Please check your data connection.');
+					App.loading.hide();
+				}
+			})
 
 
-			// add any ties to the panel
+
+			// TIES
 			Api.get('leaguenight.ties', App.next_or_most_recent_night.starts, {
 				success: function(ties){
 
@@ -74,7 +115,7 @@ $(document).ready(function(){
 				},
 				error: function(error){
 					console.log(error);
-					alert('Sorry, we could not load the data. Please check your data connection.');
+					alert('Sorry, we could not load the ties. Please check your data connection.');
 					App.loading.hide();
 				}
 			});
@@ -106,13 +147,23 @@ $(document).ready(function(){
 
 			// manage user button
 			$('.admin-users', ap).click(function(){
-				window.location.hash = '/admin/users';
+				window.location.hash = '/admin/users/new';
 			});
 
 			// manage nights button
 			$('.new-league-night', ap).click(function(){
 				window.location.hash = '/admin/night/new';
 			});
+
+			// manage season button
+			$('.new-season', ap).click(function(){
+				window.location.hash = '/admin/seasons/new';
+			});
+
+			// new machine button
+			$('.new-machine', ap).click(function(){
+				window.location.hash = '/admin/machines/new';
+			});			
 
 			// hookup scoring actions
 			$('.prepare-scoring', ap).click(function(){
@@ -264,7 +315,7 @@ $(document).ready(function(){
 			
 			
 			// machine selects			
-			Api.get('machine', App.season_id, {
+			Api.get('machine.active', {
 				success: function(machines){
 					var opts = '<option></option>';
 
@@ -514,6 +565,7 @@ $(document).ready(function(){
 
 			// setup our panel
 			var player_list = $('<ul></ul>');
+			player_list.append('<li><a href="#/admin/users/new"><h2>New User</h2><p>Add a new user</p></a></li>');
 			for(name_key in App.players){
 				var p = App.players[name_key];
 				player_list.append('<li data-name_key="'+p.name_key+'"><a href="#/admin/users/'+p.name_key+'"><h2>'+p.first_name+' '+p.last_name+'</h2></a></li>');
@@ -538,11 +590,22 @@ $(document).ready(function(){
 						last_name: $('input[name="last_name"]', this).val(),
 						facebook_id: $('input[name="facebook_id"]', this).val(),
 						email: $('input[name="email"]', this).val(),
-						password: $('input[name="password"]', this).val()
+						password: $('input[name="password"]', this).val(),
+						seasons: []
 					};
+
+				$('input[name="season[]"]:checked', this).each(function(){
+					data.seasons.push($(this).val());
+				});
 
 				if(data.name_key == '')
 					data.name_key = data.first_name+data.last_name;
+
+				// make sure '' becomes null
+				for(var i in data){
+					if(data[i] == '')
+						data[i] = null;
+				}
 
 				App.loading.show();
 				Api.get('user.register', data, {
@@ -580,7 +643,6 @@ $(document).ready(function(){
 	});
 
 	$('.page[data-route="admin/users"]').on("change", function(e, name_key) {
-
 		if(name_key == undefined){
 			return true;
 		} else if($(this).data('name_key') == name_key){
@@ -589,27 +651,378 @@ $(document).ready(function(){
 			$(this).data('name_key', name_key);
 		}
 
-		var page = this,
-			user = App.players[name_key],
+		var dfd = $.Deferred(),
+			page = this,
 			form = $('form.user-form', this),
-			listview = $('.listview ul', form).empty();
+			listview = $('.listview ul', form).empty(),
+			user_dfd = $.Deferred(),
+			active_seasons = [];
 
-		$(this).attr('data-title', 'User Admin | '+user.first_name+' '+user.last_name+' | ');
+		if(name_key in App.players){
+			user_dfd.resolve(App.players[name_key]);
+		} else if(name_key == 'new'){
+			user_dfd.resolve({
+				name_key: null,
+				first_name: 'New',
+				last_name: 'User',
+				facebook_id: null,
+				email: null,
+				password: null
+			});
+		} else {
+			Api.get('players.all.namekey', name_key, {
+				success: function(player){
+					user_dfd.resolve(player);
+				},
+				error: function(err){
+					console.log(err);
+					dfd.reject({
+						title: 'Player Not Found',
+						headline: 'Couldn\'t find that player',
+						msg: 'A player could not be found for the passed in hash.',
+						btn:{
+							fn: function(){
+								window.location.hash = '/index';
+							}
+						}
+					});		
+				}
+			})
+		}
 
-		// update our fake select button
-		$('.players-trigger', this)
-			.find('h2').text(user.first_name+' '+user.last_name).end();
+		user_dfd
+		.then(function(user){
+			$(this).attr('data-title', 'User Admin | '+user.first_name+' '+user.last_name+' | ');
+
+			// update our fake select button
+			$('.players-trigger', this)
+				.find('h2').text(user.first_name+' '+user.last_name).end();
 
 
-		$('.user-form section header h1', page).text(user.first_name+' '+user.last_name);
+			$('.user-form section header h1', page).text(user.first_name+' '+user.last_name);
 
-		$('input[name="name_key"]', form).val(name_key);
-		listview.append('<li><label for="first_name">First Name</label><fieldset><input type="text" id="first_name" name="first_name" value="'+(user.first_name != null ? user.first_name : '')+'" /></fieldset></li>');
-		listview.append('<li><label for="last_name">Last Name</label><fieldset><input type="text" id="last_name" name="last_name" value="'+(user.last_name != null ? user.last_name : '')+'" /></fieldset></li>');
-		listview.append('<li><label for="facebook_id">Facebook ID</label><fieldset><input type="text" id="facebook_id" name="facebook_id" value="'+(user.facebook_id != null ? user.facebook_id : '')+'" /></fieldset><p>This will allow the user to login with Facebook</p></li>');
-		listview.append('<li><label for="email">Email</label><fieldset><input type="email" id="email" name="email" value="'+(user.email != null ? user.email : '')+'" /></fieldset></li>');
-		listview.append('<li><label for="password">Password</label><fieldset><input type="text" id="password" name="password" /></fieldset><p>DO NOT use the same password as anything important</p></li>');
+			$('input[name="name_key"]', form).val(name_key);
+			listview.append('<li><label for="first_name">First Name</label><fieldset><input type="text" id="first_name" name="first_name" value="'+(user.first_name != null ? user.first_name : '')+'" /></fieldset></li>');
+			listview.append('<li><label for="last_name">Last Name</label><fieldset><input type="text" id="last_name" name="last_name" value="'+(user.last_name != null ? user.last_name : '')+'" /></fieldset></li>');
+			listview.append('<li><label for="facebook_id">Facebook ID</label><fieldset><input type="text" id="facebook_id" name="facebook_id" value="'+(user.facebook_id != null ? user.facebook_id : '')+'" /></fieldset><p>This will allow the user to login with Facebook</p></li>');
+			listview.append('<li><label for="email">Email</label><fieldset><input type="email" id="email" name="email" value="'+(user.email != null ? user.email : '')+'" /></fieldset></li>');
+			listview.append('<li><label for="password">Password</label><fieldset><input type="text" id="password" name="password" /></fieldset><p>DO NOT use the same password as anything important</p></li>');
 
+			// get the seasons this person was active
+			Api.get('players.getSeasons', name_key, {
+				success: function(season_ids){
+					var active_seasons = '';
+					for(i in App.seasons){
+						active_seasons += '<label for="season_'+i+'" data-player_id="'+i+'">'+App.seasons[i].title+'</label>';
+						active_seasons += '<input type="checkbox" name="season[]" id="season_'+i+'" value="'+i+'" data-player_id="'+i+'" />';
+					}
+					listview.append('<li><label>Active Seasons</label><fieldset>'+active_seasons+'</fieldset>');
+
+					for(i in season_ids){
+						listview.find('input#season_'+season_ids[i]).trigger('click');
+					}
+
+					dfd.resolve(true);
+				}
+			});
+		})
+		.fail(function(err){
+			dfd.reject(err);
+		});
+
+		return dfd;
+	});
+
+	// Season Admin
+	$('.page[data-route="admin/seasons"]').on("init", function(){
+		var dfd = $.Deferred();
+
+		if( User.logged_in == false || User.admin == false ){
+			dfd.reject({
+				title: 'Admins Only',
+				headline: 'You must be an admin',
+				msg: 'This page is only accessible to the admins, please talk to them if you need help.',
+				btn:{
+					fn: function(){
+						window.location.hash = '/index';
+					}
+				}
+			});
+		} else {
+			if($(this).data('inited') == true)
+				return true;
+
+			var	page = $(this),
+				season_panel = $('#season_admin-season-panel', page);
+
+			// SEASON PANEL
+			season_panel.data('popup', new Popup(season_panel));
+			season_panel.on('click', 'li[data-season_id] a', function(){
+				season_panel.data('popup').close();
+			});
+
+			// handle clicks to the players btn to open our popup
+			$('.season-trigger', page).on('click', function(){
+				$('#season_admin-season-panel').data('popup').open();
+			}).find('h2').text('Choose a Season');
+
+			// setup our panel
+			var season_list = $('<ul></ul>');
+			for(var i in App.seasons){
+				var s = App.seasons[i];
+				season_list.prepend('<li data-season_id="'+s.season_id+'"><a href="#/admin/seasons/'+s.season_id+'"><h3>'+s.title+'</h3>'+(s.season_id == App.season_id ? '<p>current season</p>' : '')+'</a></li>');
+			}
+			season_list.prepend('<li data-starts="new"><a href="#/admin/seasons/new"><h2>New Season</h2><p>Create a new season</p></a></li>');
+
+			$('article', season_panel).empty().append(season_list);
+
+			// FORM SUBMISSION
+			$('form.season-form', page).on('submit', function(){
+				App.loading.show();
+
+				var	form = $(this),
+					data = {
+						season_id: form.find('input[name="season_id"]').val(),
+						title: form.find('input[name="title"]').val(),
+						current: form.find('input[name="current"]:checked').val()
+					};
+
+				if(data.current == undefined)
+					data.current = 0;
+				
+				Api.post('season.update', data, {
+					success: function(d){
+						window.location.hash = '/index';
+						App.loading.hide();
+					}
+				});
+
+				return false;
+			});
+
+
+
+			dfd.resolve();
+			$(this).data('inited', true);
+		}
+
+		return dfd;
+	});
+
+	$('.page[data-route="admin/seasons"]').on("change", function(e, season_id){
+		if(season_id == undefined){
+			return true;
+		} else if($(this).data('season_id') == season_id){
+			return true;
+		} else {
+			$(this).data('season_id', season_id);
+		}
+
+		var dfd = $.Deferred();
+			page = this,
+			form = $('form.season-form', this),
+			season = null;
+
+		if(season_id == 'new'){
+			// new season
+			season = {
+				season_id: null,
+				title: 'New Season',
+				current: false
+			};
+			
+		} else if(season_id in App.seasons){
+			// known season
+			season = App.seasons[season_id];
+			if(App.seasons[season_id].season_id == App.season_id)
+				season.current = true;
+			else
+				season.current = false;
+
+		} else {
+			// not found
+			dfd.reject({
+				title: 'Season Not Found',
+				headline: 'Couldn\'t find that season',
+				msg: 'A season could not be found for the passed in hash.',
+				btn:{
+					fn: function(){
+						window.location.hash = '/index';
+					}
+				}
+			});
+			return dfd;
+		}
+
+		$(this).attr('data-title', 'Season Admin | '+season.title+' | ');
+		$('.season-trigger', this)
+			.find('h2').text(season.title).end();
+		$('.season-form section header h1', page).text('Edit '+season.title);
+
+		// general night info
+		form
+			.find('input[name="season_id"]').val(season.season_id).end()
+			.find('input[name="title"]').val(season.title).end()
+			.find('label[for="current_'+(season.current ? 'yes' : 'no')+'"]').trigger('click').end();
+
+		dfd.resolve();
+		dfd;
+	});
+
+	// Machine Admin
+	$('.page[data-route="admin/machines"]').on("init", function(){
+		var dfd = $.Deferred();
+
+		if( User.logged_in == false || User.admin == false ){
+			dfd.reject({
+				title: 'Admins Only',
+				headline: 'You must be an admin',
+				msg: 'This page is only accessible to the admins, please talk to them if you need help.',
+				btn:{
+					fn: function(){
+						window.location.hash = '/index';
+					}
+				}
+			});
+		} else {
+			if($(this).data('inited') == true)
+				return true;
+
+			var	page = $(this),
+				machine_panel = $('#machine_admin-machine-panel', page);
+
+			// MACHINE PANEL
+			machine_panel.data('popup', new Popup(machine_panel));
+			machine_panel.on('click', 'li[data-machine_id] a', function(){
+				machine_panel.data('popup').close();
+			});
+
+			// handle clicks to the machine btn to open our popup
+			$('.machine-trigger', page).on('click', function(){
+				$('#machine_admin-machine-panel').data('popup').open();
+			}).find('h2').text('Choose a Machine');
+
+			Api.get('machine.all', {
+				success: function(machines){
+					var machines_list = $('<ul></ul>');
+					for(var i in machines){
+						var m = machines[i];
+						machines_list.append('<li data-machine_id="'+m.machine_id+'"><a href="#/admin/machines/'+m.abbv+'"><h3>'+m.name+'</h3>'+(m.active == true ? '<p>active</p>' : '')+'</a></li>');
+					}
+					machines_list.prepend('<li data-machine_id="new"><a href="#/admin/machines/new"><h2>New Machine</h2><p>Add a new machine</p></a></li>');
+					$('article', machine_panel).empty().append(machines_list);
+
+					dfd.resolve(true);
+				},
+				error: function(err){
+					dfd.reject(err);
+				}
+			});
+
+			// FORM SUBMISSION
+			$('form.machine-form', page).on('submit', function(){
+				App.loading.show();
+
+				var	form = $(this),
+					data = {
+						machine_id: form.find('input[name="machine_id"]').val(),
+						image: form.find('input[name="image"]').val(),
+						name: form.find('input[name="name"]').val(),
+						abbv: form.find('input[name="abbv"]').val(),						
+						new_url: form.find('input[name="new_url"]').val(),
+						note: form.find('input[name="note"]').val(),
+						active: form.find('input[name="active"]:checked').val()
+					};
+
+				
+				Api.post('machine.update', data, {
+					success: function(d){
+						window.location.hash = '/index';
+						App.loading.hide();
+					},
+					error: function(err){
+						console.log(err);
+					}
+				});
+
+				return false;
+			});
+
+			$(this).data('inited', true);
+		}
+
+		return dfd;
+	});
+
+	$('.page[data-route="admin/machines"]').on("change", function(e, abbv){
+		if(abbv == undefined){
+			return true;
+		} else if($(this).data('abbv') == abbv){
+			return true;
+		} else {
+			$(this).data('abbv', abbv);
+		}
+
+		var dfd = $.Deferred();
+			page = this,
+			form = $('form.machine-form', this),
+			machine_dfd = $.Deferred();
+
+		if(abbv == 'new'){
+			// new machine
+			machine_dfd.resolve({
+				machine_id: null,
+				name: null,
+				abbv: null,
+				image: null,
+				note: null,
+				active:null
+			});
+		} else {
+			Api.get('machine.abbv', abbv, {
+				success: function(machine){
+					machine_dfd.resolve(machine);
+				},
+				error: function(err){
+					console.log(err);
+					machine_dfd.reject({
+						title: 'Machine Not Found',
+						headline: 'Couldn\'t find that machine',
+						msg: 'A machine could not be found for the passed in hash.',
+						btn:{
+							fn: function(){
+								window.location.hash = '/index';
+							}
+						}
+					});
+				}
+			});
+		}
+
+		machine_dfd
+		.then(function(machine){
+			$(this).attr('data-title', 'Machine Admin | '+machine.name+' | ');
+			$('.machine-trigger', this)
+				.find('h2').text(machine.name).end();
+			$('.machine-form section header h1', page).text('Edit '+machine.name);
+
+			// general machine info
+			form
+				.find('input[name="machine_id"]').val(machine.machine_id).end()
+				.find('input[name="image"]').val(machine.image).end()
+				.find('input[name="name"]').val(machine.name).end()
+				.find('input[name="abbv"]').val(machine.abbv).end()
+				.find('img.thumb').attr('src', machine.image).end()
+				.find('input[name="note"]').val(machine.note).end()
+				.find('label[for="active_'+(machine.active ? 'yes' : 'no')+'"]').trigger('click').end();
+
+			dfd.resolve(true);
+		})
+		.fail(function(err){
+			dfd.reject(err);
+		});
+
+		return dfd;
 	});
 
 

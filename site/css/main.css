@@ -28,6 +28,7 @@ textarea{
   position:relative;
   width:100%;  
   display:none;
+  z-index:2;
 }
 .page:first-child{
   display:block;
@@ -632,6 +633,7 @@ body.loading{
   width:100%;
   height:100%;
   background:rgba(0,0,0,.5);
+  z-index:10;
 }
 /*
   #overlay.show-header{

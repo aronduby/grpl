@@ -32,6 +32,20 @@ $(document).ready(function(){
 		});
 	});
 
+	Socket.add('season_updated', function(season){
+		dialog({
+			title: 'New Data Recieved',
+			headline: '"' + season.title + '" Has Been Updated',
+			msg: season.title + ' has been edited, that means what you see may now be out of date until you refresh. Press <strong>OK to refresh</strong> and get the latest info or cancel to contiue without refreshing',
+			btn:{ 
+				fn: function(){
+					App.loading.show();
+					window.location.reload();
+				}
+			}
+		});
+	})
+
 	$('.page[data-route="index"]').on("init", function() {
 		if($(this).data('inited') == true)
 			return true;
@@ -91,14 +105,16 @@ $(document).ready(function(){
 			$('button#randomizer').triggerHandler('click');
 		});
 		$('button#randomizer').on('click', function(){
-			var machine = App.randomMachine(),
-				order = ['1','2','3','4'];
-			$('#random-panel')
-				.find('img').attr('src', machine.image).end()
-				.find('h3').text(machine.name).end()
-				.find('p').text(machine.abbv).end()
-				.find('.order span').text( order.sort(function() { return 0.5 - Math.random() }).join(', ') ).end()
-				.data('popup').open();
+			App.randomMachine()
+			.then(function(machine){
+				var order = ['1','2','3','4'];
+				$('#random-panel')
+					.find('img').attr('src', machine.image).end()
+					.find('h3').text(machine.name).end()
+					.find('p').text(machine.abbv).end()
+					.find('.order span').text( order.sort(function() { return 0.5 - Math.random() }).join(', ') ).end()
+					.data('popup').open();
+			});
 		});
 
 		$(this).data('inited', true);
@@ -216,7 +232,7 @@ $(document).ready(function(){
 						}
 
 						group_holder.append(
-							'<li data-name_key="'+p.name_key+'" data-pre_total="'+pre_total+'" data-scoring_string="'+p.scoring_string+'" '+(User.logged_in==true && User.name_key == p.name_key ? 'class="user" ' : '')+'>' +
+							'<li data-name_key="'+p.name_key+'" data-pre_total="'+pre_total+'" data-scoring_string="'+p.scoring_string+'" '+(User.logged_in==true && User.name_key == p.name_key ? 'class="user starred" ' : '')+'>' +
 								'<a href="#/players/'+p.name_key+'" title="view player info">' +
 									'<h3>' +
 										p.first_name+' '+p.last_name +

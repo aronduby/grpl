@@ -6,120 +6,122 @@ var App = {
 	active_season_id: 4,
 	next_or_most_recent_night: null,
 	machines: [],
+	seasons: {},
 	ready: $.Deferred(), // triggered once we have all of our needed info loaded
 
 	init: function(){
 
 		this.loading.show();
 
-		// grab all of the league nights
-		var lnl = Api.get('leaguenight', {
-			success: function(nights){
-				var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-					today = new Date();
+		Api.get('getSeason', {
+			success: function(d){
+				App.season_id = d.current;
+				App.active_season_id = d.active;
 
-				today.setHours(0);
-				today.setMinutes(0);
-				today.setSeconds(0);
-				today.setMilliseconds(0);
+				if(App.active_season_id != App.season_id){
+					$('#season-notifier')
+						.find('span.active').text(App.active_season_id).end()
+						.find('span.current').text(App.season_id).end()
+						.slideDown();
+				} else {
+					$('#season-notifier').slideUp();
+				}
+			},
+			error: function(jqXHR, status, error){
+				console.log(status, error);
+				alert('Sorry, we could not load the data. Please check your data connection.');
+			},
+			complete: function(){
+				// App.loading.hide();
+			}
+		})
+		.then(function(){
+			// grab all of the seasons
+			var sga = Api.get('season.getAll', {
+				success: function(seasons){
+					for(var i in seasons){
+						App.seasons[seasons[i].season_id] = seasons[i];
+					}
+				}
+			});
 
-				for(i in nights){
-					var night = nights[i],
-						desc = '';
+			// grab all of the league nights
+			var lnl = Api.get('leaguenight', {
+				success: function(nights){
+					var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+						today = new Date();
 
-					if(night.starts == 'totals'){
-						night.desc = 'Running Total for the Season';
-						night.date_obj = false;
-					} else {
-						var starts = new Date(night.starts+'T00:00:00-05:00');
-						night.desc = months[starts.getUTCMonth()] + ' ' + starts.getUTCDate().cardinal() + ', ' + starts.getUTCFullYear();
-						night.date_obj = starts;
+					today.setHours(0);
+					today.setMinutes(0);
+					today.setSeconds(0);
+					today.setMilliseconds(0);
 
-						// if its today add the start scoring button to the admin panel
-						var is_today = (
-							starts.getMonth() == today.getMonth()
-							&& starts.getDate() == today.getDate()
-							&& starts.getFullYear() == today.getFullYear()
-						);
-						if(is_today == true){
-							night.today = true;
-							App.next_or_most_recent_night = night;
+					for(i in nights){
+						var night = nights[i],
+							desc = '';
+
+						if(night.starts == 'totals'){
+							night.desc = 'Running Total for the Season';
+							night.date_obj = false;
 						} else {
-							night.today = false;
-							if(App.next_or_most_recent_night == undefined || starts.getTime() > today.getTime())
+							var starts = new Date(night.starts+'T00:00:00-05:00');
+							night.desc = months[starts.getUTCMonth()] + ' ' + starts.getUTCDate().cardinal() + ', ' + starts.getUTCFullYear();
+							night.date_obj = starts;
+
+							// if its today add the start scoring button to the admin panel
+							var is_today = (
+								starts.getMonth() == today.getMonth()
+								&& starts.getDate() == today.getDate()
+								&& starts.getFullYear() == today.getFullYear()
+							);
+							if(is_today == true){
+								night.today = true;
 								App.next_or_most_recent_night = night;
+							} else {
+								night.today = false;
+								if(App.next_or_most_recent_night == undefined || starts.getTime() > today.getTime())
+									App.next_or_most_recent_night = night;
+							}
 						}
+						App.league_nights[night.starts] = night;
 					}
 
-					App.league_nights[night.starts] = night;
-				}
-			},
-			error: function(jqXHR, status, error){
-				console.log(status, error);
-				alert('Sorry, we could not load the data. Please check your data connection.');
-			},
-			complete: function(){
-				// App.loading.hide();
-			}
-		});
-
-		// grab all of our players
-		// get all of our players info
-		var pl = Api.get('players', this.season_id, {
-			success: function(players){
-				for(i in players){
-					App.players[players[i].name_key] = players[i];
-				}
-			},
-			error: function(jqXHR, status, error){
-				console.log(status, error);
-				alert('Sorry, we could not load the data. Please check your data connection.');
-			},
-			complete: function(){
-				// App.loading.hide();
-			}
-		});
-
-		// get the socket's active season_id
-		var gs = Api.get('getSeason', {
-			success: function(sid){
-				if(sid==undefined)
-					sid = App.season_id;
-
-				if(App.active_season_id != sid){
-					App.active_season_id = sid;
-					if(App.active_season_id != App.season_id){
-						$('#season-notifier')
-							.find('span.active').text(App.active_season_id).end()
-							.find('span.current').text(App.season_id).end()
-							.slideDown();
-					} else {
-						$('#season-notifier').slideUp();
+					// no nights, only totals
+					if(App.next_or_most_recent_night == undefined){
+						App.next_or_most_recent_night = App.league_nights['totals'];
 					}
-				}	
-			},
-			error: function(jqXHR, status, error){
-				console.log(status, error);
-				alert('Sorry, we could not load the data. Please check your data connection.');
-			}
-		});
-		
-		// get the machines for this season
-		var m = Api.get('machine', this.season_id, {
-			success: function(machines){
-				App.machines = machines;
-			},
-			error: function(jqXHR, status, error){
-				console.log(status, error);
-				alert('Sorry, we could not load the data. Please check your data connection.');
-			},
-			complete: function(){
-				// App.loading.hide();
-			}
-		});
+				},
+				error: function(jqXHR, status, error){
+					console.log(status, error);
+					alert('Sorry, we could not load the data. Please check your data connection.');
+				},
+				complete: function(){
+					// App.loading.hide();
+				}
+			});
 
-		$.when( lnl, pl, gs, m ).then(function(){
-			App.ready.resolve(); 
+			// grab all of our players
+			// get all of our players info
+			var pl = Api.get('players', App.season_id, {
+				success: function(players){
+					for(i in players){
+						App.players[players[i].name_key] = players[i];
+					}
+				},
+				error: function(jqXHR, status, error){
+					console.log(status, error);
+					alert('Sorry, we could not load the data. Please check your data connection.');
+				},
+				complete: function(){
+					// App.loading.hide();
+				}
+			});
+
+			$.when( sga, lnl, pl ).then(function(){
+				App.ready.resolve(); 
+			});
+
+
 		});
 
 		return this.ready.promise();
@@ -138,7 +140,27 @@ var App = {
 	},
 
 	randomMachine: function(){
-		return this.machines[Math.floor(Math.random()*(this.machines.length))];
+		var dfd = $.Deferred();
+
+		if(this.machines.length == 0){
+			App.loading.show();
+
+			Api.get('machine.active', {
+				success: function(machines){
+					App.machines = machines;
+					dfd.resolve(App.machines[Math.floor(Math.random()*(App.machines.length))]);
+					App.loading.hide();
+				},
+				error: function(err){
+					console.log(err);
+					dfd.reject(err);
+				}
+			});
+		} else {
+			dfd.resolve(this.machines[Math.floor(Math.random()*(this.machines.length))]);
+		}
+
+		return dfd;
 	},
 
 	// handle the loading animation
@@ -264,7 +286,7 @@ var router,
 				}
 			},
 			'/tiebreaker':{
-				'/([a-zA-z]+)': {
+				'/([a-zA-Z]+)': {
 					on: function(name_key, next){
 						$.when( route_change('admin/tiebreaker', name_key) ).then(next);	
 					}
@@ -277,6 +299,20 @@ var router,
 				'/(new|[\\d-]+)': {
 					on: function(starts, next){
 						$.when( route_change('admin/night', starts) ).then(next);
+					}
+				}
+			},
+			'/seasons':{
+				'/(new|\\d+)': {
+					on: function(season_id, next){
+						$.when( route_change('admin/seasons', season_id) ).then(next);
+					}
+				}
+			},
+			'/machines':{
+				'/([a-zA-Z\\d]+)': {
+					on: function(abbv, next){
+						$.when( route_change('admin/machines', abbv) ).then(next);
 					}
 				}
 			}
@@ -316,6 +352,20 @@ $(document).ready(function() {
 		} else {
 			router.init('/home');
 		}
+
+		// Season Changer
+		var select = $('#season-changer-select');
+		for(var i in App.seasons){
+			select.prepend('<option value="'+App.seasons[i].season_id+'" '+(App.seasons[i].season_id==App.active_season_id?'selected="selected"':'')+'">'+App.seasons[i].title+(App.seasons[i].season_id==App.season_id?' - Current':'')+'</option>');
+		}
+		select.on('change', function(){
+			App.changeSeason($(this).val());
+			return false;
+		});
+		$('#season-notifier button').on('click', function(){
+			App.changeSeason(App.season_id);
+			return false;
+		});
 	});
 
 
@@ -351,25 +401,6 @@ $(document).ready(function() {
 	// when an abbv is clicked do an alert
 	$('body').on('click', 'abbv[title]', function(){
 		alert($(this).text()+': '+$(this).attr('title'));
-	});
-
-	// SEASON CHANGER
-	// get all of the seasons
-	Api.get('season.getAll', {
-		success: function(seasons){
-			var select = $('#season-changer-select');
-			for(var i in seasons){
-				select.prepend('<option value="'+seasons[i].season_id+'" '+(seasons[i].season_id==App.active_season_id?'selected="selected"':'')+'">'+seasons[i].title+(seasons[i].season_id==App.season_id?' - Current':'')+'</option>');
-			}
-			select.on('change', function(){
-				App.changeSeason($(this).val());
-				return false;
-			})
-		}
-	});
-	$('#season-notifier button').on('click', function(){
-		App.changeSeason(App.season_id);
-		return false;
 	});
 
 
