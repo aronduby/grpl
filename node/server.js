@@ -594,7 +594,16 @@ if (cluster.isMaster) {
 
 					if(data.new_url.length){
 						var u = 'layout_imgs/machines/'+data.abbv+'.jpg';
-						download(data.new_url, '../site/'+u, function(){ d.resolve(u); }, function(err){ d.reject(err); } );
+						download(
+							data.new_url, 
+							'../site/'+u, 
+							function(){ 
+								d.resolve(u); 
+							}, 
+							function(err){ 
+								d.reject(err); 
+							}
+						);
 					} else {
 						d.resolve(data.image);
 					}
