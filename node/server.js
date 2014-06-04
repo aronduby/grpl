@@ -480,18 +480,14 @@ if (cluster.isMaster) {
 				if(err || socket_season_id == null)
 					socket_season_id = season_id;
 
-				Q.all([
-					grpl.playerlist.getRankings(socket_season_id)
-				])
-				.spread(function(player_list){//, machine_list){
+				grpl.division.getForSeason(socket_season_id)
+				.then(function(divisions){
 					var night = new grpl.leaguenight.LeagueNight({
 						starts: 'totals',
 						night_id: 'totals',
 						title: 'Totals to Date',				
 						note: '',
-						players: player_list.players,
-						machines: [], // machine_list,
-						machines_note: 'no machines for totals' //'Machines Played Less Than Twice'
+						divisions: divisions
 					});
 					cb(null, night);
 				})
@@ -502,24 +498,6 @@ if (cluster.isMaster) {
 			
 		});
 
-		// get all the players and the current rankings
-		socket.on('leaguenight.totals.players', function(cb){
-			socket.get('season_id', function(err, socket_season_id){
-				if(err || socket_season_id == null)
-					socket_season_id = season_id;
-
-				grpl.playerlist.getRankings(socket_season_id)
-				.then(function(player_list){
-					cb(null, player_list.players);
-				}).fail(function(err){ cb(err); }).done();
-			});
-			
-		});
-
-		socket.on('leaguenight.totals.machines', function(cb){
-			cb(null, []);
-		});
-
 		// information for a specific league night
 		socket.on('leaguenight.starts', function(starts, cb){
 			socket.get('season_id', function(err, socket_season_id){
@@ -528,23 +506,11 @@ if (cluster.isMaster) {
 
 				grpl.leaguenight.getByStarts(starts)
 				.then(function(night){
-					var promises = [];
+					var use_rankings = (new Date(night.starts).getTime() <= new Date().getTime());
 					
-					// get player points
-					if(new Date(night.starts).getTime() <= new Date().getTime()){
-						promises.push( grpl.playerlist.getPointsForNight(socket_season_id, starts) );
-					} else {
-						promises.push( grpl.playerlist.getRankings(socket_season_id, starts) );
-					}
-
-					// get machines
-					promises.push( grpl.machine.getForLeagueNight(starts) );
-
-					// wait for both machines and players to be done
-					Q.all(promises)
-					.spread(function( player_list, machine_list){
-						night.players = player_list.players;
-						night.machines = machine_list;
+					grpl.division.getPointsForNight(socket_season_id, starts, use_rankings)
+					.then(function( divisions ){
+						night.divisions = divisions;
 						cb(null, night);
 
 					}).fail(function(err){ 
@@ -557,33 +523,14 @@ if (cluster.isMaster) {
 				
 		});
 
-		// get players and rankings for a specific night
-		socket.on('leaguenight.starts.players', function(starts, cb){
-			socket.get('season_id', function(err, socket_season_id){
-				if(err || socket_season_id == null)
-					socket_season_id = season_id;
 
-				var promise;
-				if(new Date(night.starts).getTime() <= new Date().getTime()){
-					promise =  grpl.playerlist.getPointsForNight(socket_season_id, starts);
-				} else {
-					promise = grpl.playerlist.getRankings(socket_season_id, starts);
-				}
-
-				promise
-				.then(function(player_list){
-					cb(null, player_list.players);
-				}).fail(function(err){ cb(err); }).done();
-			});
-				
-		});
-
-		socket.on('leaguenight.starts.machines', function(starts, cb){
-			grpl.machine.getForLeagueNight(starts)
-			.then(function(machines){
-				cb(null, machines);
+		socket.on('division.getForSeason', function(season_id, cb){
+			grpl.division.getForSeason(season_id)
+			.then(function(divisions){
+				cb(null, divisions);
 			}).fail(function(err){ cb(err); }).done();
 		});
+
 
 		socket.on('machine', function(season_id, cb){
 			socket.get('season_id', function(err, socket_season_id){

@@ -159,7 +159,6 @@ $(document).ready(function(){
 
 		var page = this;
 		
-
 		// update our fake select button
 		$('.nights-trigger', this)
 			.find('h2').text(App.league_nights[hash].title).end()
@@ -173,100 +172,121 @@ $(document).ready(function(){
 		} else {
 			method += 'starts';
 		}
+
 		var dfd = Api.get(method, arg, {
 			success: function(night){
-				// MACHINES
-				if(night.machines.length > 0){
-					var machine_list = $('<ul></ul>');
-					for(i in night.machines){
-						var machine = night.machines[i];
-						machine_list.append('<li><img src="'+machine.image+'" /><h3>'+machine.name+'</h3><p>'+machine.abbv+'</p></li>');
-					}
-					$('.machine-holder .listview', page).empty().append(machine_list);
-					if(night.machines_note){
-						$('<h2>'+night.machines_note+'</h2>').insertBefore(machine_list);
-					}
+				// DIVISIONS
+				var cloner = $('.division.hidden', page);
 
+				if(night.divisions.length <= 1){
+					cloner.addClass('single');
 				} else {
-					$('.machine-holder .listview', page).html('<p>no machines selected for this week</p>');
+					cloner.removeClass('single');
 				}
+				
+				$('.division:not(.hidden)', page).remove();
+				$.each(night.divisions, function(){
+					var el = cloner.clone(true),
+						division = this;
 
-				// PLAYERS
-				if(night.players.length){
-					var player_holder = $('.player-holder .listview', page).empty(),
-						group_holder = $('<ul></ul>'),
-						j = 0;
-					for(i in night.players){
-						if(j%4 == 0 && j != 0){
-							player_holder.append(group_holder);
-							group_holder = $('<ul></ul>');
+					// update the division title
+					el.find('> header h1').text(division.title);
+
+					// MACHINES
+					if(division.machines.length > 0){
+						var machine_list = $('<ul></ul>');
+						for(i in division.machines){
+							var machine = division.machines[i];
+							machine_list.append('<li><img src="'+machine.image+'" /><h3>'+machine.name+'</h3><p>'+machine.abbv+'</p></li>');
+						}
+						$('.machine-holder .listview', el).empty().append(machine_list);
+						if(division.machines_note){
+							$('<h2>'+division.machines_note+'</h2>').insertBefore(machine_list);
 						}
 
-						var p = night.players[i],
-							machine_points = false;
+					} else {
+						$('.machine-holder .listview', el).html('<p>no machines selected for this week</p>');
+					}
 
-						// if scoring has started and it's the same night override the machine with the data from scoring
-						if(Scoring.started == true && Scoring.starts == night.starts){
-							var scoring_player = Scoring.players[ Scoring.name_key_to_index[p.name_key] ];
-							p.machines = scoring_player.machines;
-							p.night_score = scoring_player.night_score ? scoring_player.night_score : '';
-						}
-
-						// machine places
-						if(p.machines != undefined){
-							machine_points = $('<div></div>');
-							for(abbv in p.machines){
-								machine_points.append('<span class="player-machine" data-abbv="'+abbv+'">' +
-									'<span class="abbv">'+abbv+'</span>' +
-									'<span class="machine-points">'+(p.machines[abbv]!='' ? p.machines[abbv] : '-')+'</span>' +
-								'</span>');
+					// PLAYERS
+					if(division.player_list.players.length){
+						var player_holder = $('.player-holder .listview', el).empty(),
+							group_holder = $('<ul></ul>'),
+							j = 0;
+						for(i in division.player_list.players){
+							if(j%4 == 0 && j != 0){
+								player_holder.append(group_holder);
+								group_holder = $('<ul></ul>');
 							}
+
+							var p = division.player_list.players[i],
+								machine_points = false;
+
+							// if scoring has started and it's the same night override the machine with the data from scoring
+							if(Scoring.started == true && Scoring.starts == night.starts){
+								var scoring_player = Scoring.players[ Scoring.name_key_to_index[p.name_key] ];
+								p.machines = scoring_player.machines;
+								p.night_score = scoring_player.night_score ? scoring_player.night_score : '';
+							}
+
+							// machine places
+							if(p.machines != undefined){
+								machine_points = $('<div></div>');
+								for(abbv in p.machines){
+									machine_points.append('<span class="player-machine" data-abbv="'+abbv+'">' +
+										'<span class="abbv">'+abbv+'</span>' +
+										'<span class="machine-points">'+(p.machines[abbv]!='' ? p.machines[abbv] : '-')+'</span>' +
+									'</span>');
+								}
+							}
+
+							var score = [p.score],
+								pre_total = p.score;
+
+							if(p.night_score != undefined){
+								score[0] = Number(score[0]) + Number(p.night_score);
+								score.unshift(p.night_score);						
+							}
+
+							group_holder.append(
+								'<li data-name_key="'+p.name_key+'" data-pre_total="'+pre_total+'" data-scoring_string="'+p.scoring_string+'" '+(User.logged_in==true && User.name_key == p.name_key ? 'class="user starred" ' : '')+'>' +
+									'<a href="#/players/'+p.name_key+'" title="view player info">' +
+										'<h3>' +
+											p.first_name+' '+p.last_name +
+											(night.subs!=undefined && night.subs[p.name_key] != undefined ? '<span class="sub" title="sub">'+night.subs[p.name_key].sub+'</span>' : '') +
+										'</h3>' +
+										(machine_points != false ? '<p class="player-points">'+machine_points.html()+'</p>' : '' ) +
+										'<span class="score right '+(score.length>1 ? 'double' : '')+'"><span>'+score.join('</span><span>')+'</span></span>' +
+									'</a>' + 
+								'</li>');
+
+							j++;
 						}
+						player_holder.append(group_holder);
 
-						var score = [p.score],
-							pre_total = p.score;
+						// add our tied class to the proper people
+						var tied_count = 0;
+						player_holder.find('li').filter(function(index){
+							if($(this).attr('data-tied_count')!=undefined)
+								return true;
 
-						if(p.night_score != undefined){
-							score[0] = Number(score[0]) + Number(p.night_score);
-							score.unshift(p.night_score);						
-						}
+							var sstr = $(this).attr('data-scoring_string');
+							if(sstr == 'undefined')
+								return false;
 
-						group_holder.append(
-							'<li data-name_key="'+p.name_key+'" data-pre_total="'+pre_total+'" data-scoring_string="'+p.scoring_string+'" '+(User.logged_in==true && User.name_key == p.name_key ? 'class="user starred" ' : '')+'>' +
-								'<a href="#/players/'+p.name_key+'" title="view player info">' +
-									'<h3>' +
-										p.first_name+' '+p.last_name +
-										(night.subs!=undefined && night.subs[p.name_key] != undefined ? '<span class="sub" title="sub">'+night.subs[p.name_key].sub+'</span>' : '') +
-									'</h3>' +
-									(machine_points != false ? '<p class="player-points">'+machine_points.html()+'</p>' : '' ) +
-									'<span class="score right '+(score.length>1 ? 'double' : '')+'"><span>'+score.join('</span><span>')+'</span></span>' +
-								'</a>' + 
-							'</li>');
-
-						j++;
-					}
-					player_holder.append(group_holder);
-
-					// add our tied class to the proper people
-					var tied_count = 0;
-					player_holder.find('li').filter(function(index){
-						if($(this).attr('data-tied_count')!=undefined)
-							return true;
-
-						var sstr = $(this).attr('data-scoring_string');
-						if(sstr == 'undefined')
+							var tied = $('li[data-scoring_string="'+sstr+'"]', player_holder);
+							if(tied.length > 1){
+								tied.attr('data-tied_count', ++tied_count%2==1?'odd':'even');
+								return true;
+							}
 							return false;
+						}).addClass('tied');
+					} else {
+						$('.player-holder .listview', page).html('<p>No player scores have been posted yet. Check back after the first week</p>');
+					}
 
-						var tied = $('li[data-scoring_string="'+sstr+'"]', player_holder);
-						if(tied.length > 1){
-							tied.attr('data-tied_count', ++tied_count%2==1?'odd':'even');
-							return true;
-						}
-						return false;
-					}).addClass('tied');
-				} else {
-					$('.player-holder .listview', page).html('<p>No player scores have been posted yet. Check back after the first week</p>');
-				}
+					el.removeClass('hidden').insertBefore(cloner);
+				});// end division loop
 
 				// NOTES
 				$('.notes', page).html(night.note);
