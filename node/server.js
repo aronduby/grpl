@@ -365,36 +365,27 @@ if (cluster.isMaster) {
 
 						// save the divisions and then do the division checks
 						var promises = [];
-						for(var i in data.divisions){
-							var dd = data.divisions[i],
-								d = new grpl.division.Division(dd),
-								p = d.save();
-
-							promises.push(p);
-						}
-						/*
 						data.divisions.forEach(function(dd){
 							var d = new grpl.division.Division(dd),
 								p = d.save();
 							promises.push(p);
 						});
-						*/
 
 						Q.all(promises)
 						.then(function(){
 							grpl.division.checkCapsForSeason(season.season_id)
 							.then(function(r){
-								console.log(r);
-								cb(null, 'wtf');
+								cb(null, r);
 								io.sockets.emit('season_updated', season);		
 							})
 							.fail(function(err){
 								cb(err);
 							}).done();
 
-						}, function(err){
+						})
+						.fail(function(err){
 							cb(err);
-						});
+						}).done();
 						
 						
 					}).catch(function(err){
