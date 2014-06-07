@@ -338,7 +338,6 @@ $(document).ready(function(){
 			$('select[name="player"]', page).html(player_opts);
 			$('#sublist', page).on('click', '.remove', function(){
 				$(this).parents('li:eq(0)').remove();
-
 				return false;
 			});
 
@@ -776,6 +775,26 @@ $(document).ready(function(){
 
 			$('article', season_panel).empty().append(season_list);
 
+			// DIVISIONS
+			$('#divisionlist', page).on('click', '.remove', function(){
+				$(this).parents('li:eq(0)').remove();
+				return false;
+			});
+			$('form.season-form', page).on('addDivision', function(e, division){
+				var c = $(this).find('#divisionlist li.copy').clone();
+
+				c.find('input[name="division_id"]').val(division.division_id);
+				c.find('input[name="title"]').val(division.title);
+				c.find('input[name="cap"]').val(division.cap);
+
+				c.removeClass('hidden copy');
+				c.appendTo('#divisionlist ul');
+			});
+			$('form.season-form', page).on('click', '.add-division', function(){
+				$(this).trigger('addDivision', {});
+				return false;
+			});
+
 			// FORM SUBMISSION
 			$('form.season-form', page).on('submit', function(){
 				App.loading.show();
@@ -789,18 +808,54 @@ $(document).ready(function(){
 
 				if(data.current == undefined)
 					data.current = 0;
+
+				// add our divisions
+				// check to make sure theres at least 1 division
+				var divisions = [];
+				form.find('#divisionlist li').not('.copy').each(function(i){
+					var d = {
+						division_id: $(this).find('input[name="division_id"]').val(),
+						season_id: data.season_id,
+						title: $(this).find('input[name="title"]').val(),
+						cap: $(this).find('input[name="cap"]').val(),
+						display_order: i
+					};
+
+					$.each(['division_id', 'season_id', 'cap'], function(){
+						if(d[this] == ''){
+							d[this] = null;
+						} else {
+							d[this] = Number(d[this]);
+						}
+					});
+					divisions.push(d);
+				});
+
+				if(divisions.length < 1){
+					App.loading.hide();
+					dialog({
+						title: 'Oops...',
+						headline: 'Add a Division',
+						msg: 'You have to have at least 1 division per season for things to work',
+					});
+					return false;
+				}
+
+				data.divisions = divisions;
 				
 				Api.post('season.update', data, {
 					success: function(d){
 						window.location.hash = '/index';
 						App.loading.hide();
+					},
+					error: function(err){
+						App.loading.hide();
+						dialog(err);
 					}
 				});
 
 				return false;
 			});
-
-
 
 			dfd.resolve();
 			$(this).data('inited', true);
@@ -828,8 +883,10 @@ $(document).ready(function(){
 			season = {
 				season_id: null,
 				title: 'New Season',
-				current: false
+				current: false,
+				divisions: []
 			};
+			dfd.resolve();
 			
 		} else if(season_id in App.seasons){
 			// known season
@@ -838,6 +895,24 @@ $(document).ready(function(){
 				season.current = true;
 			else
 				season.current = false;
+
+			// load the divisions
+			form.find('#divisionlist li').not('.copy').remove();
+			Api.get('division.getForSeasonNoPlayers', season_id, {
+				success: function(divisions){
+					i = false;
+					for(i in divisions){
+						form.triggerHandler('addDivision', divisions[i]);
+					}
+					if(i === false)
+						form.triggerHandler('addDivision', {});
+
+					dfd.resolve();
+				},
+				error: function(err){
+					dfd.reject(err);
+				}
+			});
 
 		} else {
 			// not found
@@ -865,8 +940,7 @@ $(document).ready(function(){
 			.find('input[name="title"]').val(season.title).end()
 			.find('label[for="current_'+(season.current ? 'yes' : 'no')+'"]').trigger('click').end();
 
-		dfd.resolve();
-		dfd;
+		return dfd;
 	});
 
 	// Machine Admin

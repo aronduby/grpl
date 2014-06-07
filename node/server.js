@@ -362,10 +362,42 @@ if (cluster.isMaster) {
 					.then(function(){
 						if(season.current == true)
 							season_id = season.season_id;
+
+						// save the divisions and then do the division checks
+						var promises = [];
+						for(var i in data.divisions){
+							var dd = data.divisions[i],
+								d = new grpl.division.Division(dd),
+								p = d.save();
+
+							promises.push(p);
+						}
+						/*
+						data.divisions.forEach(function(dd){
+							var d = new grpl.division.Division(dd),
+								p = d.save();
+							promises.push(p);
+						});
+						*/
+
+						Q.all(promises)
+						.then(function(){
+							grpl.division.checkCapsForSeason(season.season_id)
+							.then(function(r){
+								console.log(r);
+								cb(null, 'wtf');
+								io.sockets.emit('season_updated', season);		
+							})
+							.fail(function(err){
+								cb(err);
+							}).done();
+
+						}, function(err){
+							cb(err);
+						});
 						
-						cb(null, data);
-						io.sockets.emit('season_updated', season);
-					}).fail(function(err){
+						
+					}).catch(function(err){
 						cb(err);
 					}).done();					
 				}
@@ -525,9 +557,23 @@ if (cluster.isMaster) {
 
 
 		socket.on('division.getForSeason', function(season_id, cb){
-			grpl.division.getForSeason(season_id)
+			grpl.division.getForSeason(season_id, true)
 			.then(function(divisions){
 				cb(null, divisions);
+			}).fail(function(err){ cb(err); }).done();
+		});
+
+		socket.on('division.getForSeasonNoPlayers', function(season_id, cb){
+			grpl.division.getForSeasonNoPlayers(season_id)
+			.then(function(divisions){
+				cb(null, divisions);
+			}).fail(function(err){ cb(err); }).done();
+		});
+
+		socket.on('division.checkCapsForSeason', function(season_id, cb){
+			grpl.division.checkCapsForSeason(season_id)
+			.then(function(data){
+				cb(null, data);
 			}).fail(function(err){ cb(err); }).done();
 		});
 
