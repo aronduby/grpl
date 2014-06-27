@@ -300,6 +300,11 @@ var router,
 					on: function(starts, next){
 						$.when( route_change('admin/night', starts) ).then(next);
 					}
+				},
+				'/order/([\\d-]+)': {
+					on:function(starts, next){
+						$.when( route_change('admin/night/order', starts) ).then(next);
+					}
 				}
 			},
 			'/seasons':{
@@ -384,10 +389,19 @@ $(document).ready(function() {
 	});
 	// radio buttons update the label
 	$('form').on('change', 'input[type="radio"], input[type="checkbox"]', function(){
-		// remove all checked
-		$('label[data-player="'+$(this).data('player')+'"]').removeClass('checked');
+		if( $(this).parents('li').is('[data-disabled="1"]') ){
+			return false;
+		}
+
+		// remove all checked for radios
+		if($(this).attr('type')=='radio')
+			$('label[data-group="'+$(this).attr('data-group')+'"]').removeClass('checked');
+
 		// add checked for this one
-		$('label[for="'+$(this).attr('id')+'"]').addClass('checked');
+		if( $(this).is(':checked') )
+			$('label[for="'+$(this).attr('id')+'"]').addClass('checked');
+		else
+			$('label[for="'+$(this).attr('id')+'"]').removeClass('checked');
 	});
 
 	// WIGGLER

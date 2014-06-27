@@ -30,6 +30,8 @@ if (cluster.isMaster) {
 		Q = require('q'),
 		season_id;
 
+	var logger = require('tracer').colorConsole();
+
 	// grab the current season_id
 	grpl.season.getCurrent()
 	.then(function(season){
@@ -184,7 +186,7 @@ if (cluster.isMaster) {
 			grpl.scoring.tiebreaker(data)
 			.then(function(name_key){
 				cb(null, name_key);
-				io.sockets.emit('tiesbroken', data.starts, name_key);
+				io.sockets.emit('tiesbroken', data.night_id, name_key);
 			})
 			.fail(function(err){
 				cb(err);
@@ -205,6 +207,7 @@ if (cluster.isMaster) {
 				}
 			})
 			.fail(function(err){
+				logger.error(err.stack);
 				socket.emit('error', err);
 			}).done();
 		});
@@ -280,13 +283,23 @@ if (cluster.isMaster) {
 			}).done();
 		});
 
+		socket.on('scoring.getDivisions', function(cb){
+			grpl.scoring.getDivisions()
+			.then(function(d){
+				cb(null, d);
+			})
+			.fail(function(err){
+				cb(err);
+			}).done();
+		});
+
 		socket.on('scoring.getGroupForUser', function(name_key, cb){
 			grpl.scoring.getGroupForUser(name_key)
 			.then(function(d){
 				cb(null, d);
 			})
 			.fail(function(err){
-				console.log(err);
+				logger.error(err.stack);
 				cb(err);
 			}).done();
 		});
@@ -366,9 +379,11 @@ if (cluster.isMaster) {
 						// save the divisions and then do the division checks
 						var promises = [];
 						data.divisions.forEach(function(dd){
-							var d = new grpl.division.Division(dd),
-								p = d.save();
-							promises.push(p);
+							var d = new grpl.division.Division(dd);
+							if(d.season_id == null)
+								d.season_id = season.season_id;
+
+							promises.push( d.save() );
 						});
 
 						Q.all(promises)
@@ -379,21 +394,132 @@ if (cluster.isMaster) {
 								io.sockets.emit('season_updated', season);		
 							})
 							.fail(function(err){
+								logger.error(err.stack);
 								cb(err);
 							}).done();
 
 						})
 						.fail(function(err){
+							logger.error(err.stack);
 							cb(err);
 						}).done();
 						
 						
 					}).catch(function(err){
+						logger.error(err.stack);
 						cb(err);
 					}).done();					
 				}
 			});
 		})
+
+		// gets all of the league nights for the season, including a totals
+		socket.on('leaguenight', function(cb){
+			socket.get('season_id', function(err, socket_season_id){
+				if(err || socket_season_id == null)
+					socket_season_id = season_id;
+
+				grpl.leaguenight.getAllForSeason(socket_season_id)
+				.then(function(nights){
+					var totals = new grpl.leaguenight.LeagueNight({
+						'season_id': socket_season_id,
+						starts: 'totals',
+						night_id: 'totals',
+						title: 'Totals to Date',				
+						note: ''
+					});
+					nights.unshift(totals);
+					cb(null, nights);
+				})
+				.fail(function(err){
+					cb(err);
+				}).done();
+			});
+			
+		});
+
+		// people who are tied
+		socket.on('leaguenight.ties', function(starts, cb){
+			socket.get('season_id', function(err, socket_season_id){
+				if(err || socket_season_id == null)
+					socket_season_id = season_id;
+
+				grpl.playerlist.getTies(socket_season_id, starts)
+				.then(function(ties){
+					cb(null, ties);
+				}).fail(function(err){
+					logger.error(err.stack);
+					cb(err);
+				}).done();
+			});
+			
+		});
+
+		// get the information for totals
+		socket.on('leaguenight.totals', function(cb){
+			socket.get('season_id', function(err, socket_season_id){
+				if(err || socket_season_id == null)
+					socket_season_id = season_id;
+
+				grpl.division.getForSeason(socket_season_id)
+				.then(function(divisions){
+					var night = new grpl.leaguenight.LeagueNight({
+						starts: 'totals',
+						night_id: 'totals',
+						title: 'Totals to Date',				
+						note: '',
+						divisions: divisions
+					});
+					cb(null, night);
+				})
+				.fail(function(err){
+					logger.error(err.stack);
+					cb(err);
+				}).done();
+			});
+			
+		});
+
+		// information for a specific league night
+		socket.on('leaguenight.starts', function(starts, cb){
+			socket.get('season_id', function(err, socket_season_id){
+				if(err || socket_season_id == null)
+					socket_season_id = season_id;
+
+				grpl.leaguenight.getByStarts(starts)
+				.then(function(night){
+					var future_night = (new Date(night.starts).getTime() >= new Date().getTime());
+					
+					grpl.division.getPointsForNight(socket_season_id, starts, future_night)
+					.then(function( divisions ){
+						night.divisions = divisions;
+						cb(null, night);
+
+					}).fail(function(err){ 
+						logger.error(err);
+						cb(err); 
+					}).done();
+
+				}).fail(function(err){ cb(err); }).done();
+			});				
+		});
+
+		socket.on('leaguenight.order', function(starts, cb){
+			socket.get('season_id', function(err, socket_season_id){
+				if(err || socket_season_id == null)
+					socket_season_id = season_id;
+
+				grpl.playerlist.getOrderForNight(socket_season_id, starts)
+				.then(function(order){
+					
+					cb(null, order);					
+
+				}).fail(function(err){ cb(err); }).done();
+			});
+		});
+
+
+
 
 		socket.on('leaguenight.update', function(data, cb){
 			socket.get('user.admin', function(err, admin){
@@ -421,22 +547,27 @@ if (cluster.isMaster) {
 						today.setSeconds(0);
 						today.setMilliseconds(0);
 						if(today <= d){
-							var mtln = new grpl.machinetoleaguenight.MachineToLeagueNight(night.starts);
-							for(var display_order in data.machines){
-								var abbv = data.machines[display_order];
-								if(abbv != ''){
-									mtln.add(abbv, display_order);
+							for(var i in data.divisions){
+								var div = data.divisions[i],
+									mtln = new grpl.machinetoleaguenight.MachineToLeagueNight(night.night_id, div.division_id);
+
+								for(var display_order in div.machines){
+									var abbv = div.machines[display_order];
+									if(abbv != ''){
+										mtln.add(abbv, display_order);
+									}
 								}
+								defers.push( mtln.save() );
 							}
-							defers.push( mtln.save() );
 						}
 
 						// update the subs
-						var sublist = new grpl.playersublist.PlayerSubList(night.starts);
+						var sublist = new grpl.playersublist.PlayerSubList(night.night_id);
 						for(var i in data.subs){
 							sublist.add(data.subs[i]);
 						}
 						defers.push( sublist.save() );
+
 
 						Q.all(defers)
 						.then(function(){
@@ -455,95 +586,91 @@ if (cluster.isMaster) {
 			});			
 		});
 
-		// gets all of the league nights for the season, including a totals
-		socket.on('leaguenight', function(cb){
-			socket.get('season_id', function(err, socket_season_id){
-				if(err || socket_season_id == null)
-					socket_season_id = season_id;
-
-				grpl.leaguenight.getAllForSeason(socket_season_id)
-				.then(function(nights){
-					var totals = new grpl.leaguenight.LeagueNight({
-						'season_id': socket_season_id,
-						starts: 'totals',
-						night_id: 'totals',
-						title: 'Totals to Date',				
-						note: ''
+		socket.on('leaguenight.update.order', function(data, cb){
+			socket.get('user.admin', function(err, admin){
+				if(admin != true && admin != 'true'){
+					socket.emit('error', {
+						title:'Error',
+						headline: 'Nope...',
+						msg: '<p>Only Admins can edit league nights. If you think you should be an admin talk to the people in charge.</p>'
 					});
-					nights.unshift(totals);
-					cb(null, nights);
-				})
-				.fail(function(err){
-					cb(err);
-				}).done();
+				} else {
+					var today = new Date();
+						today.setHours(0);
+						today.setMinutes(0);
+						today.setSeconds(0);
+						today.setMilliseconds(0);
+
+					var nd = new Date(data.starts + ' 0:0:0');
+						//nd.setHours(0);
+						//nd.setMinutes(0);
+						//nd.setSeconds(0);
+						//nd.setMilliseconds(0);
+
+					if(nd < today){
+						socket.emit('error', {
+							title:'Error',
+							headline: 'Nope...',
+							msg: '<p>You can\'t edit the start order of a night that already happened</p>'
+						});
+					} else {
+						grpl.leaguenight.getByStarts(data.starts)
+						.then(function(night){
+							
+							data.night_id = night.night_id;
+							
+							night.saveOrder(data)
+							.then(function(order){
+								cb(null, true);
+								io.sockets.emit('leaguenight_updated', night);
+							})
+							.fail(function(err){
+								cb(err);
+							}).done();
+							
+						})
+						.fail(function(err){
+							cb(err);
+						}).done();
+					}
+				}
 			});
-			
 		});
 
-		// people who are ties
-		socket.on('leaguenight.ties', function(starts, cb){
+
+
+
+
+		socket.on('playerlist.createStartOrderForNight', function(starts, cb){
 			socket.get('season_id', function(err, socket_season_id){
 				if(err || socket_season_id == null)
 					socket_season_id = season_id;
 
-				grpl.playerlist.getTies(socket_season_id, starts)
-				.then(function(ties){
-					cb(null, ties);
-				}).fail(function(err){
-					console.log(err);
-					cb(err);
-				}).done();
-			});
-			
-		});
+				grpl.playerlist.createStartOrderForNight(socket_season_id, starts)
+				.then(function(order){
 
-		// get the information for totals
-		socket.on('leaguenight.totals', function(cb){
-			socket.get('season_id', function(err, socket_season_id){
-				if(err || socket_season_id == null)
-					socket_season_id = season_id;
-
-				grpl.division.getForSeason(socket_season_id)
-				.then(function(divisions){
-					var night = new grpl.leaguenight.LeagueNight({
-						starts: 'totals',
-						night_id: 'totals',
-						title: 'Totals to Date',				
-						note: '',
-						divisions: divisions
-					});
-					cb(null, night);
-				})
-				.fail(function(err){
-					cb(err);
-				}).done();
-			});
-			
-		});
-
-		// information for a specific league night
-		socket.on('leaguenight.starts', function(starts, cb){
-			socket.get('season_id', function(err, socket_season_id){
-				if(err || socket_season_id == null)
-					socket_season_id = season_id;
-
-				grpl.leaguenight.getByStarts(starts)
-				.then(function(night){
-					var use_rankings = (new Date(night.starts).getTime() <= new Date().getTime());
-					
-					grpl.division.getPointsForNight(socket_season_id, starts, use_rankings)
-					.then(function( divisions ){
-						night.divisions = divisions;
-						cb(null, night);
-
-					}).fail(function(err){ 
-						console.log(err);
-						cb(err); 
+					grpl.leaguenight.getByStarts(starts)
+					.then(function(night){
+						var data = {
+							order: order,
+							season_id: night.season_id,
+							night_id: night.night_id
+						};
+						night.saveOrder(data)
+						.then(function(){
+							cb(null, true);
+						})
+						.fail(function(err){
+							cb(err);
+						}).done();
+					})
+					.fail(function(err){
+						logger.error(err.stack);
+						cb(err);
 					}).done();
-
+					
 				}).fail(function(err){ cb(err); }).done();
 			});
-				
 		});
 
 
@@ -714,8 +841,16 @@ if (cluster.isMaster) {
 
 						cb(null, data);
 
-					}).fail(function(err){ console.log(err); cb(err); }).done();
-				}).fail(function(err){ console.log(err); cb(err); }).done();
+					}).fail(function(err){ 
+						logger.error(err); 
+						logger.trace(err.stack);
+						cb(err); 
+					}).done();
+				
+				}).fail(function(err){ 
+					logger.error(err); 
+					cb(err); 
+				}).done();
 			});
 				
 		});
@@ -724,7 +859,7 @@ if (cluster.isMaster) {
 			grpl.player.getSeasonsForNameKey(name_key)
 			.then(function(season_ids){
 				cb(null, season_ids);
-			}).fail(function(err){ console.log(err); cb(err); }).done();
+			}).fail(function(err){ logger.error(err); cb(err); }).done();
 		});
 
 		socket.on('changelog', function(cb){
@@ -739,7 +874,7 @@ if (cluster.isMaster) {
 		 *	Random Utility Functions
 		*/
 		socket.on('echo', function(str){
-			console.log(str);
+			logger.log(str);
 		});
 
 	});// end connect

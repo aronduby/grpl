@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf8">
+	<title>Slip.js — sortable and swipeable views</title>
+	<meta name="viewport" content="width=device-width, user-scalable=no, maximum-scale=1.0">
+
+	<link href="styles.css" rel="stylesheet" />
+</head>
+<body>
+<h1>Slip.js</h1>
+
+
+<h1>Players</h1>
+<ol id="player-order" class="slippylist">
+	<li data-name_key="ChrisTabaka" data-rank=""><span class="rank"></span> Chris Tabaka </li>
+	<li data-name_key="AdamPeacock" data-rank=""><span class="rank"></span> Adam Peacock </li>
+	<li data-name_key="RodneyMinch" data-rank=""><span class="rank"></span> Rodney Minch </li>
+	<li data-name_key="NickMonoyios" data-rank=""><span class="rank"></span> Nick Monoyios </li>
+	
+	<li class="divider disabled" data-group="1"></li>
+	
+	<li data-name_key="DaveAnnis" data-rank=""><span class="rank"></span> Dave Annis </li>
+	<li data-name_key="DanClimie" data-rank=""><span class="rank"></span> Dan Climie </li>
+	<li data-name_key="RandalByrne" data-rank=""><span class="rank"></span> Randal Byrne </li>
+	<li data-name_key="JeffVandenBerg" data-rank=""><span class="rank"></span> Jeff VandenBerg </li>
+	
+	<li class="divider disabled" data-group="2"></li>
+
+	<li data-name_key="SamuelStearley" data-rank=""><span class="rank"></span> Samuel Stearley </li>
+	<li data-name_key="DaaneBlouw" data-rank=""><span class="rank"></span> Daane Blouw </li>
+	<li data-name_key="KevinSmeenge" data-rank=""><span class="rank"></span> Kevin Smeenge </li>
+	<li data-name_key="TimMayhew" data-rank=""><span class="rank"></span> Tim Mayhew </li>
+
+	<li class="divider disabled" data-group="3"></li>
+
+	<li data-name_key="ChristineVanKempen" data-rank=""><span class="rank"></span> Christine Van Kempen </li>
+	<li data-name_key="JimNess" data-rank=""><span class="rank"></span> Jim Ness </li>
+	<li data-name_key="MikeSchudel" data-rank=""><span class="rank"></span> Mike Schudel </li>
+	<li data-name_key="MattBehrens" data-rank=""><span class="rank"></span> Matt Behrens </li>
+
+	<li class="divider disabled" data-group="4"></li>
+
+	<li data-name_key="DaveBeauchamp" data-rank=""><span class="rank"></span> Dave Beauchamp </li>
+	<li data-name_key="AronDuby" data-rank=""><span class="rank"></span> Aron Duby </li>
+	<li data-name_key="JoshuaWheeler" data-rank=""><span class="rank"></span> Joshua Wheeler </li>
+	<li data-name_key="AndrewAdkins" data-rank=""><span class="rank"></span> Andrew Adkins </li>
+
+	<li class="divider disabled" data-group="5"></li>
+
+	<li data-name_key="KevinVlietstra" data-rank=""><span class="rank"></span> Kevin Vlietstra </li>
+	<li data-name_key="JakeVanKempen" data-rank=""><span class="rank"></span> Jake Van Kempen </li>
+	<li data-name_key="MatthewWroblewski" data-rank=""><span class="rank"></span> Matthew Wroblewski </li>
+	<li data-name_key="NoemyAguilar" data-rank=""><span class="rank"></span> Noemy Aguilar </li>
+
+	<li class="divider disabled" data-group="6"></li>
+
+	<li data-name_key="DerekBetts" data-rank=""><span class="rank"></span> Derek Betts </li>
+	<li data-name_key="JesAyYo" data-rank=""><span class="rank"></span> Jes Ay Yo </li>
+	<li data-name_key="KileMoore" data-rank=""><span class="rank"></span> Kile Moore </li>
+	<li data-name_key="PatrickCarter" data-rank=""><span class="rank"></span> Patrick Carter </li>
+
+	<li class="divider disabled" data-group="7"></li>
+
+	<li data-name_key="LoganPatterson" data-rank=""><span class="rank"></span> Logan Patterson </li>
+	<li data-name_key="KeithHerrick" data-rank=""><span class="rank"></span> Keith Herrick </li>
+	<li data-name_key="LindaGellasch" data-rank=""><span class="rank"></span> Linda Gellasch </li>
+	<li data-name_key="MatthewSmith" data-rank=""><span class="rank"></span> Matthew Smith </li>
+
+	<li class="divider disabled" data-group="8"></li>
+
+	<li data-name_key="DaintryFrie" data-rank=""><span class="rank"></span> Daintry Frie </li>
+	<li data-name_key="JimPatterson" data-rank=""><span class="rank"></span> Jim Patterson </li>
+	<li data-name_key="DustinVanderMeer" data-rank=""><span class="rank"></span> Dustin VanderMeer </li>
+	<li data-name_key="CurtisBrown" data-rank=""><span class="rank"></span> Curtis Brown </li>
+</ol>
+
+<p><a href="https://github.com/pornel/slip">Bug/fork/star on GitHub</a>.</p>
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="slip.js"></script>
+<script>
+
+	(function($){
+
+		$.fn.playerOrder = function( options ){
+			if(this.data('po_inst'))
+				return this.data('po_inst');
+
+
+			function PlayerOrder(el, options){
+				if(el.nodeType) 
+					el = $(el);
+
+				this.options = options;
+
+				// Functions used for as event handlers need usable `this` and must not change to be removable
+				this.onBeforeSwipe = this.onBeforeSwipe.bind(this);
+				this.onBeforeReorder = this.onBeforeReorder.bind(this);
+				this.onReorder = this.onReorder.bind(this);
+				this.onToggleDNP = this.onToggleDNP.bind(this);
+
+				this.attach(el);
+			}
+
+			PlayerOrder.prototype = {
+				el: null,
+				options: {},
+				slip: null,
+
+				attach: function(el){
+					this.el = el;
+
+					this.el.on('click touchstart', 'button.dnp', this.onToggleDNP)
+					.on({
+						'slip:beforeswipe': this.onBeforeSwipe,
+						'slip:beforereorder': this.onBeforeReorder,
+						'slip:reorder': this.onReorder
+					});
+
+					this.slip = new Slip(this.el[0]);
+				},
+
+				detach: function(){
+					this.slip.detach();
+					this.el.off('click', 'button.dnp', this.onToggleDNP)
+					.off({
+						'slip:beforeswipe': this.onBeforeSwipe,
+						'slip:beforereorder': this.onBeforeReorder,
+						'slip:reorder': this.onBeforeReorder
+					});
+				},
+
+				onBeforeSwipe: function(e){
+					e.preventDefault();
+				},
+				onBeforeReorder: function(e){
+					if($(e.target).hasClass('disabled') || $(e.target).is('button'))
+						e.preventDefault();
+				},
+				onReorder: function(e){
+					e.target.parentNode.insertBefore(e.target, e.originalEvent.detail.insertBefore);
+					this.checkForErrors();				
+					return false;
+				},
+
+				onToggleDNP: function(e){
+					$(e.target).parent().toggleClass('dnp');
+					this.checkForErrors();
+					return false;
+				},
+
+				getGroup: function(li){
+					if(li.nodeType)
+						li = $(li);
+
+					var group = li.nextUntil('.divider');
+					group = group.add(li.prevUntil('.divider')).add(li);
+
+					return group;
+				},
+
+				checkForErrors: function(){
+					$('li.error', this.el).removeClass('error');
+
+					var self = this,
+						checks = $('> li:first-child, > li.divider + li', this.el);
+
+					checks.each(function(){
+						var group = self.getGroup(this),
+							not_dnps = group.not('.dnp');
+
+						if(not_dnps.length < 3 || not_dnps.length > 4){
+							group.addClass('error');
+						}
+					});
+
+					if( $('li.error', this.el).length > 0 )
+						return true;
+					else
+						return false;
+				},
+
+				save: function(){
+					if(this.checkForErrors()){
+						// alert('You have groups with too few or too many people. Fix them before continuing, they\'re highlighted in red.');
+						return false;
+					}
+
+					var players = [],
+						grouping = 0,
+						order = 0;
+
+					$('li', this.el).each(function(){
+						if($(this).hasClass('divider')){
+							grouping++;
+							return true; // continue;
+						}
+
+						players.push($.extend({}, $(this).data(), {
+							order: order,
+							grouping: grouping,
+							dnp: $(this).hasClass('dnp')	
+						}));
+						order++;
+					});
+
+					return players;
+				}
+			}
+
+			return this.each(function(){
+				$(this).data('po_inst', new PlayerOrder(this));
+			});
+		}
+
+	})(jQuery);
+
+	$('.slippylist li')
+		.not('.divider')
+		.append('<button class="dnp">DNP</button>')
+		.each(function(i){
+			$(this).attr('data-rank', i).find('span.rank').text( i + 1);
+		});
+
+	$('#player-order').playerOrder();
+
+</script>

@@ -10,7 +10,8 @@ var Scoring = $.extend({}, $.PubSub, {
 
 	started: false,
 	starts: false,
-	machines: [],
+	night_id: false,
+	divisions: [],
 	players: [],
 	name_key_to_index: {},
 	logged_in_users: [],
@@ -29,7 +30,16 @@ var Scoring = $.extend({}, $.PubSub, {
 	stop: function(){ Socket.emit('scoring.stop'); },
 
 	whenStarted: function(data){
+		var self = this;
+
 		$.extend(true, this, data);
+		$.each(data.divisions, function(){
+			var d = this;
+			$.each(d.player_list.players, function(){
+				self.players.push(this);
+			});
+		});
+
 		for(var i =0 in this.players){
 			this.name_key_to_index[this.players[i].name_key] = i;
 		}
@@ -38,8 +48,9 @@ var Scoring = $.extend({}, $.PubSub, {
 	stopped: function(data){
 		this.started = false;
 		this.starts = false;
-		this.machines = [];
-		this.groups = [];
+		this.night_id = false;
+		this.divisions = [];
+		this.players = [];
 		this.logged_in_users = [];
 
 		this.callbacks.stopped.resolve(data);
@@ -72,8 +83,11 @@ var Scoring = $.extend({}, $.PubSub, {
 
 	getGroupForUser: function(name_key){
 		var dfd = $.Deferred();
-
+		console.groupCollapsed('Scoring.getGroupForUser');
 		Socket.emit('scoring.getGroupForUser', name_key, function(err, data){
+			console.log(err, data);
+			console.groupEnd();
+
 			if(err){ dfd.reject(err); return false; }
 			dfd.resolve(data);
 		});
@@ -98,8 +112,8 @@ Scoring.add('updated', function(data){
 			night_score = 0;
 		sp.machines[data.abbv] = Number(data.players[name_key]);
 		
-		for(var i in Scoring.machines){
-			night_score += Number(sp.machines[ Scoring.machines[i].abbv ])
+		for(var i in Scoring.divisions[ sp.division_id ].machines){
+			night_score += Number(sp.machines[ Scoring.divisions[ sp.division_id ].machines[i].abbv ])
 		}
 		sp.night_score = night_score;
 		// sp.night_score = Number(sp.night_score ? sp.night_score : 0) + Number(data.players[name_key]);
@@ -134,7 +148,6 @@ $(document).ready(function(){
 	//
 	//	PAGE SETUP
 	//
-
 	$('.page[data-route="scoring"]').on("init", function(e, data) {
 		var inited = $(this).data('inited');
 		if(inited == true && (data == undefined || data.name_key == undefined || data.name_key == $(this).data('name_key')))
@@ -168,31 +181,12 @@ $(document).ready(function(){
 					}
 				});
 			} else if(data != undefined && data.name_key != undefined && User.admin == true && User.name_key != data.name_key) {
-				var score_user = data.name_key,
-					machine_url = '#/admin/scoring/'+data.name_key;
+				var score_user = data.name_key;
 			} else {
 				var score_user = User.name_key;
-					machine_url = '#/scoring';
 			}
 
-			var page = this,
-				group = Scoring.getGroupForUser(score_user),
-				machine_list = $('<ul></ul>');
-		
-			// MACHINE PANEL
-			group.then(function(g){
-				for(i in g.machines){
-					var machine = g.machines[i];
-					machine_list.append('<li data-offset="'+i+'" data-abbv="'+machine.abbv+'">' +
-						'<a href="'+machine_url+'/'+i+'">' +
-							'<h2>'+machine.name+'</h2>' +
-							'<p>'+machine.abbv+'</p>' +
-							'<span class="status-indicator" data-status="'+(g.players[0].machines[machine.abbv] ? 'on' : 'off')+'"></span>' +
-						'</a>' +
-					'</li>');
-				}
-				$('#scoring-machine-panel article').empty().append(machine_list);
-			});
+			var page = this;
 
 			// setup our machine panel
 			// only do this if we aren't already inited
@@ -209,55 +203,83 @@ $(document).ready(function(){
 			// LIVE RESULTS PANEL
 			var dfd = Api.get('leaguenight.starts', Scoring.starts, {
 				success: function(night){
-					// PLAYERS
-					var player_holder = $('.player-holder .listview', page).empty(),
-						group_holder = $('<ul></ul>'),
-						j = 0;
+					var panel = $('#scoring-live-panel', page);
 
-					for(i in night.players){
-						if(j%4 == 0 && j != 0){
-							player_holder.append(group_holder);
-							group_holder = $('<ul></ul>');
-						}
-						
-						var p = night.players[j],
-							machine_points = false;
+					// DIVISION
+					var cloner = $('.division.hidden', panel);
 
-						// if scoring has started and it's the same night override the machine with the data from scoring
-						if(Scoring.started == true && Scoring.starts == night.starts){
-							var scoring_player = Scoring.players[ Scoring.name_key_to_index[p.name_key] ];
-							p.machines = scoring_player.machines;
-							p.night_score = scoring_player.night_score ? scoring_player.night_score : '';
-						}
-
-						// machine places
-						if(p.machines != undefined){
-							machine_points = $('<div></div>');
-							for(abbv in p.machines){
-								machine_points.append('<span class="player-machine" data-abbv="'+abbv+'">' +
-									'<span class="abbv">'+abbv+'</span>' +
-									'<span class="machine-points">'+(p.machines[abbv]!='' ? p.machines[abbv] : '-')+'</span>' +
-								'</span>');
-							}
-						}
-
-						var score = [p.score],
-							pre_total = p.score;
-
-						if(p.night_score != undefined){
-							score[0] = Number(score[0]) + Number(p.night_score);
-							score.unshift(p.night_score);						
-						}
-
-						group_holder.append(
-							'<li data-name_key="'+p.name_key+'" data-pre_total="'+pre_total+'" '+(User.logged_in==true && User.name_key == p.name_key ? 'class="user" ' : '')+'>' +
-								'<h3>'+p.first_name+' '+p.last_name+'</h3>' +
-								(machine_points != false ? '<p class="player-points">'+machine_points.html()+'</p>' : '' ) +
-								'<span class="score right '+(score.length>1 ? 'double' : '')+'"><span>'+score.join('</span><span>')+'</span></span>' +
-							'</li>');
-						j++;
+					if(night.divisions.length <= 1){
+						cloner.addClass('single');
+					} else {
+						cloner.removeClass('single');
 					}
-					player_holder.append(group_holder);
+					
+					$('.division:not(.hidden)', panel).remove();
+					$.each(night.divisions, function(){
+						var el = cloner.clone(true),
+							division = this;
+
+						// update the division title
+						el.find('> header h1').text(division.title);
+
+						// PLAYERS
+						var player_holder = $('.player-holder .listview', el).empty(),
+							group_holder = $('<ul></ul>'),
+							cur_group = division.player_list.players[0].grouping;
+
+						for(i in division.player_list.players){
+							var p = division.player_list.players[i],
+								machine_points = false;
+
+							if(p.grouping != cur_group){
+								player_holder.append(group_holder);
+								group_holder = $('<ul></ul>');
+								cur_group = p.grouping;
+							}							
+
+							// if scoring has started and it's the same night override the machine with the data from scoring
+							if(Scoring.started == true && Scoring.starts == night.starts){
+								var scoring_player = Scoring.players[ Scoring.name_key_to_index[p.name_key] ];
+								p.machines = scoring_player.machines;
+								p.night_score = scoring_player.night_score ? scoring_player.night_score : '';
+							}
+
+							// machine places
+							if(p.machines != undefined){
+								machine_points = $('<div></div>');
+								for(abbv in p.machines){
+									machine_points.append('<span class="player-machine" data-abbv="'+abbv+'">' +
+										'<span class="abbv">'+abbv+'</span>' +
+										'<span class="machine-points">'+(p.machines[abbv]!='' ? p.machines[abbv] : '-')+'</span>' +
+									'</span>');
+								}
+							}
+
+							var score = [p.score],
+								pre_total = p.score;
+
+							if(p.night_score != undefined){
+								score[0] = Number(score[0]) + Number(p.night_score);
+								score.unshift(p.night_score);						
+							}
+
+							group_holder.append(
+								'<li data-name_key="'+p.name_key+'" data-pre_total="'+pre_total+'" data-scoring_string="'+p.scoring_string+'" class="'+(User.logged_in==true && User.name_key == p.name_key ? 'user starred ' : '')+(p.dnp ? 'dnp' : '')+' ">' +
+									'<a href="#/players/'+p.name_key+'" title="view player info">' +
+										'<h3>' +
+											p.first_name+' '+p.last_name +
+											(night.subs!=undefined && night.subs[p.name_key] != undefined ? '<span class="sub" title="sub">'+night.subs[p.name_key].sub+'</span>' : '') +
+										'</h3>' +
+										(machine_points != false ? '<p class="player-points">'+machine_points.html()+'</p>' : '' ) +
+										'<span class="score right '+(score.length>1 ? 'double' : '')+'"><span>'+score.join('</span><span>')+'</span></span>' +
+									'</a>' + 
+								'</li>');
+						}
+						player_holder.append(group_holder);
+
+						el.removeClass('hidden').insertBefore(cloner);
+					});// end division loop
+
 				},
 				error: function(error){
 					console.log(error);
@@ -331,10 +353,20 @@ $(document).ready(function(){
 						},
 						places = {1:false, 2:false, 3:false, 4:false},
 						checked = $('input[type="radio"]:checked', this),
-						dnps = $('input[type="radio"][value="0"]:checked');
+						dnps = $('input[type="radio"][value="0"]:checked'),
+						total_in_group = $('li[data-namekey]', this).length,
+						total_to_play = total_in_group - $('li[data-namekey][data-dnp="1"]').length;
 
-					if(checked.length < 4){
-						errors.push('There should be 4 scores submitted, you only have '+checked.length+'.');
+					if(checked.length < total_in_group){
+						errors.push('There should be '+total_in_group+' scores submitted, you only have '+checked.length+'.');
+					}
+
+					// mark any places higher than the number of people to play as dnp
+					if(total_to_play < 4){
+						for(var i = total_to_play + 1; i <= 4; i++){
+							places[i] = true;
+							error_msgs[i] = 'You only have '+total_to_play+' people, skip '+i+' place';
+						}
 					}
 
 					// if we have DNPs make the lower X places as obtained
@@ -382,13 +414,15 @@ $(document).ready(function(){
 							players: {}
 						};
 
-					// do we need to change the points value based on the # of DNPs?
-					switch(dnps.length){
-						case 0:
+					// do we need to change the points values based on the # of players
+					switch(total_to_play){
+						case 4:
 							break;
-						case 1:
-						default:
+						case 3:
 							points = [0,7,4,1,0];
+							break;
+						case 2:
+							points = [0,7,1,0,0];
 							break;
 					}
 
@@ -440,9 +474,11 @@ $(document).ready(function(){
 				}
 			});
 		} else if(data != undefined && data.name_key != undefined && User.admin == true) {
-			var score_user = data.name_key;
+			var score_user = data.name_key,
+				machine_url = '#/admin/scoring/'+data.name_key;
 		} else {
-			var score_user = User.name_key;
+			var score_user = User.name_key,
+				machine_url = '#/scoring';
 		}
 		
 
@@ -455,8 +491,6 @@ $(document).ready(function(){
 
 			$(page).attr('data-title', 'Scoring | '+Machine.abbv+' | ');
 
-			var points = [-1,7,5,3,1,0];
-
 			// update our fake select button
 			$('.machines-trigger', page)
 				.find('h2').text(Machine.name).end()
@@ -464,6 +498,20 @@ $(document).ready(function(){
 
 
 			$('.scoring-form section header h1', page).text(Machine.name);
+
+			// machine panel
+			var machine_list = $('<ul></ul>');
+			for(i in group.machines){
+				var machine = group.machines[i];
+				machine_list.append('<li data-offset="'+i+'" data-abbv="'+machine.abbv+'">' +
+					'<a href="'+machine_url+'/'+i+'">' +
+						'<h2>'+machine.name+'</h2>' +
+						'<p>'+machine.abbv+'</p>' +
+						'<span class="status-indicator" data-status="'+(group.players[0].machines[machine.abbv] ? 'on' : 'off')+'"></span>' +
+					'</a>' +
+				'</li>');
+			}
+			$('#scoring-machine-panel article').empty().append(machine_list);
 
 			// machine notes
 			$('.machine-notes', page).empty();
@@ -480,9 +528,29 @@ $(document).ready(function(){
 
 			// players order
 			var tmp = group.players.slice(0).reverse(),
-				player_order = tmp.slice(offset).concat(tmp.slice(0,offset)),
+				slice_index = offset > tmp.length ? offset - tmp.length : offset,
+				player_order = tmp.slice(slice_index).concat(tmp.slice(0,slice_index)),
 				places = [1,2,3,4,0],
+				points = [-1,7,5,3,1,0],
 				player_list = $('<ul></ul>');
+
+			// do we need to change the points values based on the # of players
+			var dnps = 0;
+			for(var i=0; i<group.players.length; ++i){
+				if(group.players[i].dnp == 1)
+					dnps++;
+			}
+
+			switch(group.players.length - dnps){
+				case 4:
+					break;
+				case 3:
+					points = [0,7,4,1,0];
+					break;
+				case 2:
+					points = [0,7,1,0,0];
+					break;
+			}
 
 			for(i in player_order){
 				var player = $.extend(player_order[i], App.players[player_order[i].name_key]),
@@ -490,20 +558,20 @@ $(document).ready(function(){
 					player_place = false;
 
 				if(player.machines[Machine.abbv]){
-					player_place = $.inArray(Number(player.machines[Machine.abbv]), points);;
+					player_place = $.inArray(Number(player.machines[Machine.abbv]), points);
 					if(player_place == -1)
 						player_place = false;
 				}
 
-				content = '<li data-namekey="'+player.name_key+'">';
+				content = '<li data-namekey="'+player.name_key+'" data-dnp="'+player.dnp+'" data-disabled="'+player.dnp+'">';
 					content += '<span class="number">'+(Number(i)+1)+'</span>';
 					content += '<h2>'+player.first_name+' '+player.last_name+'</h2>';
 					content += '<fieldset>';
 					
 						for(j in places){
 							var p = places[j];
-							content += '<label for="'+player.name_key+'_'+p+'" data-player="'+player.name_key+'">'+(p==0 ? 'DNP' : p)+'</label>';
-							content += '<input type="radio" name="players['+player.name_key+']" value="'+p+'" id="'+player.name_key+'_'+p+'" data-player="'+player.name_key+'" '+(player_place==(p == 0 ? 5 : p) ? 'checked="checked"' : '' )+' />';
+							content += '<label for="'+player.name_key+'_'+p+'" data-group="'+player.name_key+'" '+(p==0 && player.dnp==true ? 'class="checked"' : '')+'>'+(p==0 ? 'DNP' : p)+'</label>';
+							content += '<input type="radio" name="players['+player.name_key+']" value="'+p+'" id="'+player.name_key+'_'+p+'" data-group="'+player.name_key+'" '+(player_place==(p == 0 ? 5 : p) || player.dnp==true && p==0 ? 'checked="checked"' : '' )+' />';
 							// j++;
 						}
 
@@ -541,7 +609,8 @@ $(document).ready(function(){
 			dfd.resolve();
 		})
 		.fail(function(err){
-			alert(err);
+			console.error(err);
+			alert('Something failed, check the console');
 			return false;
 		}).done();
 		

@@ -444,25 +444,24 @@ a.button{
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#85af3f', endColorstr='#38681b',GradientType=0 ); /* IE6-9 */
     border-color:#509527;
   }
+  button.grey,
+  a.button.grey{
+    border-color:#616161;
+    background:linear-gradient(to bottom, #8A8A8A 0%, #4F4F4F 100%) repeat scroll 0 0 rgba(0, 0, 0, 0);
+  }
+
+  header > button:first-child,
+  header > a.button:first-child{
+    float:right;
+    font-size:16px;
+    margin:-10px -10px 0 0;
+    border-color:#616161;
+    background:linear-gradient(to bottom, #8A8A8A 0%, #4F4F4F 100%) repeat scroll 0 0 rgba(0, 0, 0, 0);
+  }
   button[disabled],
   a.button.disabled{
-    cursor:default !important;
-    background: #d1d1d1 !important; /* Old browsers */
-    background: -moz-linear-gradient(top,  #d1d1d1 0%, #b3b3b3 100%) !important; /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#d1d1d1), color-stop(100%,#b3b3b3)) !important; /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top,  #d1d1d1 0%,#b3b3b3 100%) !important; /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top,  #d1d1d1 0%,#b3b3b3 100%) !important; /* Opera 11.10+ */
-    background: -ms-linear-gradient(top,  #d1d1d1 0%,#b3b3b3 100%) !important; /* IE10+ */
-    background: linear-gradient(to bottom,  #d1d1d1 0%,#b3b3b3 100%) !important; /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d1d1d1', endColorstr='#b3b3b3',GradientType=0 ) !important; /* IE6-9 */
-    border-color:#c3c3c3 !important;
-    color:#dedede !important;
-    text-shadow:none !important;
-  }
-  button[disabled]:before,
-  a.button.disabled:before{
-    opacity:.3;
-    filter:alpha(opacity=30);
+    cursor:not-allowed !important;
+    opacity:.4;
   }
 
 /*--- Button Icons ---*/
@@ -473,7 +472,9 @@ a.button.scoring:before{
   background-position:0 -38px;
 }
 button.admin:before,
-a.button.admin:before{
+a.button.admin:before,
+button.gear:before,
+a.button.gear:before{
   width:25px;
   height:25px;
   background-position:0 -70px;

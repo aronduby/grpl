@@ -150,7 +150,7 @@ $(document).ready(function(){
 		var dfd = Api.get('players.namekey', name_key, {
 			success: function(data){
 				var player = data.player,
-					place = data.place,
+					place = player.rank,
 					total_points = data.total_points,
 					machines = data.machines,
 					nights = data.nights,

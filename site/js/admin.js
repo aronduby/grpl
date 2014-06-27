@@ -179,59 +179,76 @@ $(document).ready(function(){
 					.find('.stop-scoring').removeAttr('disabled').show();
 
 				// build up the group progress section
-				var group_list = $('<ul></ul>'),
-					machines = $('<p class="machines"></p>');
+				var group_list = $('<ul></ul>');
 
-				for(var i in Scoring.machines){
-					machines.append('<span class="abbv" data-abbv="'+Scoring.machines[i].abbv+'">'+Scoring.machines[i].abbv+'</span>');
-				}
+				$.each(Scoring.divisions, function(){
+					var division = this,
+						machines = division.machines,
+						machines_content = $('<p class="machines"></p>');
 
-				for(var i in Scoring.players){
-					if(i%4==0){
-						if(i != 0){
-							li.attr('data-name_keys', name_keys.join(' '));
-							a.append(h).append(scored_machines).append('<span class="status-indicator off" data-status="'+group_status+'"></span>');
-							li.append(a).appendTo(group_list);
-						}
-						var name_keys = [],
-							li = $('<li/>'),
-							a = $('<a/>'),
-							h = $('<h3/>'),
-							scored_machines = machines.clone(),
-							scored_machines_count = 0,
-							group_status = 'off';
-
-						a.attr({
-							href: '#/admin/scoring/'+Scoring.players[i].name_key,
-							title: 'edit scoring'
-						});
-
-						for(var machine_i in Scoring.machines){
-							if(Scoring.players[i].machines[ Scoring.machines[machine_i].abbv ]){
-								scored_machines.find('span[data-abbv="'+Scoring.machines[machine_i].abbv+'"]').addClass('done');
-								scored_machines_count++;
-							}
-						}
-						if(scored_machines_count>0){
-							if(scored_machines_count == Scoring.machines.length)
-								group_status = 'on';
-							else
-								group_status = 'half';
-						}
-						
-						// create the heading with the group number and initials
-						h.append('#'+(Number(i)/4 + 1));
+					// machines for this division
+					for(var j = 0; j < machines.length; j++){
+						machines_content.append('<span class="abbv" data-abbv="'+machines[j].abbv+'">'+machines[j].abbv+'</span>');
 					}
 
-					h.append(' '+Scoring.players[i].initials);
-					name_keys.push(Scoring.players[i].name_key);
-				}
-				// add our last group
-				li.attr('data-name_keys', name_keys.join(' '));
-				a.append(h).append(scored_machines).append('<span class="status-indicator off" data-status="'+group_status+'"></span>');
-				li.append(a).appendTo(group_list);
+					// players in this division
+					var prev_grouping = false;
+					for(var j = 0; j < division.player_list.players.length; j++){
+						var player = division.player_list.players[j];
+
+						// the first player for the group sets up all the html stuff
+						if(player.grouping !== prev_grouping){
+							// if this wasn't the first group, add the previously setup group
+							if(prev_grouping !== false){
+								li.attr('data-name_keys', name_keys.join(' '));
+								a.append(h).append(scored_machines).append('<span class="status-indicator off" data-status="'+group_status+'"></span>');
+								li.append(a).appendTo(group_list);	
+							}
+
+							var name_keys = [],
+								li = $('<li/>'),
+								a = $('<a/>'),
+								h = $('<h3/>'),
+								scored_machines = machines_content.clone(),
+								scored_machines_count = 0,
+								group_status = 'off';
+
+							a.attr({
+								href: '#/admin/scoring/'+player.name_key,
+								title: 'edit scoring'
+							});
+
+							for(var mi = 0; mi < machines.length; mi++){
+								if(player.machines[machines[mi].abbv]){
+									scored_machines.find('span[data-abbv="'+machines[mi].abbv+'"]').addClass('done');
+									scored_machines_count++;
+								}
+							}
+							if(scored_machines_count>0){
+								if(scored_machines_count == machines.length)
+									group_status = 'on';
+								else
+									group_status = 'half';
+							}
+							
+							// create the heading with the group number and initials
+							h.append('#'+(Number(player.grouping) + 1));
+						}
+
+						// add the initials and the name key to the group li
+						prev_grouping = player.grouping;
+						h.append(' '+player.initials);
+						name_keys.push(player.name_key);
+					}
+
+					// add our last group
+					li.attr('data-name_keys', name_keys.join(' '));
+					a.append(h).append(scored_machines).append('<span class="status-indicator off" data-status="'+group_status+'"></span>');
+					li.append(a).appendTo(group_list);
+				});
 
 				$('.scoring-groups', ap).empty().append(group_list);
+
 			}).add('updated', function(data){
 				var one_player;
 
@@ -285,13 +302,13 @@ $(document).ready(function(){
 
 			var	page = $(this);
 
-			// setup out players panel
+			// setup out nights panel
 			$('#night_admin-night-panel', page).data('popup', new Popup($('#night_admin-night-panel')));
 			$('#night_admin-night-panel', page).on('click', 'li[data-starts] a', function(){
 				$('#night_admin-night-panel').data('popup').close();
 			});
 
-			// handle clicks to the players btn to open our popup
+			// handle clicks to the nights btn to open our popup
 			$('.night-trigger', page).on('click', function(){
 				$('#night_admin-night-panel').data('popup').open();
 			});
@@ -312,6 +329,13 @@ $(document).ready(function(){
 			// update our fake select button
 			$('.night-trigger', this)
 				.find('h2').text('Choose a Night').end();
+
+
+			// order button
+			$('button.edit-night-order', page).on('click', function(){
+				window.location = '#/admin/night/order/'+$(this).data('starts');
+				return false;
+			});
 			
 			
 			// machine selects			
@@ -358,6 +382,26 @@ $(document).ready(function(){
 				$(this).trigger('addSub', {});
 				return false;
 			});
+
+			// Add Divisions
+			$('form.night-form', page).on('addDivision', function(e, div){
+				var c = $(this).find('.division.copy').clone();
+
+				c
+					.find('input[name="division_id"]').val(div.division_id).end()
+					.find('header h3').text(div.title);
+
+
+				for(var i in div.machines){
+					c
+						.find('select[name="machines['+i+']"]')
+							.find('option[value="'+div.machines[i].abbv+'"]').attr('selected','selected');
+				}
+				
+				c.removeClass('hidden copy');
+				c.appendTo('.machinelist-holder');
+			});
+
 			$('form.night-form', page).on('submit', function(){
 				App.loading.show();
 
@@ -372,11 +416,22 @@ $(document).ready(function(){
 							year: form.find('input[name="starts[year]"]').val()
 						},
 						note: form.find('input[name="note"]').val(),
-						machines: [],
+						divisions: [],
 						subs: []
-					};
-				$('select.machine', form).each(function(){
-					data.machines.push( $(this).val() );
+					},
+					post_save = form.find('select[name="post-save"] > option:selected').val();
+
+				$('.division', form).not('.copy').each(function(){
+					var d = {
+						division_id: $(this).find('input[name="division_id"]').val(),
+						machines: []
+					}
+
+					$('select.machine', this).each(function(){
+						d.machines.push( $(this).val() );
+					});
+
+					data.divisions.push(d);
 				});
 
 				$('#sublist li', form).each(function(){
@@ -395,8 +450,20 @@ $(document).ready(function(){
 
 				Api.post('leaguenight.update', data, {
 					success: function(d){
-						// console.log(d);
-						window.location.hash = '/index';
+						switch(post_save){
+							case 'index':
+							default:
+								window.location.hash = '/index';
+								break;
+
+							case 'order':
+								window.location.hash = '/admin/night/order/'+d.starts;
+								break;
+
+							case 'edit-another':
+								window.location.hash = '/admin/night/new';
+								break;
+						}
 						App.loading.hide();
 					}
 				});
@@ -425,10 +492,11 @@ $(document).ready(function(){
 		if(starts == 'new'){
 			var night = {
 				night_id: null,
-				title: 'New Night',
+				title: 'League Night #',
 				date_obj: new Date(),
 				note: null,
-				subs: {}
+				subs: {},
+				has_order: 0
 			};
 			night.date_obj.setHours(0);
 			night.date_obj.setMinutes(0);
@@ -481,31 +549,18 @@ $(document).ready(function(){
 			.find('input[name="starts[day]"]').val(night.date_obj.getDate()).end()
 			.find('input[name="starts[year]"]').val(night.date_obj.getFullYear()).end()
 			.find('input[name="note"]').val(night.note).end();
-
-		// disable the machines if it's in the past
-		var today = new Date();
-		today.setHours(0);
-		today.setMinutes(0);
-		today.setSeconds(0);
-		today.setMilliseconds(0);
-		if(night.night_id != null && night.date_obj < today){
-			$('select.machine, input[name^="starts"], select[name^="starts"]', form).attr('disabled','disabled');
-		} else {
-			$('select.machine, input[name^="starts"], select[name^="starts"]', form).removeAttr('disabled');
-		}
+		
 
 		// existing night, load machines and subs
 		form.find('option[selected]').removeAttr('selected');
 		form.find('#sublist li').not('.copy').remove();
+		form.find('div.machinelist').not('.copy').remove();
 		if(night.night_id !== null){
 			Api.get('leaguenight.starts', night.starts, {
 				success: function(night){
 
-					// machines
-					for(var i in night.machines){
-						form
-							.find('select[name="machines['+i+']"]')
-								.find('option[value="'+night.machines[i].abbv+'"]').attr('selected','selected');
+					for(var i in night.divisions){
+						form.triggerHandler('addDivision', night.divisions[i]);
 					}
 
 					// subs
@@ -521,12 +576,275 @@ $(document).ready(function(){
 				}
 			});
 		} else {
-			form.triggerHandler('addSub', {});		
+			// form.triggerHandler('addSub', {});		
+			// dfd.resolve();
+			Api.get('division.getForSeason', App.season_id, {
+				success: function(divisions){
+					for(var i in divisions){
+						form.triggerHandler('addDivision', divisions[i]);
+					}
+					dfd.resolve();
+				},
+				error: function(err){
+					dfd.reject(err);
+				}
+			})
+		}
+
+		// disable the order button?
+		if(night.has_order == 1){
+			form
+				.find('button.edit-night-order')
+					.removeAttr('disabled')
+					.data('starts', night.starts);
+		} else {
+			form.find('button.edit-night-order').attr('disabled', 'disabled');
+		}
+
+		dfd.then(function(){
+			// disable the machines if it's in the past
+			var today = new Date();
+			today.setHours(0);
+			today.setMinutes(0);
+			today.setSeconds(0);
+			today.setMilliseconds(0);
+			if(night.night_id != null && night.date_obj < today){
+				$('select.machine, input[name^="starts"], select[name^="starts"]', form).attr('disabled','disabled');
+			} else {
+				$('select.machine, input[name^="starts"], select[name^="starts"]', form).removeAttr('disabled');
+			}
+		});
+
+		return dfd;
+	});
+	
+	// User Order
+	$('.page[data-route="admin/night/order"]').on('init', function(){
+		var dfd = $.Deferred();
+
+		if( User.logged_in == false || User.admin == false ){
+			dfd.reject({
+				title: 'Admins Only',
+				headline: 'You must be an admin',
+				msg: 'This page is only accessible to the admins, please talk to them if you need help.',
+				btn:{
+					fn: function(){
+						window.location.hash = '/index';
+					}
+				}
+			});
+		} else {
+			if($(this).data('inited') == true)
+				return true;
+
+			var	page = $(this);
+
+			// setup out nights panel
+			$('#order-admin-night-panel', page).data('popup', new Popup($('#order-admin-night-panel')));
+			$('#order-admin-night-panel', page).on('click', 'li[data-starts] a', function(){
+				$('#order-admin-night-panel').data('popup').close();
+			});
+
+			// handle clicks to the nights btn to open our popup
+			$('.night-trigger', page).on('click', function(){
+				$('#order-admin-night-panel').data('popup').open();
+			});
+
+			// setup our panel
+			var night_list = $('<ul></ul>');
+			night_list.append('<li data-starts="new"><a href="#/admin/night/new"><h2>New Night</h2><p>Create a new night</p></a></li>');
+			for(starts in App.league_nights){
+				if(starts=='totals')
+					continue;
+
+				var n = App.league_nights[starts];
+				night_list.append('<li data-starts="'+starts+'"><a href="#/admin/night/'+starts+'"><h2>'+n.title+'</h2><p>'+n.desc+'</p></a></li>');
+			}
+
+			$('#order-admin-night-panel article', page).empty().append(night_list);
+
+			// update our fake select button
+			$('.night-trigger', this)
+				.find('h2').text('Choose a Night').end();
+
+			// order button
+			$('button.edit-night-order', page).on('click', function(){
+				console.log( $(this).data() );
+				window.location = '#/admin/night/order/'+$(this).data('starts');
+				return false;
+			});
+
+			// night button
+			$('button.edit-night', page).on('click', function(){
+				window.location = '#/admin/night/'+$(this).data('starts');
+				return false;
+			});
+
+
+			// PlayerOrder plugin
+			$('#player-order').playerOrder();
+
+
+			// form
+			$('form.order-form', page).on('submit', function(){
+				App.loading.show();
+				var order = $('#player-order').playerOrder().save();
+				if(order === false){
+					App.loading.hide();
+					dialog({
+						title: 'I Can\'t Let You Do That',
+						headline: 'Error in the Groups',
+						msg: 'You have at least one group with too few (< 3) or too many (> 4) players. You need to correct that before continuing.',
+						btn:{ 
+							fn: function(){
+								App.loading.hide();
+							}
+						}
+					});
+				} else {
+
+					var data = {
+						starts: $(this).find('input[name="starts"]').val(),
+						season_id: $(this).find('input[name="season_id"]').val(),
+						order: order
+					};
+
+					Api.post('leaguenight.update.order', data, {
+						success: function(){
+							window.location.hash = '/index';
+							App.loading.hide();
+						}
+					});
+				}
+
+				return false;
+			});
+
+
+			page.data('inited', true);
 			dfd.resolve();
 		}
 
 		return dfd;
+	});
 
+	$('.page[data-route="admin/night/order"]').on('change', function(e, starts){
+		if(starts == undefined){
+			return true;
+		} else if($(this).data('starts') == starts){
+			return true;
+		} else {
+			$(this).data('starts', starts);
+		}
+
+		var dfd = $.Deferred();
+			page = this,
+			form = $('form.order-form', this);
+
+		// NEW NIGHT?
+		if(starts == 'new'){
+			dfd.reject({
+				title: 'I\'m Afraid I Can\'t Let You Do That',
+				headline: 'Night Has to Exist First',
+				msg: 'You must first create a night before you can edit the order for it.',
+				btn:{
+					fn: function(){
+						window.location.hash = '/admin/night/new';
+					}
+				}
+			});
+			return dfd;
+
+		// SCORING HAS STARTED?
+		} else if(Scoring.started && Scoring.starts==starts){
+			dfd.reject({
+				title: 'I\'m Afraid I Can\'t Let You Do That',
+				headline: 'Scoring Already Started',
+				msg: 'Scoring has already started for that night, so you could break lots of things. Instead, talk to Aron about what you need to do and he\'ll handle it',
+				btn:{
+					fn: function(){
+						window.location.hash = '/index';
+					}
+				}
+			});
+			return dfd;
+
+		} else if(starts in App.league_nights){
+			var night = App.league_nights[starts];
+			if(night.today == false && night.date_obj.getTime() < Date.now()){
+				dfd.reject({
+					title: 'I\'m Afraid I Can\'t Let You Do That',
+					headline: 'Live in the Now!',
+					msg: 'You can\'t edit the order for a night that already happened.',
+					btn:{
+						fn: function(){
+							window.location.hash = '/admin/night/'+starts;
+						}
+					}
+				});
+
+				return dfd;
+			}
+
+		} else {
+			dfd.reject({
+				title: 'Night Not Found',
+				headline: 'Couldn\'t find that night',
+				msg: 'A night could not be found for the passed in hash.',
+				btn:{
+					fn: function(){
+						window.location.hash = '/index';
+					}
+				}
+			});
+			return dfd;
+		}
+
+
+		$(this).attr('data-title', 'Order Admin | '+night.title+' | ');
+		$('.night-trigger', this)
+			.find('h2').text(night.title).end();
+		$('.order-form section header h1', page).text('Edit Order for '+night.title);
+
+		form.find('button.edit-night').data('starts', night.starts);
+
+		// general night info
+		form
+			.find('input[name="starts"]').val(night.starts).end()
+			.find('input[name="season_id"]').val(App.season_id).end();
+
+		// load up the player information
+		$('#player-order').empty();
+
+		Api.get('leaguenight.order', night.starts, {
+			success: function(order){
+				var cur_group = 0,
+					order_list = $('#player-order', page);
+
+				for(var i = 0; i < order.players.length; ++i){
+					var p = order.players[i];
+
+					if(p.grouping != cur_group){
+						order_list.append('<li class="divider disabled" data-group="'+cur_group+'">');
+						cur_group = p.grouping;
+						//continue;
+					}
+
+					order_list.append('<li data-name_key="'+p.name_key+'" data-rank="'+p.rank+'" class="'+(p.dnp ? 'dnp' : '')+'">' + 
+						'<span class="rank">'+p.rank+'</span>' +
+						'<h3>'+p.first_name+' '+p.last_name+'</h3>' +
+						'<button class="x dnp yellow"></button>' +
+					'</li>');
+				}
+
+				dfd.resolve();
+			},
+			error: function(err){
+				dfd.reject(err);
+			}
+		});
+
+		return dfd;
 	});
 
 	// User Admin
@@ -565,10 +883,23 @@ $(document).ready(function(){
 			// setup our panel
 			var player_list = $('<ul></ul>');
 			player_list.append('<li><a href="#/admin/users/new"><h2>New User</h2><p>Add a new user</p></a></li>');
-			for(name_key in App.players){
-				var p = App.players[name_key];
-				player_list.append('<li data-name_key="'+p.name_key+'"><a href="#/admin/users/'+p.name_key+'"><h2>'+p.first_name+' '+p.last_name+'</h2></a></li>');
-			}
+			Api.get('players.all', {
+				success: function(players){
+					for(var i in players){
+						var p = players[i],
+							name_key = p.name_key;
+
+						player_list.append('<li><a href="#/admin/users/'+name_key+'"><h3>'+p.first_name+' '+p.last_name+'</h3></a></li>');			
+					}
+					dfd.resolve();
+				},
+				error: function(error){
+					console.log(error);
+					alert('Sorry, we could not load the players. Please check your data connection.');
+					App.loading.hide();
+					dfd.reject(err);
+				}
+			});
 
 			$('#user_admin-users-panel article', page).empty().append(player_list);
 			$('form.user-form .listview ul').html(player_list.html());
@@ -578,7 +909,7 @@ $(document).ready(function(){
 				.find('h2').text('Choose a User').end();
 			
 			page.data('inited', true);
-			dfd.resolve();
+			// dfd.resolve();
 
 			// FORM SUBMISSION
 			$('form.user-form', this).on('submit', function(){
@@ -609,13 +940,14 @@ $(document).ready(function(){
 				App.loading.show();
 				Api.get('user.register', data, {
 					success: function(success){
-						App.players[name_key] = {
+						App.players[data.name_key] = {
 							'name_key': data.name_key,
 							'first_name': data.first_name,
 							'last_name': data.last_name,
 							'facebook_id': data.facebook_id,
 							'email': data.email,
-							'admin': App.players[name_key].admin
+							// 'admin': App.players[data.name_key].admin
+							'admin': data.admin
 						};					
 
 						dialog({
@@ -626,7 +958,8 @@ $(document).ready(function(){
 
 						$('input', form).val('');
 						$('header h1', form).text('Choose a User');
-						$('.listview ul', form).html($('#user_admin-users-panel ul').html());
+						// $('.listview ul', form).html($('#user_admin-users-panel ul').html());
+						window.location.hash = '/admin/users';
 
 						App.loading.hide();
 					}
@@ -700,7 +1033,7 @@ $(document).ready(function(){
 
 			$('.user-form section header h1', page).text(user.first_name+' '+user.last_name);
 
-			$('input[name="name_key"]', form).val(name_key);
+			$('input[name="name_key"]', form).val(user.name_key);
 			listview.append('<li><label for="first_name">First Name</label><fieldset><input type="text" id="first_name" name="first_name" value="'+(user.first_name != null ? user.first_name : '')+'" /></fieldset></li>');
 			listview.append('<li><label for="last_name">Last Name</label><fieldset><input type="text" id="last_name" name="last_name" value="'+(user.last_name != null ? user.last_name : '')+'" /></fieldset></li>');
 			listview.append('<li><label for="facebook_id">Facebook ID</label><fieldset><input type="text" id="facebook_id" name="facebook_id" value="'+(user.facebook_id != null ? user.facebook_id : '')+'" /></fieldset><p>This will allow the user to login with Facebook</p></li>');
@@ -708,22 +1041,25 @@ $(document).ready(function(){
 			listview.append('<li><label for="password">Password</label><fieldset><input type="text" id="password" name="password" /></fieldset><p>DO NOT use the same password as anything important</p></li>');
 
 			// get the seasons this person was active
-			Api.get('players.getSeasons', name_key, {
-				success: function(season_ids){
-					var active_seasons = '';
-					for(i in App.seasons){
-						active_seasons += '<label for="season_'+i+'" data-player_id="'+i+'">'+App.seasons[i].title+'</label>';
-						active_seasons += '<input type="checkbox" name="season[]" id="season_'+i+'" value="'+i+'" data-player_id="'+i+'" />';
-					}
-					listview.append('<li><label>Active Seasons</label><fieldset>'+active_seasons+'</fieldset>');
+			var active_seasons = '';
+			for(i in App.seasons){
+				active_seasons += '<label for="season_'+i+'" data-group="seasons">'+App.seasons[i].title+'</label>';
+				active_seasons += '<input type="checkbox" name="season[]" id="season_'+i+'" value="'+i+'" data-group="seasons" />';
+			}
+			listview.append('<li><label>Active Seasons</label><fieldset>'+active_seasons+'</fieldset>');
+			if(user.name_key != null){
+				Api.get('players.getSeasons', user.name_key, {
+					success: function(season_ids){
+						for(i in season_ids){
+							listview.find('input#season_'+season_ids[i]).trigger('click');
+						}
 
-					for(i in season_ids){
-						listview.find('input#season_'+season_ids[i]).trigger('click');
+						dfd.resolve(true);
 					}
-
-					dfd.resolve(true);
-				}
-			});
+				});
+			} else {
+				dfd.resolve(true);
+			}
 		})
 		.fail(function(err){
 			dfd.reject(err);
@@ -1122,22 +1458,23 @@ $(document).ready(function(){
 			var	page = $(this);
 
 			// figure out which league night we should set the starts to
-			var next,
+			var next = null,
+				starts = null,
 				d = new Date(),
 				today = new Date(d.getFullYear(), d.getMonth(), d.getDate()),
-				future = [],
-				starts = null;
+				future = [];
 
 			for(var i=0 in App.league_nights){
 				if(App.league_nights[i].date_obj!=false){
 					if(App.league_nights[i].date_obj.getTime() >= today )
-						future.push( i );
+						future.push( App.league_nights[i] );
 				}
 			}
-			starts = future.pop();
+			next = future.pop();
+			starts = next.starts;
 
 			// starts can't be null
-			if(starts == null){
+			if(next == null){
 				dfd.reject({
 					title: 'Cant\'t Break Ties',
 					headline: 'No Usable League Night Found to Break Ties',
@@ -1150,7 +1487,8 @@ $(document).ready(function(){
 				});
 				return dfd;
 			}
-			$('input[name="starts"]', this).val(starts);
+			$('input[name="night_id"]', this).val(next.night_id);
+			$('input[name="starts"]', this).val(next.starts);
 
 			// confirmed checkbox
 			$('input[name="confirmed"]', this).on('change', function(){
@@ -1209,6 +1547,7 @@ $(document).ready(function(){
 				// format our data
 				var d = {
 					starts: $('input[name="starts"]', this).val(),
+					night_id: $('input[name="night_id"]', this).val(),
 					players: []
 				};
 
@@ -1269,8 +1608,8 @@ $(document).ready(function(){
 								content += '<h2>'+player.first_name+' '+player.last_name+'</h2>';
 								content += '<fieldset>';
 									while(p <= places){
-										content += '<label for="'+player.name_key+'_'+p+'" data-player="'+player.name_key+'">'+(p==0 ? 'DNP' : p)+'</label>';
-										content += '<input type="radio" name="players['+player.name_key+']" value="'+p+'" id="'+player.name_key+'_'+p+'" data-player="'+player.name_key+'" />';
+										content += '<label for="'+player.name_key+'_'+p+'" data-group="'+player.name_key+'">'+(p==0 ? 'DNP' : p)+'</label>';
+										content += '<input type="radio" name="players['+player.name_key+']" value="'+p+'" id="'+player.name_key+'_'+p+'" data-group="'+player.name_key+'" />';
 										p++;
 									}
 

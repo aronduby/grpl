@@ -112,6 +112,7 @@
   #changelog-panel,
   #user_admin-users-panel,
   #night_admin-night-panel,
+  #order-admin-night-panel,
   #homepage-panel,
   #season_admin-season-panel,
   #machine_admin-machine-panel{
@@ -133,6 +134,8 @@
     #user_admin-users-panel .close,
     #night_admin-night-panel .pointer,
     #night_admin-night-panel .close,
+    #order-admin-night-panel .pointer,
+    #order-admin-night-panel .close,
     #season_admin-season-panel .pointer,
     #season_admin-season-panel .close,
     #machine_admin-machine-panel .pointer,
@@ -147,6 +150,7 @@
    #changelog-panel header,
    #user_admin-users-panel header,
    #night_admin-night-panel header,
+   #order-admin-night-panel header,
    #season_admin-season-panel header,
    #machine_admin-machine-panel header,
    #homepage-panel header{ padding:15px; }
@@ -157,6 +161,7 @@
    #changelog-panel header h1,
    #user_admin-users-panel header h1,
    #night_admin-night-panel header h1,
+   #order-admin-night-panel header h1,
    #season_admin-season-panel header h1,
    #machine_admin-machine-panel header h1,
    #homepage-panel header h1{ font-size:20px; }
@@ -167,6 +172,7 @@
    #changelog-panel article,
    #user_admin-users-panel article,
    #night_admin-night-panel article,
+   #order-admin-night-panel article,
    #season_admin-season-panel article,
    #machine_admin-machine-panel article,
    #homepage-panel article{ padding-bottom:10px; }
@@ -193,6 +199,7 @@
   #scoring .scoring-form,
   #user_admin .user-form,
   #night_admin .night-form,
+  #order_admin .order-form,
   #season_admin .season-form,
   #machine_admin .machine-form,
   #changelog .log,
@@ -462,6 +469,20 @@ body > footer{
   .player-holder li.tied[data-tied_count='even'] a:before{
     color:#8ad626;
   }
+
+/* if there are preset DNPs */
+.player-holder li.dnp,
+.players li[data-dnp="1"]{
+  opacity:.5;
+}
+  .player-holder li.dnp h3::after,
+  .players li[data-dnp="1"] h2::after{
+    content:'DNP';
+    font-weight:bold;
+    color:#900;
+    margin-left:.25em;
+    text-shadow:1px 1px 1px rgba(0,0,0,.4);
+  }
   
 /* highlight the live night on index */
 #nights-panel .listview li.live a:before{
@@ -501,12 +522,41 @@ body > footer{
 #index .division.single{
   background:none;
 }
-  #index .division.single > header{
+  #index .division.single > header,
+  #scoring-live-panel .division.single > header{
     display:none;
   }
-  #index .division.single > .content{
+  #index .division.single > .content,
+  #scoring-live-panel .division.single > .content{
     padding:0;
   }
+
+
+#scoring-live-panel .division {
+  margin-bottom:0;
+  box-shadow:none;
+  border-radius:0;
+}
+  #scoring-live-panel .division header{
+    border-radius:0;
+    padding:2px 6px;
+    background:#9f9f9f;
+    border-bottom:1px solid #b3b3b3;
+    border-top:1px solid #8b8b8b;
+  }
+    #scoring-live-panel .division h1{
+      font-size:.85em; 
+      text-shadow:none;
+      color:#626262;
+    }
+
+#scoring-live-panel .division .content{
+  padding-bottom:0;
+}
+
+#scoring-live-panel .division .listview ul:first-child::before{
+  content:none;
+}
 
 /*
  *  ChangeLog
@@ -689,6 +739,7 @@ body > footer{
   top:50%; left:10px;
   margin-top:-13px;
   font-size:26px;
+  font-weight: bold;
   color:#98724b;
   letter-spacing:-.06em;
 }
@@ -773,7 +824,7 @@ label.confirmed{
   left:0;
   bottom:0;
   width:10px;
-  border-radius:5px 0 0 5px;  
+  border-radius:0 0 0 5px;  
   opacity:.8;
 }
   #players .nights-holder fieldset.points:before{
@@ -968,16 +1019,19 @@ label.confirmed{
   }
 
 #sublist li,
-#divisionlist li{
+#divisionlist li,
+li.subsection li{
   padding-right:15px;
 }
 #sublist button.remove,
-#divisionlist button.remove{
+#divisionlist button.remove,
+li.subsection button.remove{
   float:right;
   line-height:.8em;
 }
 #sublist fieldset,
-#divisionlist fieldset{
+#divisionlist fieldset,
+li.subsection fieldset{
   position:relative;
   width:auto;
   box-shadow:none;
@@ -987,7 +1041,9 @@ label.confirmed{
 
   #sublist fieldset select,
   #sublist fieldset input,
-  #divisionlist fieldset input{
+  #divisionlist fieldset input,
+  li.subsection fieldset input,
+  li.subsection fieldset select{
     padding:5px;
     box-shadow:0 0 2px rgba(0,0,0,.6);
     box-sizing: border-box; /* css3 rec */
@@ -1001,7 +1057,7 @@ label.confirmed{
     width:39%;
   }
   #sublist fieldset input,
-  #divisionlist fieldset input,{
+  #divisionlist fieldset input{
     width:60%;
   }
 
@@ -1014,7 +1070,8 @@ label.confirmed{
 }
 
 
-#divisionlist header{
+#divisionlist header,
+.page li.subsection header{
   padding:8px 12px;
   border-bottom:1px solid #b8b8b8;
   background: -moz-linear-gradient(top,  rgba(163,163,163,0.3) 0%, rgba(104,104,104,0.3) 100%); /* FF3.6+ */
@@ -1025,7 +1082,8 @@ label.confirmed{
   background: linear-gradient(to bottom,  rgba(163,163,163,0.3) 0%,rgba(104,104,104,0.3) 100%); /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4da3a3a3', endColorstr='#4d686868',GradientType=0 ); /* IE6-9 */
 }
-  #divisionlist header h3{
+  #divisionlist header h3,
+  li.subsection header h3{
     display:inline-block;
     font-size:1.2em;
   }
@@ -1114,6 +1172,108 @@ label.confirmed{
   #random-panel .order span{
     margin-left:5px;
   }
+
+
+/*
+ * Slip Functionality
+*/
+.slip-swiping-container {
+  overflow-x: hidden;
+}
+  .slip-list li {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    cursor:-webkit-grab;
+    cursor:grab;
+  }
+  .slip-list .slip-reordering {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.45);
+    cursor:-webkit-grabbing;
+    cursor: grabbing;
+  }
+
+
+/*
+ *  Player Order
+*/
+#player-order li{
+  position:relative;
+  border-color:#c9c9c9;
+  overflow:hidden;
+  white-space:nowrap;
+  padding-right:57px;
+}
+  #player-order li.divider{
+    height: 15px;
+    background: #9f9f9f;
+    border-top: 1px solid #8b8b8b;
+    border-bottom: 1px solid #b3b3b3;
+    padding:0;
+  }
+  
+  #player-order li.dnp > *{
+    opacity:.35 !important;
+  }
+    #player-order li.dnp > .dnp:hover{
+      opacity:1 !important;
+    }
+
+  #player-order li.error{
+    color:#900;
+    border-left:5px solid;
+  }
+    #player-order li.error .rank{
+      color:#A26E6E;
+    }
+    #player-order li.error .dnp{
+      background: linear-gradient(to bottom,  #ba2626 0%,#7d1010 100%);
+      border-color:#981313;
+    }
+
+  #player-order li.slip-reordering{
+    background:#fff;
+  }
+    
+    #player-order li > *{
+      display:inline-block;
+      vertical-align:middle;
+    }
+
+    #player-order button.dnp{
+      position:absolute;
+      top:-1px; right:0;
+      bottom:-1px; left:auto;
+      border-radius:0;
+      opacity:.8;
+    }
+      #player-order button.dnp:hover{
+        opacity:1;
+      }
+      #player-order > li:first-child .dnp{
+        top:0;
+      }
+
+    #player-order .rank{
+      font-weight:bold;
+      font-size:18px;
+      color:#9f9f9f;
+      letter-spacing:-.04em;
+      margin-right:15px;
+      text-align:center;
+      line-height:13px;
+    }
+      #player-order .rank::before{
+        content:'rank';
+        display:block;
+        font-size:10px;
+        font-weight:100;
+        text-transform:uppercase;
+      }
+
+
+
+
 
 /*
  *  Wiggle Animation

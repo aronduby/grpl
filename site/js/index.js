@@ -82,8 +82,8 @@ $(document).ready(function(){
 			if($(self).data('hash') == data.starts){
 				for(name_key in data.players){
 					var p = $('.player-holder li[data-name_key="'+name_key+'"]', self),
-						night_total = Scoring.players[ Scoring.name_key_to_index[name_key] ].night_score + '',
-						season_total = Number(p.data('pre_total')) + Number(night_total);
+						night_total = Scoring.players[ Scoring.name_key_to_index[name_key] ].night_score,
+						season_total = Number(p.data('pre_total')) + night_total;
 
 					// nigh the machines
 					// update the totals for night and season
@@ -212,15 +212,17 @@ $(document).ready(function(){
 					if(division.player_list.players.length){
 						var player_holder = $('.player-holder .listview', el).empty(),
 							group_holder = $('<ul></ul>'),
-							j = 0;
-						for(i in division.player_list.players){
-							if(j%4 == 0 && j != 0){
-								player_holder.append(group_holder);
-								group_holder = $('<ul></ul>');
-							}
+							cur_group = division.player_list.players[0].grouping;
 
+						for(i in division.player_list.players){
 							var p = division.player_list.players[i],
 								machine_points = false;
+
+							if(p.grouping != cur_group){
+								player_holder.append(group_holder);
+								group_holder = $('<ul></ul>');
+								cur_group = p.grouping;
+							}							
 
 							// if scoring has started and it's the same night override the machine with the data from scoring
 							if(Scoring.started == true && Scoring.starts == night.starts){
@@ -249,7 +251,7 @@ $(document).ready(function(){
 							}
 
 							group_holder.append(
-								'<li data-name_key="'+p.name_key+'" data-pre_total="'+pre_total+'" data-scoring_string="'+p.scoring_string+'" '+(User.logged_in==true && User.name_key == p.name_key ? 'class="user starred" ' : '')+'>' +
+								'<li data-name_key="'+p.name_key+'" data-pre_total="'+pre_total+'" data-scoring_string="'+p.scoring_string+'" class="'+(User.logged_in==true && User.name_key == p.name_key ? 'user starred ' : '')+(p.dnp ? 'dnp' : '')+' ">' +
 									'<a href="#/players/'+p.name_key+'" title="view player info">' +
 										'<h3>' +
 											p.first_name+' '+p.last_name +
@@ -259,28 +261,29 @@ $(document).ready(function(){
 										'<span class="score right '+(score.length>1 ? 'double' : '')+'"><span>'+score.join('</span><span>')+'</span></span>' +
 									'</a>' + 
 								'</li>');
-
-							j++;
 						}
 						player_holder.append(group_holder);
 
 						// add our tied class to the proper people
-						var tied_count = 0;
-						player_holder.find('li').filter(function(index){
-							if($(this).attr('data-tied_count')!=undefined)
-								return true;
+						// if everyone is tied don't mark them
+						if($('li[data-scoring_string]', page).length != $('li[data-scoring_string="0"]').length){
+							var tied_count = 0;
+							player_holder.find('li').filter(function(index){
+								if($(this).attr('data-tied_count')!=undefined)
+									return true;
 
-							var sstr = $(this).attr('data-scoring_string');
-							if(sstr == 'undefined')
+								var sstr = $(this).attr('data-scoring_string');
+								if(sstr == 'undefined')
+									return false;
+
+								var tied = $('li[data-scoring_string="'+sstr+'"]', player_holder);
+								if(tied.length > 1){
+									tied.attr('data-tied_count', ++tied_count%2==1?'odd':'even');
+									return true;
+								}
 								return false;
-
-							var tied = $('li[data-scoring_string="'+sstr+'"]', player_holder);
-							if(tied.length > 1){
-								tied.attr('data-tied_count', ++tied_count%2==1?'odd':'even');
-								return true;
-							}
-							return false;
-						}).addClass('tied');
+							}).addClass('tied');
+						}
 					} else {
 						$('.player-holder .listview', page).html('<p>No player scores have been posted yet. Check back after the first week</p>');
 					}
