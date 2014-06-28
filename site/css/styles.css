@@ -1273,6 +1273,56 @@ li.subsection fieldset{
 
 
 
+/*
+ *  Player List Rankings
+*/
+.player-holder .rank{
+  display:inline-block;
+  font-size:.9em;
+  color:#aaa;
+  margin-right:.25em;
+  width:50px;
+}
+  .player-holder .rank::before{
+    content: '#';
+  }
+
+  .player-holder .rank .movement{
+    font-weight:normal;
+    font-size:.8em;
+    margin-left:.25em;
+    line-height:0;
+  }
+  
+    .player-holder .rank .movement.positive{
+      color:#89B488;
+      vertical-align:super;
+    }    
+    .player-holder .rank .movement.negative{
+      color:#B19191;
+      vertical-align:sub;
+    }
+    .player-holder .rank .movement.same{
+      position:relative;
+      color:#ccc;
+      top:-2px;
+    }
+      
+
+
+    .player-holder .rank .movement::before{
+      font-weight:bold;
+    }
+    .player-holder .rank .movement.same::before{
+      content:'\21D4'; 
+    }
+    .player-holder .rank .movement.positive::before{
+      content:'\21D1';
+    }
+    .player-holder .rank .movement.negative::before{
+      content:'\21D3';
+    }
+
 
 
 /*

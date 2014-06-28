@@ -250,10 +250,15 @@ $(document).ready(function(){
 								score.unshift(p.night_score);						
 							}
 
+							var rank_movement = 0;
+							if(p.previous_rank != null)
+								rank_movement = p.previous_rank - p.rank;
+							
 							group_holder.append(
 								'<li data-name_key="'+p.name_key+'" data-pre_total="'+pre_total+'" data-scoring_string="'+p.scoring_string+'" class="'+(User.logged_in==true && User.name_key == p.name_key ? 'user starred ' : '')+(p.dnp ? 'dnp' : '')+' ">' +
 									'<a href="#/players/'+p.name_key+'" title="view player info">' +
 										'<h3>' +
+											'<span class="rank">'+p.rank+'<span class="movement '+(rank_movement > 0 ? 'positive' : (rank_movement==0 ? 'same' : 'negative'))+'" data-movement="'+rank_movement+'">'+(rank_movement == 0 ? '' : Math.abs(rank_movement))+'</span></span>' +
 											p.first_name+' '+p.last_name +
 											(night.subs!=undefined && night.subs[p.name_key] != undefined ? '<span class="sub" title="sub">'+night.subs[p.name_key].sub+'</span>' : '') +
 										'</h3>' +
