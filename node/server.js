@@ -851,8 +851,7 @@ if (cluster.isMaster) {
 					logger.error(err); 
 					cb(err); 
 				}).done();
-			});
-				
+			});				
 		});
 
 		socket.on('players.getSeasons', function(name_key, cb){
@@ -860,6 +859,34 @@ if (cluster.isMaster) {
 			.then(function(season_ids){
 				cb(null, season_ids);
 			}).fail(function(err){ logger.error(err); cb(err); }).done();
+		});
+
+
+		socket.on('players.headToHead', function(name_key, cb){
+			socket.get('season_id', function(err, socket_season_id){
+				if(err || socket_season_id == null)
+					socket_season_id = season_id;
+
+				var data = {};
+
+				grpl.player.getByNameKey(name_key)
+				.then(function(player){
+
+					player.getHeadToHead(socket_season_id)
+					.then(function(data){
+						cb(null, data);
+					})
+					.fail(function(err){
+						logger.error(err);
+						cb(err)
+					}).done();
+					
+				})
+				.fail(function(err){
+					logger.error(err);
+					cb(err);
+				}).done();
+			});
 		});
 
 		socket.on('changelog', function(cb){

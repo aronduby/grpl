@@ -94,11 +94,14 @@ $(document).ready(function(){
 			chart.replot();
 
 		});
+
+		// "collapsibles" for the head-to-head list items
+		$('#head-to-head').on('click', 'li > header', function(){
+			$(this).parents('li').toggleClass('open');
+		});
 		
 		page.data('inited', true);
-
 	});
-
 
 	// redraw our interface on hash change
 	$('.page[data-route="players"]').on("change", function(e, name_key) {
@@ -147,6 +150,7 @@ $(document).ready(function(){
 		$('fieldset', page).data('visible', true);
 		$('fieldset', page).attr('data-visible', true);
 
+		// get the main data
 		var dfd = Api.get('players.namekey', name_key, {
 			success: function(data){
 				var player = data.player,
@@ -225,16 +229,6 @@ $(document).ready(function(){
 					var width = ((50 * Number(machines[i].points))/7);
 					tr.find('td').append('<div class="'+(machines[i].sub!=null ? 'sub' : '')+'" style="width:'+width+'%;">'+machines[i].points+'</div>');
 					
-
-					var dateobj = new Date(machines[i].starts+'T00:00:00-05:00');
-					machine_list.append('<li>' + 
-						'<h2>' +
-							machines[i].name + 
-							(machines[i].sub != null ? '<span class="sub" title="sub">'+machines[i].sub+'</span>' : '') +
-						'</h2>' +
-						'<p>'+(months[dateobj.getUTCMonth()] + ' ' + dateobj.getUTCDate().cardinal() + ', ' + dateobj.getUTCFullYear())+'</p>' +
-						'<span class="score right">'+machines[i].points+'</span>' +
-					'</li>');
 				}} else {
 					machine_list.append('<li><p>no machines played yet</p></li>');
 				}
@@ -249,12 +243,74 @@ $(document).ready(function(){
 			complete: function(){
 				// App.loading.hide();
 			}
-		})
+		});
+
+		// work on the head2head seperately
+		Api.get('players.headToHead', name_key, {
+			success: function(data){
+				var players = data.players,
+					machines = data.machines,
+					this_player = players[name_key],
+					ul = $('<ul></ul>');
+
+				delete players[name_key];
+
+				for(var opp_name_key in players){
+					var opp = players[opp_name_key],
+						win = 0,
+						loss = 0,
+						li = $('<li data-name_key="'+opp_name_key+'"><header><h1>'+opp.first_name+' '+opp.last_name+' <span class="record"></span></h1></header><div class="content"></div></li>'),
+						table = $('<table></table>');
+
+					table.appendTo(li.find('.content'));
+
+					for(var abbv in opp.machines){
+						for(var starts in opp.machines[abbv]){
+							var p_score = this_player.machines[abbv][starts],
+								o_score = opp.machines[abbv][starts],
+								short_starts = starts.match(/\d{4}-0?(\d{1,2})-0?(\d{1,2})/);
+
+							short_starts = short_starts[1]+'/'+short_starts[2];
+
+							if(p_score > o_score){
+								win++;
+							} else {
+								loss++;
+							}
+
+							var row = '<tr class="'+(p_score > o_score ? 'won' : 'lost')+'">';
+								row += '<th><abbv title="'+machines[abbv]+'">'+abbv+'</abbv></th>';
+								row += '<td class="league_night">';
+									row += '<span class="title">'+App.league_nights[starts].title+'</span>';
+									row += '<span class="short-starts">'+short_starts+'</span>';
+								row += '</td>';
+								row += '<td class="scores">';
+									row += '<div class="this-player" data-points="'+p_score+'">'+p_score+'</div>';
+									row += '<div class="opponent" data-points="'+o_score+'">'+o_score+'</div>';
+								row += '</td>';
+							row += '</tr>';
+							table.append(row);
+						}
+					}
+
+					li.find('.record')
+						.text(win+'-'+loss)
+						.addClass( win > loss ? 'winning' : (win == loss ? 'tied' : 'losing'));
+
+					ul.append(li);					
+				}
+
+				$('#head-to-head').empty().append(ul);
+
+			},
+			error: function(err){
+				console.log(err);
+				$('.head-to-head-holder .listview').html('<p>Sorry, but we were unable to load this information</p>');
+			}
+		});
 		
 		return dfd;
-
 	});
-
 
 	$('.page[data-route="players"]').on('show', function(){
 		var points = JSON.parse($('#players-nights-chart-data').text());
