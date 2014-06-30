@@ -571,7 +571,7 @@ $(document).ready(function(){
 						for(j in places){
 							var p = places[j];
 							content += '<label for="'+player.name_key+'_'+p+'" data-group="'+player.name_key+'" '+(p==0 && player.dnp==true ? 'class="checked"' : '')+'>'+(p==0 ? 'DNP' : p)+'</label>';
-							content += '<input type="radio" name="players['+player.name_key+']" value="'+p+'" id="'+player.name_key+'_'+p+'" data-group="'+player.name_key+'" '+(player_place==(p == 0 ? 5 : p) || player.dnp==true && p==0 ? 'checked="checked"' : '' )+' />';
+							content += '<input type="radio" name="players['+player.name_key+']" value="'+p+'" id="'+player.name_key+'_'+p+'" data-group="'+player.name_key+'" data-player="'+player.name_key+'" '+(player_place==(p == 0 ? 5 : p) || player.dnp==true && p==0 ? 'checked="checked"' : '' )+' />';
 							// j++;
 						}
 
