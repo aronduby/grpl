@@ -63,8 +63,11 @@ var App = {
 						if(night.starts == 'totals'){
 							night.desc = 'Running Total for the Season';
 							night.date_obj = false;
+							night.future = true;
 						} else {
-							var starts = new Date(night.starts+'T00:00:00-05:00');
+							var parts = night.starts.split('-'),
+								starts = new Date(parts[0], parts[1] - 1, parts[2]);
+
 							night.desc = months[starts.getUTCMonth()] + ' ' + starts.getUTCDate().cardinal() + ', ' + starts.getUTCFullYear();
 							night.date_obj = starts;
 
@@ -76,9 +79,11 @@ var App = {
 							);
 							if(is_today == true){
 								night.today = true;
+								night.future = false;
 								App.next_or_most_recent_night = night;
 							} else {
 								night.today = false;
+								night.future = starts > today;
 								if(App.next_or_most_recent_night == undefined || starts.getTime() > today.getTime())
 									App.next_or_most_recent_night = night;
 							}

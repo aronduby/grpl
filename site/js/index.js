@@ -157,7 +157,7 @@ $(document).ready(function(){
 		} else
 			$(this).data('hash', hash);
 
-		// also set night_id
+		// set night_id
 		$(this).data('night_id', App.league_nights[hash].night_id);
 
 		var page = this;
@@ -235,7 +235,7 @@ $(document).ready(function(){
 							}
 
 							// machine places
-							if(p.machines != undefined){
+							if(!$.isEmptyObject(p.machines)){
 								machine_points = $('<div></div>');
 								for(abbv in p.machines){
 									machine_points.append('<span class="player-machine" data-abbv="'+abbv+'">' +
@@ -248,7 +248,7 @@ $(document).ready(function(){
 							var score = [p.score],
 								pre_total = p.score;
 
-							if(p.night_score != undefined){
+							if(App.league_nights[hash].future == false){
 								score[0] = Number(score[0]) + Number(p.night_score);
 								score.unshift(p.night_score);						
 							}
