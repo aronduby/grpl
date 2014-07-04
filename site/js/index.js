@@ -271,7 +271,7 @@ $(document).ready(function(){
 
 						// add our tied class to the proper people
 						// if everyone is tied don't mark them
-						if($('li[data-scoring_string]', page).length != $('li[data-scoring_string="0"]').length){
+						if($('li[data-scoring_string]', player_holder).length != $('li[data-scoring_string="0"]', player_holder).length){
 							var tied_count = 0;
 							player_holder.find('li').filter(function(index){
 								if($(this).attr('data-tied_count')!=undefined)
