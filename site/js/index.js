@@ -1,7 +1,7 @@
 $(document).ready(function(){
 
 	Socket.add('tiesbroken', function(updated){
-		var cur_night = $('.page#index').data('hash');
+		var cur_night = $('.page#index').data('night_id');
 
 		if(cur_night == updated || cur_night == 'totals'){
 			dialog({
@@ -156,6 +156,9 @@ $(document).ready(function(){
 			return true;
 		} else
 			$(this).data('hash', hash);
+
+		// also set night_id
+		$(this).data('night_id', App.league_nights[hash].night_id);
 
 		var page = this;
 		

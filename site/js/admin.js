@@ -1,7 +1,6 @@
 $(document).ready(function(){
 
 	Socket.add('tiesbroken', function(updated, name_key){
-		console.log(updated, name_key);
 		if(User.admin == true){
 			$('#admin-panel section.ties').find('li[data-name_key="'+name_key+'"]').remove();
 			var count = $('#admin-panel section.ties .tie-groups li').length;
@@ -1608,8 +1607,8 @@ $(document).ready(function(){
 								content += '<h2>'+player.first_name+' '+player.last_name+'</h2>';
 								content += '<fieldset>';
 									while(p <= places){
-										content += '<label for="'+player.name_key+'_'+p+'" data-group="'+player.name_key+'">'+(p==0 ? 'DNP' : p)+'</label>';
-										content += '<input type="radio" name="players['+player.name_key+']" value="'+p+'" id="'+player.name_key+'_'+p+'" data-group="'+player.name_key+'" />';
+										content += '<label for="'+player.name_key+'_'+p+'" data-player="'+player.name_key+'" data-group="'+player.name_key+'">'+(p==0 ? 'DNP' : p)+'</label>';
+										content += '<input type="radio" name="players['+player.name_key+']" value="'+p+'" id="'+player.name_key+'_'+p+'" data-player="'+player.name_key+'" data-group="'+player.name_key+'" />';
 										p++;
 									}
 
