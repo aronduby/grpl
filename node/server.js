@@ -889,6 +889,26 @@ if (cluster.isMaster) {
 			});
 		});
 
+		socket.on('players.headToHeadAllTime', function(name_key, cb){
+			grpl.player.getByNameKey(name_key)
+			.then(function(player){
+
+				player.getHeadToHead()
+				.then(function(data){
+					cb(null, data);
+				})
+				.fail(function(err){
+					logger.error(err);
+					cb(err)
+				}).done();
+				
+			})
+			.fail(function(err){
+				logger.error(err);
+				cb(err);
+			}).done();
+		});
+
 		socket.on('changelog', function(cb){
 			grpl.changelog.get()
 			.then(function(data){

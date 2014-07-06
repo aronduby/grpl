@@ -855,7 +855,7 @@ label.confirmed{
 
 /*--- Machines Chart ---*/
 #players-machines-chart,
-#head-to-head table{
+.head-to-head-holder table{
   height:auto;
   text-align:left;
   margin-bottom:20px;
@@ -888,12 +888,12 @@ label.confirmed{
 
   #players-machines-chart tbody tr:nth-child(even) td,
   #players-machines-chart tbody tr:nth-child(even) th,
-  #head-to-head table tr:nth-child(even) td,
-  #head-to-head table tr:nth-child(even) th{
+  .head-to-head-holder table tr:nth-child(even) td,
+  .head-to-head-holder tr:nth-child(even) th{
     background:#eee;
   }
   #players-machines-chart tbody th,
-  #head-to-head table th{
+  .head-to-head-holder table th{
     width:55px;
     padding:8px 5px 8px 0;
     border-right:1px solid #ccc;
@@ -904,12 +904,12 @@ label.confirmed{
     vertical-align:middle;
   }
   #players-machines-chart tbody td,
-  #head-to-head table td{
+  .head-to-head-holder table td{
     vertical-align:middle;
     border-bottom:1px solid #ccc;
   }
   #players-machines-chart tbody td div,
-  #head-to-head table td.scores div{
+  .head-to-head-holder table td.scores div{
     display:inline-block;
     font-size:12px;
     font-weight:300;
@@ -927,7 +927,7 @@ label.confirmed{
       margin:0 0 2px 0;
     }
     #players-machines-chart tbody td div:nth-child(2),
-    #head-to-head table td.scores div:nth-child(2){
+    .head-to-head-holder table td.scores div:nth-child(2){
       background:#8db27b;
     }
 
@@ -959,7 +959,7 @@ label.confirmed{
 
 
 /* Head to Head */
-#head-to-head li{
+#players .head-to-head-holder li{
   padding:0;
   background: #ffffff; /* Old browsers */
   background: -moz-linear-gradient(top,  #ffffff 0%, #e5e5e5 100%); /* FF3.6+ */
@@ -970,31 +970,31 @@ label.confirmed{
   background: linear-gradient(to bottom,  #ffffff 0%,#e5e5e5 100%); /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e5e5e5',GradientType=0 ); /* IE6-9 */
 }
-  #head-to-head li header{
+  #players .head-to-head-holder li header{
     background:none;
     border:none;
     cursor:pointer !important;
   }
-    #head-to-head h1{
+    #players .head-to-head-holder li h1{
       font-size:18px;
       text-shadow:none;
       color:#696969;
     }
     
-    #head-to-head .record{ display:inline-block; }
-    #head-to-head .record.winning{ color: #53AD53; }
-    #head-to-head .record.losing{ color: #B45050; }
-    #head-to-head .record.tied{ color: #8EBDCF; }
-      #head-to-head .record::before{ content:'('; }
-      #head-to-head .record::after{ content:')'; }
+    .head-to-head-holder .record{ display:inline-block; }
+    .head-to-head-holder .record.winning{ color: #53AD53; }
+    .head-to-head-holder .record.losing{ color: #B45050; }
+    .head-to-head-holder .record.tied{ color: #8EBDCF; }
+      .head-to-head-holder .record::before{ content:'('; }
+      .head-to-head-holder .record::after{ content:')'; }
       
     
   /* defaults to closed (unlike normal collapsibles) */
-  #head-to-head .content{
+  .head-to-head-holder li .content{
     display:none;
     border-radius:0;
   }    
-  #head-to-head h1::before{
+  .head-to-head-holder li h1::before{
     content:'+';
     display:inline-block;
     width:1em;
@@ -1006,52 +1006,52 @@ label.confirmed{
     margin-right:.25em;
   }
   
-  #head-to-head li.open .content{ 
+  .head-to-head-holder li.open .content{ 
     display:block; 
     background:#f7f7f7;
     box-shadow:inset 0 0 4px 0 rgba(0,0,0,.5);
   }
-  #head-to-head li.open h1::before{ content:'-'; }
+  .head-to-head-holder li.open h1::before{ content:'-'; }
   
   
   /* tables (in addition to machine chart styles above) */
-  #head-to-head table{
+  .head-to-head-holder table{
     width:98%;
     margin:0 1%;
     font-family:'Roboto Condensed';
     font-weight:bold;
   }
   
-    #head-to-head table tr.won{ color:#53AD53; }
-    #head-to-head table tr.lost{ color:#B45050; }
+    .head-to-head-holder table tr.won{ color:#53AD53; }
+    .head-to-head-holder table tr.lost{ color:#B45050; }
   
-    #head-to-head table td.league_night{
+    .head-to-head-holder table td.league_night{
       padding:0 .5em;
       width:15%;
       border-right:1px solid #ccc;
       font-weight:normal;
       text-align:center;      
     }
-      #head-to-head table td.league_night .short-starts{
+      .head-to-head-holder table td.league_night .short-starts{
         display:none;
       }
     
-    #head-to-head table td.scores{
+    .head-to-head-holder table td.scores{
       padding-left:2px;
     }    
     
-    #head-to-head table td.scores div[data-points="7"]{ width:50%; }
-    #head-to-head table td.scores div[data-points="6"]{ width:42.8571%; }
-    #head-to-head table td.scores div[data-points="5"]{ width:35.7142%; }
-    #head-to-head table td.scores div[data-points="4"]{ width:28.5714%; }
-    #head-to-head table td.scores div[data-points="3"]{ width:21.4285%; }
-    #head-to-head table td.scores div[data-points="2"]{ width:14.2857%; }
-    #head-to-head table td.scores div[data-points="1"]{ width:7.14258%; }
-    #head-to-head table td.scores div[data-points="0"]{ display:none; }
+    .head-to-head-holder table td.scores div[data-points="7"]{ width:50%; }
+    .head-to-head-holder table td.scores div[data-points="6"]{ width:42.8571%; }
+    .head-to-head-holder table td.scores div[data-points="5"]{ width:35.7142%; }
+    .head-to-head-holder table td.scores div[data-points="4"]{ width:28.5714%; }
+    .head-to-head-holder table td.scores div[data-points="3"]{ width:21.4285%; }
+    .head-to-head-holder table td.scores div[data-points="2"]{ width:14.2857%; }
+    .head-to-head-holder table td.scores div[data-points="1"]{ width:7.14258%; }
+    .head-to-head-holder table td.scores div[data-points="0"]{ display:none; }
     
     @media only screen and (max-width: 767px){
-      #head-to-head table td.league_night .title{ display:none; } 
-      #head-to-head table td.league_night .short-starts{ display:inline; } 
+      .head-to-head-holder table td.league_night .title{ display:none; } 
+      .head-to-head-holder table td.league_night .short-starts{ display:inline; } 
     }
     
     

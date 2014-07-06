@@ -96,7 +96,7 @@ $(document).ready(function(){
 		});
 
 		// "collapsibles" for the head-to-head list items
-		$('#head-to-head').on('click', 'li > header', function(){
+		$('.head-to-head-holder').on('click', 'li > header', function(){
 			$(this).parents('li').toggleClass('open');
 		});
 		
@@ -245,69 +245,83 @@ $(document).ready(function(){
 			}
 		});
 
-		// work on the head2head seperately
-		Api.get('players.headToHead', name_key, {
-			success: function(data){
-				var players = data.players,
-					machines = data.machines,
-					this_player = players[name_key],
-					ul = $('<ul></ul>');
+		var headToHeads = {
+			'players.headToHead': '#head-to-head',
+			'players.headToHeadAllTime': '#head-to-head-all-time'
+		};
 
-				delete players[name_key];
+		for(var method in headToHeads){
+			Api.get(method, name_key, {
+				success: function(data){
+					var players = data.players,
+						machines = data.machines,
+						this_player = players[name_key],
+						ul = $('<ul></ul>'),
+						id = headToHeads[this.method];
 
-				for(var opp_name_key in players){
-					var opp = players[opp_name_key],
-						win = 0,
-						loss = 0,
-						li = $('<li data-name_key="'+opp_name_key+'"><header><h1>'+opp.first_name+' '+opp.last_name+' <span class="record"></span></h1></header><div class="content"></div></li>'),
-						table = $('<table></table>');
+					delete players[name_key];
 
-					table.appendTo(li.find('.content'));
+					for(var opp_name_key in players){
+						var opp = players[opp_name_key],
+							win = 0,
+							loss = 0,
+							li = $('<li data-name_key="'+opp_name_key+'"><header><h1>'+opp.first_name+' '+opp.last_name+' <span class="record"></span></h1></header><div class="content"></div></li>'),
+							table = $('<table></table>');
 
-					for(var abbv in opp.machines){
-						for(var starts in opp.machines[abbv]){
-							var p_score = this_player.machines[abbv][starts],
-								o_score = opp.machines[abbv][starts],
-								short_starts = starts.match(/\d{4}-0?(\d{1,2})-0?(\d{1,2})/);
+						table.appendTo(li.find('.content'));
 
-							short_starts = short_starts[1]+'/'+short_starts[2];
+						for(var abbv in opp.machines){
+							for(var starts in opp.machines[abbv]){
+								var p_score = this_player.machines[abbv][starts],
+									o_score = opp.machines[abbv][starts],
+									short_starts = starts.match(/(\d{4})-0?(\d{1,2})-0?(\d{1,2})/);
 
-							if(p_score > o_score){
-								win++;
-							} else {
-								loss++;
+								short_starts = short_starts[2]+'/'+short_starts[3]+'/'+short_starts[1];
+
+								if(p_score > o_score){
+									win++;
+								} else {
+									loss++;
+								}
+
+								var row = '<tr class="'+(p_score > o_score ? 'won' : 'lost')+'">';
+									row += '<th><abbv title="'+machines[abbv]+'">'+abbv+'</abbv></th>';
+									row += '<td class="league_night">';
+										if(method == 'players.headToHead'){
+											row += '<span class="title">'+App.league_nights[starts].title+'</span>';
+											row += '<span class="short-starts">'+short_starts+'</span>';
+										} else {
+											row += '<span>'+short_starts+'</span>';
+										}
+									row += '</td>';
+									row += '<td class="scores">';
+										row += '<div class="this-player" data-points="'+p_score+'">'+p_score+'</div>';
+										row += '<div class="opponent" data-points="'+o_score+'">'+o_score+'</div>';
+									row += '</td>';
+								row += '</tr>';
+								table.append(row);
 							}
-
-							var row = '<tr class="'+(p_score > o_score ? 'won' : 'lost')+'">';
-								row += '<th><abbv title="'+machines[abbv]+'">'+abbv+'</abbv></th>';
-								row += '<td class="league_night">';
-									row += '<span class="title">'+App.league_nights[starts].title+'</span>';
-									row += '<span class="short-starts">'+short_starts+'</span>';
-								row += '</td>';
-								row += '<td class="scores">';
-									row += '<div class="this-player" data-points="'+p_score+'">'+p_score+'</div>';
-									row += '<div class="opponent" data-points="'+o_score+'">'+o_score+'</div>';
-								row += '</td>';
-							row += '</tr>';
-							table.append(row);
 						}
+
+						li.find('.record')
+							.text(win+'-'+loss)
+							.addClass( win > loss ? 'winning' : (win == loss ? 'tied' : 'losing'));
+
+						ul.append(li);					
 					}
 
-					li.find('.record')
-						.text(win+'-'+loss)
-						.addClass( win > loss ? 'winning' : (win == loss ? 'tied' : 'losing'));
+					$(id).empty().append(ul);
 
-					ul.append(li);					
+				},
+				error: function(err){
+					console.log(err);
+					$('.listview', $(id)).html('<p>Sorry, but we were unable to load this information</p>');
 				}
+			});
+		}
 
-				$('#head-to-head').empty().append(ul);
-
-			},
-			error: function(err){
-				console.log(err);
-				$('.head-to-head-holder .listview').html('<p>Sorry, but we were unable to load this information</p>');
-			}
-		});
+		// work on the head2head seperately
+		
 		
 		return dfd;
 	});

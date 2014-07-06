@@ -13,6 +13,7 @@ var Api = {
 			argument = undefined;
 		}
 		opts = $.extend({}, this.default_opts, opts);
+		opts.method = method;
 
 		var cb = function(err, data){
 			console.groupCollapsed('Api.get', method, argument);
