@@ -99,6 +99,11 @@ $(document).ready(function(){
 		$('.head-to-head-holder').on('click', 'li > header', function(){
 			$(this).parents('li').toggleClass('open');
 		});
+
+		$('.nights-holder').on('click', function(){
+			if(!$(this).is('.closed'))
+				$('.page[data-route="players"]').trigger('show');
+		});
 		
 		page.data('inited', true);
 	});
