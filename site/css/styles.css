@@ -405,12 +405,18 @@ body > footer{
  * --- INDEX : PLAYER HOLDER ---
 */
 .player-holder .listview ul:before{
-  content:'';
+  box-sizing:border-box;
+  content:'group #'attr(data-group);
   display:block;
-  height:3px; width:100%;
+  width:100%;
   background:#9f9f9f;
   border-top:1px solid #8b8b8b;
   border-bottom:1px solid #b3b3b3;
+  text-transform:uppercase;
+  font-weight:bold;
+  font-size:.7em;
+  padding:2px;
+  color:#666;
 }
   .player-holder .listview ul li:last-child{
     border-bottom:none;

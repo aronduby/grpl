@@ -217,6 +217,8 @@ $(document).ready(function(){
 							group_holder = $('<ul></ul>'),
 							cur_group = division.player_list.players[0].grouping;
 
+						group_holder.attr('data-group', cur_group + 1);
+
 						for(i in division.player_list.players){
 							var p = division.player_list.players[i],
 								machine_points = false;
@@ -225,6 +227,7 @@ $(document).ready(function(){
 								player_holder.append(group_holder);
 								group_holder = $('<ul></ul>');
 								cur_group = p.grouping;
+								group_holder.attr('data-group', cur_group + 1);
 							}							
 
 							// if scoring has started and it's the same night override the machine with the data from scoring
