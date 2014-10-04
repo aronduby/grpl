@@ -356,7 +356,8 @@ $(document).ready(function(){
 			// player selects
 			var player_opts = '<option></option>';
 			for(var name_key in App.players){
-				player_opts += '<option value="'+name_key+'">'+App.players[name_key].first_name+' '+App.players[name_key].last_name+'</option>';
+				var had_sub = App.players[name_key].had_sub;
+				player_opts += '<option value="'+name_key+'" '+(had_sub === true ? 'disabled' : '')+'>'+App.players[name_key].first_name+' '+App.players[name_key].last_name+(had_sub ? ' (had sub)' : '')+'</option>';
 			}
 			$('select[name="player"]', page).html(player_opts);
 			$('#sublist', page).on('click', '.remove', function(){
