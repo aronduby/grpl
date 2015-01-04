@@ -351,7 +351,7 @@ $(document).ready(function(){
 							3: 'You have multiple people marked as 3rd',
 							4: 'You have multiple people marked as 4th',
 						},
-						places = {1:false, 2:false, 3:false, 4:false},
+						places = [null, false, false, false, false],
 						checked = $('input[type="radio"]:checked', this),
 						dnps = $('input[type="radio"][value="0"]:checked'),
 						total_in_group = $('li[data-namekey]', this).length,
@@ -385,7 +385,7 @@ $(document).ready(function(){
 						if(val == 0)
 							return true;// ?
 
-						if(places[val] == false){
+						if(places[val] === false){
 							places[val] = true;
 						} else {
 							var msg = error_msgs[val];
