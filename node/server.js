@@ -107,6 +107,7 @@ if (cluster.isMaster) {
 		*/
 		// cookie hash
 		socket.on('user.loginFromHash', function(hash, cb){
+			console.log('user.loginFromHash');
 			grpl.player.getByHash(hash)
 			.then(function(player){
 				socket.set('user.name_key', player.name_key);
@@ -128,6 +129,7 @@ if (cluster.isMaster) {
 
 		// facebook access token
 		socket.on('user.loginFromAccessToken', function(token, cb){
+			console.log('user.loginFromAccessToken');
 			grpl.player.getByFBToken(token)
 			.then(function(player){
 				socket.set('user.name_key', player.name_key);
@@ -148,8 +150,10 @@ if (cluster.isMaster) {
 		});
 
 		// email/password login
-		socket.on('user.loginFromForm', function(email, password, cb){
-			grpl.player.getByEmailAndPassword(email, password)
+		socket.on('user.loginFromForm', function(data, cb){
+			console.log('user.loginFromForm');
+
+			grpl.player.getByEmailAndPassword(data.email, data.password)
 			.then(function(player){
 				socket.set('user.name_key', player.name_key);
 				socket.set('user.admin', player.admin);

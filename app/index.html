@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+<head>
+	<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb#">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+
+	<title>Grand Rapids Pinball League</title>
+
+	<!-- icons -->
+	<link rel="shortcut icon" type="image/x-icon" href="icons/favicon.ico" />
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="icons/apple-touch-icon-114x114-precomposed.png" />
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="icons/apple-touch-icon-72x72-precomposed.png" />
+	<link rel="apple-touch-icon-precomposed" href="icons/apple-touch-icon-57x57-precomposed.png">
+
+
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content="Grand Rapids Pinball League" />
+	<meta property="og:site_name" content="Grand Rapids Pinball League" />
+	<meta property="og:description" content="The Grand Rapids Pinball League was started to provide an opportunity for individuals to play competitive pinball. The league is open to anyone who has an interest in playing pinball and all skill levels are welcome. Find us at https://www.facebook.com/groups/GrandRapidsPinballLeague/" />
+	<meta property="og:url" content="http://www.grpl.info/" />
+	<meta property="fb:app_id" content="554891544539566" />
+	<meta property="og:image:url" content="http://www.grpl.info/icons/apple-touch-icon-114x114-precomposed.png" />
+	<meta property="og:image:type" content="image/png" />
+	<meta property="og:image" content="http://www.grpl.info/icons/apple-touch-icon-114x114-precomposed.png" />
+
+
+	<link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/app.css">
+
+	<!-- preload the important stuff outside of require -->
+	<script>
+		document.write('<script src="http://'+window.location.host+':834/socket.io/socket.io.js"><\/script>');
+	</script>
+	<script src="bower_components/angular/angular.min.js"></script>
+	<script src="bower_components/angular-animate/angular-animate.min.js"></script>
+	<script src="bower_components/angular-route/angular-route.min.js"></script>
+	<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>	
+	<script src="bower_components/angular-cookie/angular-cookie.js"></script>
+	<script src="bower_components/angular-promise-tracker/promise-tracker.js"></script>
+	<script src="bower_components/angular-flare/dist/angular-flare.js"></script>
+
+	<script src="bower_components/slip/slip.js"></script>
+
+
+	<script src="bower_components/requirejs/require.js" data-main="js/main"></script>
+
+</head>	
+<body ng-cloak>
+	<div id="fb-root"></div>
+
+	<nav class="navbar navbar-default navbar-static-top">
+		<div class="container-fluid">
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-nav">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#/home">
+					<img src="layout_imgs/ball-black.svg" alt="GRPL" />
+				</a>
+			</div>
+
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse" id="main-nav">
+				<ul class="nav navbar-nav">
+					<li active-nav access-level="anon"><a href="#">Anon</a></li>
+					<li active-nav><a href="#/loginTest">LoginTest</a></li>
+					<li active-nav><a href="#">Link</a></li>
+					<li class="dropdown" active-nav dropdown access-level="admin">
+						<a href class="dropdown-toggle" dropdown-toggle>Dropdown <span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu">
+							<li active-nav><a href="#">Action</a></li>
+							<li active-nav><a href="#">Another action</a></li>
+							<li active-nav><a href="#">Something else here</a></li>
+							<li class="divider"></li>
+							<li active-nav><a href="#">Separated link</a></li>
+							<li class="divider"></li>
+							<li active-nav><a href="#">One more separated link</a></li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li active-nav><a href="#">Link</a></li>
+					<li class="dropdown" active-nav dropdown>
+						<a href="#" class="dropdown-toggle" dropdown-toggle>Dropdown <span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu">
+							<li active-nav><a href="#">Action</a></li>
+							<li active-nav><a href="#">Another action</a></li>
+							<li active-nav><a href="#">Something else here</a></li>
+							<li class="divider"></li>
+							<li active-nav><a href="#">Separated link</a></li>
+						</ul>
+					</li>
+				</ul>
+			</div><!-- /.navbar-collapse -->
+		</div><!-- /.container-fluid -->
+	</nav>
+
+	<div 
+		id="socket_status" 
+		class="alert alert-dark alert-page" 
+		ng-show="status !== false" 
+		ng-controller="SocketStatusCtrl"
+		ng-class="{
+			'alert-warning': status=='reconnecting', 
+			'alert-danger': status=='disconnected', 
+			'alert-success': status=='reconnected'
+		}"			
+	>
+		{{msg}}
+		<span class="label label-warning" ng-show="status=='reconnecting' && attempt_number != 0">attempt {{current_attempt}}/{{reconnection_attempts}}</span>
+	</div>
+
+	<div class="view-container container-fluid">
+		<div ng-view></div>
+	</div>
+
+	<div id="flare-holder">
+		<flare-messages></flare-messages>
+	</div>
+
+</body>
+</html>
