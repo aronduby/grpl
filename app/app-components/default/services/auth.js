@@ -28,7 +28,7 @@ define(['app-components/services/api', 'js/routingConfig'], function(servicesApp
 		logged_in: false
 	};
 
-	function Auth($q, ipCookie, api, AdminMenuAPI){
+	function Auth($q, ipCookie, api, flare){
 
 		var self = this;
 
@@ -51,10 +51,7 @@ define(['app-components/services/api', 'js/routingConfig'], function(servicesApp
 
 			self.user.role = self.getRoleForMask(self.user.role);
 			self.user.logged_in = true;
-
-			if(self.user.role.title == 'admin'){
-				AdminMenuAPI.enable();
-			}
+			flare.info('Welcome '+self.user.first_name+'!', 3000);
 		};
 
 
@@ -248,7 +245,7 @@ define(['app-components/services/api', 'js/routingConfig'], function(servicesApp
 
 	
 
-	servicesApp.service('Auth', ['$q', 'ipCookie', 'api', 'AdminMenuAPI', Auth]);
+	servicesApp.service('Auth', ['$q', 'ipCookie', 'api', 'flare', Auth]);
 
 	return servicesApp;	
 });

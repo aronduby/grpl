@@ -16,18 +16,21 @@ function(routingConfig){
 			'socketServices',
 			'ajoslin.promise-tracker',
 			'angular-flare',
-			'AdminMenu'
+			'LoadingOverlay',
+			'ordinal'
 		]);
 
 	app.config([
-		'$stateProvider', '$urlRouterProvider', '$locationProvider', 'socketProvider', 'routeResolverProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', 
-		function($stateProvider, $urlRouterProvider, $locationProvider, socketProvider, routeResolverProvider, $controllerProvider, $compileProvider, $filterProvider, $provide){
+		'$stateProvider', '$urlRouterProvider', '$locationProvider', 'socketProvider', 'navApiProvider', 'routeResolverProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', 
+		function($stateProvider, $urlRouterProvider, $locationProvider, socketProvider, navApiProvider, routeResolverProvider, $controllerProvider, $compileProvider, $filterProvider, $provide){
 
 			socketProvider.setAddress('http://'+window.location.host+':834');
 			socketProvider.setOptions({
 				'sync disconnect on unload': true,
 				'max reconnection attempts': 5
 			});
+
+			navApiProvider.setDefaults('GRPL', 'Grand Rapids Pinball League');
 			
 
 			//Change default views and controllers directory using the following:
@@ -56,26 +59,21 @@ function(routingConfig){
 						access: access.public
 					}
 				})
-				
 				.state('public.nights', route.resolve({
-					url: '/nights/:starts',
+					url: '/index/:starts',
 					baseName: 'Nights'
-				}))
-				.state('public.users', route.resolve({
-					url: '/players',
-					baseName: 'Players'
 				}))
 				.state('public.about', route.resolve({
 					url: '/about',
 					baseName: 'About'
 				}))
-				.state('public.loginTest', route.resolve({
-					url: '/loginTest',
-					baseName: 'LoginTest'
+				.state('public.users', route.resolve({
+					url: '/players',
+					baseName: 'Players'
 				}))
-				.state('public.innerPage', route.resolve({
-					url: '/innerPage',
-					baseName: 'InnerPage'
+				.state('public.playground', route.resolve({
+					url: '/playground',
+					baseName: 'Playground'
 				}));
 
 
@@ -94,7 +92,7 @@ function(routingConfig){
 					baseName: 'Ties'
 				}))
 
-			$urlRouterProvider.otherwise('/nights');
+			$urlRouterProvider.otherwise('/index');
 
 
 			// FIX for trailing slashes. Gracefully "borrowed" from https://github.com/angular-ui/ui-router/issues/50

@@ -26,13 +26,10 @@
 
 
 	<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:300italic,400italic,700italic,400,300,700' rel='stylesheet' type='text/css'>
-	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="css/pixel-admin.min.css">	
-	<link rel="stylesheet" type="text/css" href="css/pages.min.css">
-	<link rel="stylesheet" type="text/css" href="css/themes.min.css">	
-
-	<!-- Overrides -->
-	<link rel="stylesheet" type="text/css" href="css/app.min.css">
+	<link rel="stylesheet" type="text/css" href="css/reset.css">	
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<link rel="stylesheet" type="text/css" href="css/styles.css">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap-alerts.css">
 
 
 
@@ -47,6 +44,7 @@
 	<script src="bower_components/angular-cookie/angular-cookie.js"></script>
 	<script src="bower_components/angular-promise-tracker/promise-tracker.js"></script>
 	<script src="bower_components/angular-flare/dist/angular-flare.js"></script>
+	<script src="bower_components/angularjs-ordinal-filter/ordinal.js"></script>
 
 	<script src="bower_components/slip/slip.js"></script>
 
@@ -54,23 +52,21 @@
 	<script src="bower_components/requirejs/require.js" data-main="js/main"></script>
 
 </head>	
-<body admin-menu-classes class="theme-dust main-menu-animated dont-animate-mm-content-sm animate-mm-md animate-mm-lg no-main-menu" ng-cloak>
+<body loading-overlay-classes ng-cloak>
 	<div id="fb-root"></div>
 
-	<div id="main-wrapper">
+	<header id="main-navbar" ng-include="'app-components/partials/main-navbar.html'" ng-controller="NavController"></header>
 
-		<div ng-include="'app-components/partials/main-navbar.html'"></div>		
-		<div ng-include="'app-components/partials/admin-menu.html'"></div>
-		<div ng-include="'app-components/partials/socket-status.html'"></div>
+	<article ui-view></article>
 
+	<div ng-include="'app-components/partials/socket-status.html'"></div>
 
-		<div id="content-wrapper" ui-view></div>
+	<loading-overlay></loading-overlay>
 
-		<div id="flare-holder">
-			<flare-messages></flare-messages>
-		</div>
-
+	<div id="flare-holder">
+		<flare-messages></flare-messages>
 	</div>
+
 
 
 </body>

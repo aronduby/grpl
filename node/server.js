@@ -355,7 +355,7 @@ if (cluster.isMaster) {
 			});
 		});
 
-		socket.on('season.getAll', function(cb){
+		socket.on('seasons.getAll', function(cb){
 			grpl.season.getAll()
 			.then(function(seasons){
 				cb(null, seasons);	
@@ -804,7 +804,14 @@ if (cluster.isMaster) {
 				.then(function(playerlist){
 					cb(null, playerlist.players);
 				}).fail(function(err){ cb(err); }).done();
-			});				
+			});
+		});
+
+		socket.on('players.active', function(cb){
+			grpl.playerlist.getActive(season_id)
+			.then(function(playerlist){
+				cb(null, playerlist.players);
+			}).fail(function(err){ cb(err); }).done();
 		});
 
 		socket.on('players.all', function(cb){

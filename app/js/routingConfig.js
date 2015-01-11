@@ -20,6 +20,7 @@ define([], function(){
 			'public' : "*",
 			'anon': ['public'],
 			'user' : ['user', 'admin'],
+			'notAdmin': ['public', 'user'],
 			'admin': ['admin']
 		}
 	}
