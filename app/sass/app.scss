@@ -1,0 +1,62 @@
+a:focus{
+	text-decoration: none;
+}
+
+
+.league-night-list{
+	
+	li strong{
+		display:block;
+	}
+
+	li a{
+		display:flex !important;
+    	align-items:center;
+	}
+
+}
+
+
+
+
+
+
+
+
+#flare-holder{
+	position:fixed;
+	bottom:2px;
+	right:2px;
+	z-index: 2000;
+
+	.alert{
+		border:0;
+		margin-bottom:2px;
+	}
+}
+
+#socket-status{	
+	position: relative;
+	top:46px;
+	margin:0 0 0 0;
+	-webkit-transition: all linear 0.25s;
+	transition: all linear 0.25s;
+
+	&.active{
+		-webkit-animation: progress-bar-stripes 2s linear infinite;
+		-o-animation: progress-bar-stripes 2s linear infinite;
+		animation: progress-bar-stripes 2s linear infinite;
+	}
+
+	&.ng-hide {
+		line-height: 0;
+		opacity: 0;
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+}	
+
+	@keyframes progress-bar-stripes {
+		from { background-position: 40px 0; }
+		to { background-position: 0 0; } 
+	}	

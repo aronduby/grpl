@@ -1,0 +1,14 @@
+	<div 
+		id="socket-status" 
+		class="alert alert-dark alert-page" 
+		ng-show="status !== false" 
+		ng-controller="SocketStatusCtrl"
+		ng-class="{
+			'alert-warning active': status=='reconnecting', 
+			'alert-danger': status=='disconnected', 
+			'alert-success': status=='reconnected'
+		}"			
+	>
+		{{msg}}
+		<span class="label label-warning" ng-show="status=='reconnecting' && attempt_number != 0">attempt {{current_attempt}}/{{reconnection_attempts}}</span>
+	</div>

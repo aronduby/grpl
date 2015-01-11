@@ -1,4 +1,4 @@
-define(['js/app', 'app-components/services/routingConfig'], function(app){
+define(['js/app', 'js/routingConfig'], function(app){
 	
 	app.directive('accessLevel', ['Auth', function(Auth) {
 		return {

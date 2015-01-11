@@ -1,0 +1,55 @@
+<div id="main-menu" role="navigation" access-level="admin" ng-controller="AdminMenuController">
+	<div id="main-menu-inner">
+		<div class="menu-content top" id="menu-content-demo">
+			<div class="text-bg"><span class="text-slim">Welcome,</span> <span class="text-semibold">{{user.first_name}}</span></div>
+
+			<!--<img src="assets/demo/avatars/1.jpg" alt="" class="">-->
+			<div class="btn-group">
+				<a href="#" class="btn btn-xs btn-primary btn-outline dark"><i class="fa fa-envelope"></i></a>
+				<a href="#" class="btn btn-xs btn-primary btn-outline dark"><i class="fa fa-user"></i></a>
+				<a href="#" class="btn btn-xs btn-primary btn-outline dark"><i class="fa fa-cog"></i></a>
+				<a href="#" class="btn btn-xs btn-danger btn-outline dark"><i class="fa fa-power-off"></i></a>
+			</div>
+		</div>
+
+		<ul class="navigation">
+			<li active-nav>
+				<a ng-href="#/admin/ties">
+					<i class="menu-icon fa fa-code-fork"></i>
+					<span class="mm-text">Ties</span>
+					<span class="label label-warning">4</span>
+				</a>
+			</li>
+			<li active-nav>
+				<a ui-sref="admin.scoring">
+					<i class="menu-icon fa fa-bolt"></i>
+					<span class="mm-text">Scoring</span>
+				</a>
+			</li>
+			<li active-nav>
+				<a ui-sref="admin.league-nights">
+					<i class="menu-icon fa fa-calendar-o"></i>
+					<span class="mm-text">League Nights</span>
+				</a>
+			</li>
+			<li active-nav>
+				<a ui-sref="admin.users">
+					<i class="menu-icon fa fa-users"></i>
+					<span class="mm-text">Users</span>
+				</a>
+			</li>
+			<li active-nav>
+				<a ui-sref="admin.machines">
+					<i class="menu-icon fa fa-cogs"></i>
+					<span class="mm-text">Machines</span>
+				</a>
+			</li>
+			<li active-nav>
+				<a ui-sref="admin.season">
+					<i class="menu-icon fa fa-database"></i>
+					<span class="mm-text">Seasons</span>
+				</a>
+			</li>			
+		</ul> <!-- / .navigation -->
+	</div>
+</div>

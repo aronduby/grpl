@@ -1,25 +1,38 @@
-<h1>Login Test</h1>
+<div class="inner-page">
+	<header class="page-header">			
+		<div class="row">
+			<!-- Page header, center on small screens -->
+			<h1 class="col-xs-12 text-center text-left-sm">
+				<strong>Login</strong>Test
+			</h1>
+		</div>
+	</header>
 
-<pre>{{ user | json}}</pre>
-<pre>{{ lip.$$state | json }}</pre>
+	<article class="content">
 
-<p ng-show="loginTracker.active()">logging in</p>
-<p ng-show="!loginTracker.active()">not logging in</p>
+		<pre>{{ user | json}}</pre>
+		<pre>{{ lip.$$state | json }}</pre>
 
-<p><button class="btn btn-default" ng-click="tryLogin()">tryLogin</button></p>
+		<p ng-show="loginTracker.active()">logging in</p>
+		<p ng-show="!loginTracker.active()">not logging in</p>
 
-<p><button type="button" class="btn btn-default" ng-click="loginWithFacebook()">loginWithFacebook</button></p>
+		<p><button class="btn btn-default" ng-click="tryLogin()">tryLogin</button></p>
 
-<form class="form-inline">
-	<div class="form-group">
-		<label class="sr-only" for="exampleInputEmail2">Email address</label>
-		<input type="email" class="form-control" id="exampleInputEmail2" placeholder="Enter email" ng-model="email">
-	</div>
-	<div class="form-group">
-		<label class="sr-only" for="exampleInputPassword2">Password</label>
-		<input type="password" class="form-control" id="exampleInputPassword2" placeholder="Password" ng-model="password">
-	</div>
-	<button type="submit" class="btn btn-default" ng-click="loginWithForm()">loginWithForm</button>
-</form>
+		<p><button type="button" class="btn btn-default" ng-click="loginWithFacebook()">loginWithFacebook</button></p>
 
-<p><button type="button" class="btn btn-default" ng-click="apiTest()">apiTest()</button></p>
+		<form class="form-inline">
+			<div class="form-group">
+				<label class="sr-only" for="exampleInputEmail2">Email address</label>
+				<input type="email" class="form-control" id="exampleInputEmail2" placeholder="Enter email" ng-model="email">
+			</div>
+			<div class="form-group">
+				<label class="sr-only" for="exampleInputPassword2">Password</label>
+				<input type="password" class="form-control" id="exampleInputPassword2" placeholder="Password" ng-model="password">
+			</div>
+			<button type="submit" class="btn btn-default" ng-click="loginWithForm()">loginWithForm</button>
+		</form>
+
+		<p><button type="button" class="btn btn-default" ng-click="apiTest()">apiTest()</button></p>
+	</article>
+
+</div>

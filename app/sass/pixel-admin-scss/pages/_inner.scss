@@ -1,0 +1,285 @@
+//
+// Pages / Inner
+// A port of most o the mail styles to be more generic
+// 
+// --------------------------------------------------
+
+$inner-padding: 16px;
+$subnav-width: 200px;
+
+
+// ************************************************************************* //
+//**   Small screens (mobile first)                                        **//
+
+.inner-page {
+  background: #fff !important;
+  position: absolute;
+  width:100%;
+  min-height:100%;
+
+
+  // SubNav navigation
+  //
+
+  .subnav {
+    border: 0px solid;
+    border-bottom-width: 1px;
+
+    .navigation {
+      overflow: hidden;
+      position: relative;
+      padding-top: $main-navbar-height;
+      height: $main-navbar-height;
+
+      &.open {
+        height: auto;
+
+        li.active:after {
+          -ms-transform: rotate(90deg); /* IE 9 */
+          -webkit-transform: rotate(90deg); /* Chrome, Safari, Opera */
+          transform: rotate(90deg);
+        }
+      }
+    }
+
+    .sections {
+      margin: 10px 0;
+      padding: 0;
+
+      li {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        @include transition(all .2s);
+
+        &.active {
+          position: absolute;
+          top: 0;
+          width: 100%;
+          border-bottom: 1px solid;
+
+          a {
+            font-size: 15px;
+          }
+
+          &:after {
+            content: "\f105";
+            font-family: FontAwesome;
+            position: absolute;
+            display: block;
+            right: $inner-padding;
+            top: 8px;
+            font-size: 20px;
+            @include transition(all .2s);
+          }
+        }
+
+        &.active .label,
+        &.active .badge {
+          margin-top: 13px;
+          margin-right: $inner-padding + 20;
+        }
+      }
+
+      .label,
+      .badge {
+        margin-top: 8px;
+        margin-right: $inner-padding;
+      }
+
+      a {
+        display: block;
+        padding: 10px 0 10px $inner-padding;
+        font-size: 14px;
+      }
+    }
+
+    li a > .fa:first-child {
+      width: 16px;
+      margin-right: 10px;
+      text-align: center;
+      display: inline-block;
+    }
+
+    h2{
+      margin-top: 25px;
+      font-size: 11px;
+      text-transform: uppercase;
+      padding-left: $inner-padding;
+      font-weight: 600;  
+    }
+
+    .status-label {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      margin-right: 10px;
+    }
+
+    .add-more a {
+      font-size: 12px;
+    }
+
+    li.divider {
+      padding: 0;
+      height: 1px;
+      margin: 9px 0 3px 0;
+    }
+
+  }
+
+  .main-btn {
+    border-bottom: 1px solid;
+    padding: $inner-padding;
+  }
+
+  .select-sub {
+    display: none;
+  }
+
+  .select-sub.active {
+    display: block;
+  }
+
+
+  // Controls
+  //
+
+  .controls {
+    border-bottom: 1px solid #efefef;
+    padding: 12px $inner-padding;
+  }
+
+  .controls .btn-group + .btn-group {
+    margin-left: 12px;
+  }
+
+  .controls .btn {
+    font-size: 14px;
+    line-height: 14px;
+  }
+
+  .controls .btn .fa-caret-down {
+    position: relative;
+    top: -1px;
+  }
+
+  .controls .pages {
+    line-height: 30px;
+    margin-right: 13px;
+    color: #bbb;
+  }
+
+  @media(min-width: $screen-md) {
+    .controls .wide-btns .btn {
+      width: 60px;
+      text-align: center;
+      display: inline-block;
+    }
+  }
+
+
+  // Main container
+  //
+
+  .inner-container > header:first-child {
+    display: none;
+    border-bottom: 1px solid #efefef;
+    line-height: 35px;
+    padding: 14px $inner-padding;
+    font-size: 20px;
+    font-weight: 300;
+  }
+
+  .inner-container > header.show:first-child {
+    display: block;
+  }
+}
+
+
+// ************************************************************************* //
+//**   Desktops                                                            **//
+
+@media(min-width: $screen-md) {
+  .inner-page {
+
+    // Sub navigation
+    //
+
+    .subnav {
+      width: $subnav-width;
+      border-bottom: 0;
+      position: absolute;
+      height: auto;
+      min-height: 100%;
+      border-right-width: 1px;
+
+      &.fixed {
+        position: fixed;
+
+        &:before {
+          display: none !important;
+        }
+      }
+
+      // Add fixed background
+      &:before {
+        content: "";
+        display: block;
+        top: 0;
+        bottom: 0;
+        position: fixed;
+        width: $subnav-width;
+        border-right: 1px solid;
+        z-index: -1;
+      }
+
+      .navigation {
+        height: auto !important;
+        padding-top: 0;
+
+        .label {
+          font-size: 10px;
+          line-height: 16px;
+          padding: 0 4px;
+          margin-top: 11px !important;
+          margin-right: $inner-padding !important;
+        }
+
+        li:after {
+          display: none !important;
+        }
+      }
+
+      .sections {
+        li.active {
+          position: static;
+          top: auto;
+          border: none;
+        }
+
+        a,
+        li.active a {
+          font-size: 13px;
+        }
+      }
+    }
+
+    .select-sub {
+      display: none !important;
+    }
+
+
+    // Inner container
+    //
+
+    .inner-container {
+      margin-left: $subnav-width;
+    }
+
+    .inner-container > header:first-child {
+      display: block;
+    }
+  }
+}

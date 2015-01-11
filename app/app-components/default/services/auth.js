@@ -1,4 +1,4 @@
-define(['app-components/services/api', 'app-components/services/routingConfig'], function(servicesApp, routingConfig){
+define(['app-components/services/api', 'js/routingConfig'], function(servicesApp, routingConfig){
 
 	// Load the SDK Asynchronously
 	(function(d){
@@ -28,7 +28,7 @@ define(['app-components/services/api', 'app-components/services/routingConfig'],
 		logged_in: false
 	};
 
-	function Auth($q, ipCookie, api){
+	function Auth($q, ipCookie, api, AdminMenuAPI){
 
 		var self = this;
 
@@ -51,6 +51,10 @@ define(['app-components/services/api', 'app-components/services/routingConfig'],
 
 			self.user.role = self.getRoleForMask(self.user.role);
 			self.user.logged_in = true;
+
+			if(self.user.role.title == 'admin'){
+				AdminMenuAPI.enable();
+			}
 		};
 
 
@@ -244,7 +248,7 @@ define(['app-components/services/api', 'app-components/services/routingConfig'],
 
 	
 
-	servicesApp.service('Auth', ['$q', 'ipCookie', 'api', Auth]);
+	servicesApp.service('Auth', ['$q', 'ipCookie', 'api', 'AdminMenuAPI', Auth]);
 
 	return servicesApp;	
 });

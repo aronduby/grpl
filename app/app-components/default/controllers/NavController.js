@@ -1,6 +1,6 @@
 define(['js/app'], function(app){
 	
-	app.controller('NavCtrl', ['$rootScope', '$scope', '$state', 'Auth', 'flare', function($rootScope, $scope, $state, Auth, flare) {
+	app.controller('NavCtrl', ['$rootScope', '$scope', '$state', 'Auth', 'flare', '$document', function($rootScope, $scope, $state, Auth, flare, $document) {
 		$scope.user = Auth.user;
 		$scope.userRoles = Auth.userRoles;
 		$scope.accessLevels = Auth.accessLevels;
@@ -21,9 +21,10 @@ define(['js/app'], function(app){
 
 		$scope.toggleMainMenu = function(){
 			$scope.navbar_open = false;
-			$('body').toggleClass('mme');
+			angular.element(document.body).toggleClass('mmc mme');
 		}
 
+		/*
 		// clicks to links in main menu and navbar close the respective menus
 		// not great but whatever
 		$(document).on('click', '#main-menu a', function(){
@@ -33,6 +34,7 @@ define(['js/app'], function(app){
 		$('#main-navbar').on('click', 'a:not(.dropdown-toggle)', function(){
 			$scope.navbar_open = false;
 		});
+		*/
 	}])
 
 	return app;

@@ -25,8 +25,16 @@
 	<meta property="og:image" content="http://www.grpl.info/icons/apple-touch-icon-114x114-precomposed.png" />
 
 
-	<link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="css/app.css">
+	<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:300italic,400italic,700italic,400,300,700' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/pixel-admin.min.css">	
+	<link rel="stylesheet" type="text/css" href="css/pages.min.css">
+	<link rel="stylesheet" type="text/css" href="css/themes.min.css">	
+
+	<!-- Overrides -->
+	<link rel="stylesheet" type="text/css" href="css/app.min.css">
+
+
 
 	<!-- preload the important stuff outside of require -->
 	<script>
@@ -34,7 +42,7 @@
 	</script>
 	<script src="bower_components/angular/angular.min.js"></script>
 	<script src="bower_components/angular-animate/angular-animate.min.js"></script>
-	<script src="bower_components/angular-route/angular-route.min.js"></script>
+	<script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
 	<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>	
 	<script src="bower_components/angular-cookie/angular-cookie.js"></script>
 	<script src="bower_components/angular-promise-tracker/promise-tracker.js"></script>
@@ -46,82 +54,24 @@
 	<script src="bower_components/requirejs/require.js" data-main="js/main"></script>
 
 </head>	
-<body ng-cloak>
+<body admin-menu-classes class="theme-dust main-menu-animated dont-animate-mm-content-sm animate-mm-md animate-mm-lg no-main-menu" ng-cloak>
 	<div id="fb-root"></div>
 
-	<nav class="navbar navbar-default navbar-static-top">
-		<div class="container-fluid">
-			<!-- Brand and toggle get grouped for better mobile display -->
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-nav">
-					<span class="sr-only">Toggle navigation</span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="#/home">
-					<img src="layout_imgs/ball-black.svg" alt="GRPL" />
-				</a>
-			</div>
+	<div id="main-wrapper">
 
-			<!-- Collect the nav links, forms, and other content for toggling -->
-			<div class="collapse navbar-collapse" id="main-nav">
-				<ul class="nav navbar-nav">
-					<li active-nav access-level="anon"><a href="#">Anon</a></li>
-					<li active-nav><a href="#/loginTest">LoginTest</a></li>
-					<li active-nav><a href="#">Link</a></li>
-					<li class="dropdown" active-nav dropdown access-level="admin">
-						<a href class="dropdown-toggle" dropdown-toggle>Dropdown <span class="caret"></span></a>
-						<ul class="dropdown-menu" role="menu">
-							<li active-nav><a href="#">Action</a></li>
-							<li active-nav><a href="#">Another action</a></li>
-							<li active-nav><a href="#">Something else here</a></li>
-							<li class="divider"></li>
-							<li active-nav><a href="#">Separated link</a></li>
-							<li class="divider"></li>
-							<li active-nav><a href="#">One more separated link</a></li>
-						</ul>
-					</li>
-				</ul>
-				<ul class="nav navbar-nav navbar-right">
-					<li active-nav><a href="#">Link</a></li>
-					<li class="dropdown" active-nav dropdown>
-						<a href="#" class="dropdown-toggle" dropdown-toggle>Dropdown <span class="caret"></span></a>
-						<ul class="dropdown-menu" role="menu">
-							<li active-nav><a href="#">Action</a></li>
-							<li active-nav><a href="#">Another action</a></li>
-							<li active-nav><a href="#">Something else here</a></li>
-							<li class="divider"></li>
-							<li active-nav><a href="#">Separated link</a></li>
-						</ul>
-					</li>
-				</ul>
-			</div><!-- /.navbar-collapse -->
-		</div><!-- /.container-fluid -->
-	</nav>
+		<div ng-include="'app-components/partials/main-navbar.html'"></div>		
+		<div ng-include="'app-components/partials/admin-menu.html'"></div>
+		<div ng-include="'app-components/partials/socket-status.html'"></div>
 
-	<div 
-		id="socket_status" 
-		class="alert alert-dark alert-page" 
-		ng-show="status !== false" 
-		ng-controller="SocketStatusCtrl"
-		ng-class="{
-			'alert-warning': status=='reconnecting', 
-			'alert-danger': status=='disconnected', 
-			'alert-success': status=='reconnected'
-		}"			
-	>
-		{{msg}}
-		<span class="label label-warning" ng-show="status=='reconnecting' && attempt_number != 0">attempt {{current_attempt}}/{{reconnection_attempts}}</span>
+
+		<div id="content-wrapper" ui-view></div>
+
+		<div id="flare-holder">
+			<flare-messages></flare-messages>
+		</div>
+
 	</div>
 
-	<div class="view-container container-fluid">
-		<div ng-view></div>
-	</div>
-
-	<div id="flare-holder">
-		<flare-messages></flare-messages>
-	</div>
 
 </body>
 </html>
