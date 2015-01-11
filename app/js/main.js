@@ -16,6 +16,7 @@ require(
 		'app-components/controllers/NavController',
 		'app-components/directives/AccessLevel',
 		'app-components/directives/Collapsible',
+		'app-components/directives/InlineModal',
 		'app-components/LoadingOverlay'
 	],
 	function () {

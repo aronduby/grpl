@@ -1,8 +1,8 @@
 define(['js/app'], function(app){
 
-	var injectParams = ['$scope', 'navApi', 'loadingOverlayApi', '$timeout'];
+	var injectParams = ['$scope', 'navApi', 'loadingOverlayApi', '$timeout', 'inlineModalApi', '$modal'];
 
-	var PlaygroundController = function($scope, navApi, loadingOverlayApi, $timeout ){
+	var PlaygroundController = function($scope, navApi, loadingOverlayApi, $timeout, inlineModalApi, $modal ){
 		
 		// navApi
 			$scope.title = '';
@@ -16,15 +16,24 @@ define(['js/app'], function(app){
 				navApi.defaultTitle();
 			}
 
-
 		// loadingOverlayApi
 			$scope.loading = function(ms){
 				loadingOverlayApi.show();
 				$timeout(function(){
 					loadingOverlayApi.hide();
 				}, ms);
+			}		
+
+		// inline modals
+			$scope.openHomepagePanel = function(){
+				inlineModalApi.open('homepage-panel');
 			}
-		
+
+			$scope.testModal = function(){
+				$modal.open({
+					template: '<p><a href="#/about">about</a></p>'
+				})
+			}
 	};
 
 	PlaygroundController.$inject = injectParams;

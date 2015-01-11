@@ -1,17 +1,17 @@
 define(['js/app'], function(app){
 
-	lar injectParams = ['$scope', '$q', 'api', 'ipCookie', 'LoadingOverlayAPI', 'navApi', 'promiseTracker'];
+	var injectParams = ['$scope', '$q', 'api', 'ipCookie', 'loadingOverlayApi', 'navApi', 'promiseTracker'];
 
-	lar AboutController = function($scope, $q, API, ipCookie, LoadingOverlayAPI, navApi, promiseTracker){
+	var AboutController = function($scope, $q, API, ipCookie, loadingOverlayApi, navApi, promiseTracker){
 		navApi.defaultTitle();
-		loadingOverlayAPI.show();
+		loadingOverlayApi.show();
 		
 		$scope.machines = [];
 		$scope.seasons = [];
 		$scope.players = [];
 
 		$scope.loading = function(){
-			loadingOverlayAPI.toggle();
+			loadingOverlayApi.toggle();
 		}
 
 		var machine_promise = API.get('machine.active'),
@@ -25,7 +25,7 @@ define(['js/app'], function(app){
 
 		$q.all([machine_promise, seasons_promise, players_promise])
 		.then((function(){
-			loadingOverlayAPI.hide();
+			loadingOverlayApi.hide();
 		}));
 
 

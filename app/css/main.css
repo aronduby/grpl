@@ -1,7 +1,7 @@
 @import url(http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700,300);
 
 html,body{
-  min-height:100%;
+  /* min-height: 100vh; */
 }
 
 body{
@@ -765,6 +765,28 @@ body.loading{
 }
 .popup.dialog .content div{
   line-height:1.3em; 
+}
+
+/* used with a bootstrap modal */
+.modal .popup{
+  position: static;
+  display:block;
+  width: 100% !important;
+  left:0;
+  margin:0;
+  box-shadow:none;
+}
+  .modal .popup header a.close{ display:block !important; }
+  .modal .popup header .pointer{ display:none; }
+
+  .modal .popup article{
+    padding-bottom:10px;
+  }
+
+  /* why wasn't this in bootstrap? */
+  .modal-backdrop{
+    bottom:0;  
+    position: fixed;
 }
 
 

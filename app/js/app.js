@@ -129,8 +129,8 @@ function(routingConfig){
 	]);
 
 	app.run([
-		'$rootScope', '$state', 'socket', 'api', 'ipCookie', 'Auth', 'flare', '$location',
-		function($rootScope, $state, socket, api, ipCookie, Auth, flare, $location){
+		'$rootScope', '$state', 'socket', 'api', 'ipCookie', 'Auth', 'flare', '$location', '$modalStack',
+		function($rootScope, $state, socket, api, ipCookie, Auth, flare, $location, $modalStack){
 			api.setSocket(socket);
 			Auth.tryLogin();
 
@@ -145,6 +145,8 @@ function(routingConfig){
 			*/
 			var locationSearch = null;
 			$rootScope.$on("$stateChangeStart", function (event, toState, toParams, fromState, fromParams) {
+				$modalStack.dismissAll(); // close all open modals
+
 				//save location.search so we can add it back after transition is done
 				locationSearch = $location.search();
 
