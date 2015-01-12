@@ -17,7 +17,8 @@ function(routingConfig){
 			'ajoslin.promise-tracker',
 			'angular-flare',
 			'LoadingOverlay',
-			'ordinal'
+			'ordinal',
+			'ngStorage'
 		]);
 
 	app.config([

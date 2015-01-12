@@ -152,6 +152,12 @@ p.deprecated{
     background: -ms-linear-gradient(top,  #a3a3a3 0%,#686868 100%); /* IE10+ */
     background: linear-gradient(to bottom,  #a3a3a3 0%,#686868 100%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a3a3a3', endColorstr='#686868',GradientType=0 ); /* IE6-9 */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
     .page article section header h1{
       color:#fff;
