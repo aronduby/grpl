@@ -4,6 +4,7 @@ define(['js/app'], function(app){
 
 		this.title = defaults.title;
 		this.subtitle = defaults.subtitle;
+		this.center_panel_key = false;
 
 		this.setTitle = function(title, subtitle){
 			this.title = title;
@@ -13,6 +14,10 @@ define(['js/app'], function(app){
 		this.defaultTitle = function(){
 			this.title = defaults.title;
 			this.subtitle = defaults.subtitle;
+		}
+
+		this.setCenterPanelKey = function(key){
+			this.center_panel_key = key;
 		}
 	};
 

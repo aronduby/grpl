@@ -16,6 +16,10 @@ define(['js/app'], function(app){
 				navApi.defaultTitle();
 			}
 
+			$scope.setCenterPanel = function(key){
+				navApi.setCenterPanelKey(key);
+			}
+
 		// loadingOverlayApi
 			$scope.loading = function(ms){
 				loadingOverlayApi.show();

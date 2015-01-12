@@ -1,10 +1,12 @@
 <div class="page" id="playground">
 	<article>
+
 		<section collapsible="playground.navapi">
 			<header>
 				<h1>NavApi</h1>
 			</header>
 			<div class="content">
+				<h1>Title</h1>
 				<form>
 					<div class="fields listview"><ul>
 						<li>
@@ -21,8 +23,42 @@
 						<button type="submit" class="inline" ng-click="defaultTitle()">Default Title</button>
 					</div>
 				</form>
+
+				<hr />
+
+				<h1>Center Panel</h1>
+				<div>
+					<button type="submit" class="inline" ng-click="setCenterPanel('test-panel')">Test Panel</button>
+					<button type="submit" class="inline" ng-click="setCenterPanel('other-panel')">Other Panel</button>
+				</div>
 			</div>
 		</section>
+
+		<div id="test-panel" class="popup panel center show-header" inline-modal>
+			<header>
+				<span class="pointer"></span>
+				<h1>Rankings</h1>
+				<a class="close" ng-click="close()">Close</a>
+			</header>
+			<article class="listview">
+				<ul>
+					<li><a ui-sref="public.about"><h2>About</h2></a></li>
+				</ul>
+			</article>
+		</div>
+
+		<div id="other-panel" class="popup panel center show-header" inline-modal>
+			<header>
+				<span class="pointer"></span>
+				<h1>Other</h1>
+				<a class="close" ng-click="close()">Close</a>
+			</header>
+			<article class="listview">
+				<ul>
+					<li><a ui-sref="public.about"><h2>Other Stuff</h2></a></li>
+				</ul>
+			</article>
+		</div>
 
 		<section collapsible="playground.loadingoverlayapi">
 			<header>
