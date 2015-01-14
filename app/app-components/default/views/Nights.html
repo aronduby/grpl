@@ -1,0 +1,27 @@
+<div class="page" id="index">
+	<article>
+
+		<section class="randomizer-holder">
+			<button id="randomizer" class="green block" ng-click="randomizer()">Randomizer</button>
+		</section>
+
+	</article>
+
+
+	<div id="nights-panel" class="popup center show-header" inline-modal>
+		<header>
+			<span class="pointer"></span>
+			<h1>Choose a Night</h1>
+			<a class="close" href="#">Close</a>
+		</header>
+		<article class="listview">
+			<li ng-repeat="night in nights track by night.night_id">
+				<a ng-href="#/index/{{ night.starts }}">
+					<h2>{{ night.title }}</h2>
+					<p>{{ night.description }}</p>
+				</a>
+			</li>
+		</article>
+	</div>
+
+</div>

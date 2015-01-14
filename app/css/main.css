@@ -345,6 +345,7 @@ p.deprecated{
     content:'';
     display:block;
     clear:both;
+    height:0;
   }
 
   .listview li:last-child{
@@ -942,16 +943,6 @@ form .listview fieldset.multiple select{
     -khtml-box-sizing: border-box; /* konqueror */    
   }
 
-
-
-
-
-
-
-
-
-
-
 @media only screen and (max-width: 767px){
   form .listview li h2,
   form .listview li > label,
@@ -961,4 +952,11 @@ form .listview fieldset.multiple select{
   }
   form .listview li h2,
   form .listview li > label{ margin:0 0 8px 0 !important; }
+}
+
+
+blockquote > cite{
+  display:block;
+  margin-top:.25em;
+  text-align:right;
 }

@@ -9,6 +9,7 @@ function(routingConfig){
 
 	var app = angular.module('grpl', [
 			'ngAnimate',
+			'ngSanitize',
 			'ui.router',
 			'ui.bootstrap',
 			'ipCookie',
@@ -130,8 +131,17 @@ function(routingConfig){
 	]);
 
 	app.run([
-		'$rootScope', '$state', 'socket', 'api', 'ipCookie', 'Auth', 'flare', '$location', '$modalStack',
-		function($rootScope, $state, socket, api, ipCookie, Auth, flare, $location, $modalStack){
+		'$rootScope', '$state', 'socket', 'api', 'ipCookie', 'Auth', 'flare', '$location', '$modalStack', '$templateCache',
+		function($rootScope, $state, socket, api, ipCookie, Auth, flare, $location, $modalStack, $templateCache){
+			// override the default flare tpl
+			$templateCache.put("directives/flaremessages/index.tpl.html",
+			    "<div ng-repeat=\"(key,message) in flareMessages\" ng-class=\"classes(message)\">\n" +
+			    "  <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\" ng-click=\"dismiss(key)\">&times;</button>\n" +
+			    "  <div ng-bind-html=\"message.content\"></div>\n" +
+			    "</div>\n" +
+			"");
+
+
 			api.setSocket(socket);
 			Auth.tryLogin();
 
