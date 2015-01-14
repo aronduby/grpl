@@ -13,7 +13,6 @@ define(['js/app'], function(app){
 		$scope.nights = [];
 		api.get('leaguenight')
 		.then(function(nights){
-			console.log(nights);
 			$scope.nights = nights;
 		})
 		.finally(function(){

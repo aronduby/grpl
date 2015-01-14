@@ -30,10 +30,24 @@ define(['js/app'], function(app){
 		return {
 			restrict: 'A',
 			link: function($scope, element, attrs) {
-				var tpl = element[0].outerHTML;
-				tpl = tpl.replace('inline-modal=""', '');
 
-				inlineModalApi.add(attrs.id, tpl);
+				var updater = _.debounce(function(newVal, oldVal){
+					$scope.$apply(function(){
+						var tpl = element[0].outerHTML,
+							comment_re = /<!--.*?-->/g,
+							ng_re = /ng-.*=".*" /g;
+
+						tpl = tpl.replace('inline-modal=""', '');
+						tpl = tpl.replace(comment_re, '');
+						tpl = tpl.replace(ng_re, '');
+
+						console.log(tpl);
+
+						inlineModalApi.add(attrs.id, tpl);	
+					});					
+				}, 500);
+
+				$scope.$watch(function(){ return element.html(); },  updater);
 
 				$scope.$on('$destroy', function() {
 					inlineModalApi.remove(attrs.id);

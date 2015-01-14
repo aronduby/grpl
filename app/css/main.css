@@ -100,7 +100,7 @@ textarea{
       display:inline-block;
       text-align:center;
     }
-    #main-navbar .select-trigger div:after{
+    #main-navbar .select-trigger div::after{
       content:'';
       display:block;
       position:absolute;
