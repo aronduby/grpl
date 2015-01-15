@@ -1,16 +1,15 @@
 define(['app-components/services/socket'], function(servicesApp){
 
-	function Api($q){
-		var Socket;
+	function Api($q, Socket){
+
+		this.setSocket = function(sock){
+			Socket = sock;
+		}
 
 		this.default_opts = {
 			success: function(){  },
 			error: function(){  },
 			complete: function(){ return true; }
-		};
-
-		this.setSocket = function(sock){
-			Socket = sock;
 		};
 
 		this.get = function(method, argument, opts){
@@ -51,8 +50,21 @@ define(['app-components/services/socket'], function(servicesApp){
 		};
 	}
 
-	servicesApp.service('api', ['$q', Api]);
+	servicesApp.provider('api', function apiProvider(){
+		var socket;
 
+		this.setSocket = function(sock){
+			socket = sock;
+		}
+
+		this.$get = ['$q', function($q){
+			return new Api($q, socket);
+		}];
+
+	});
+
+	// servicesApp.service('api', ['$q', Api]);
+	
 	return servicesApp;
 
 });

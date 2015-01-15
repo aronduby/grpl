@@ -35,10 +35,12 @@ define(['js/app'], function(app){
 				scope.toggle = function(){ scope.closed = !scope.closed; }
 
 				element.addClass('collapsible');
-				element.find('header').on('click', function(){
+				var header = angular.element(element.find('header')[0]);
+				header.on('click', function(e){
 					scope.$apply(function(){
 						scope.toggle();
-					});					
+					});
+					e.stopPropagation();
 				});
 
 				attrs.$observe('closed', function(closed){

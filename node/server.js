@@ -496,6 +496,7 @@ if (cluster.isMaster) {
 					
 					grpl.division.getPointsForNight(socket_season_id, starts, future_night)
 					.then(function( divisions ){
+
 						night.divisions = divisions;
 						cb(null, night);
 

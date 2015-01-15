@@ -42,10 +42,12 @@
 		document.write('<script src="http://'+window.location.host+':834/socket.io/socket.io.js"><\/script>');
 	</script>
 	<script src="bower_components/underscore/underscore-min.js"></script>
+	<script src="bower_components/moment/min/moment.min.js"></script>
 
 	<script src="bower_components/angular/angular.min.js"></script>
 	<script src="bower_components/angular-animate/angular-animate.min.js"></script>
 	<script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+	<script src="bower_components/angular-filter/dist/angular-filter.js"></script>
 	<script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
 	<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>	
 	<script src="bower_components/angular-cookie/angular-cookie.js"></script>
@@ -60,12 +62,24 @@
 	<script src="bower_components/requirejs/require.js" data-main="js/main"></script>
 
 </head>	
-<body loading-overlay-classes ng-cloak>
+<body loading-overlay-classes class="loading">
 	<div id="fb-root"></div>
 
 	<header id="main-navbar" ng-include="'app-components/partials/main-navbar.html'" ng-controller="NavController"></header>
 
-	<article ui-view></article>
+	<article ui-view>
+		<div id="loading-container">
+			<div id="loading">
+				<div class="inner">
+					<div class="text">
+						<span>l</span><span>o</span><span>a</span><span>d</span><span>i</span><span>n</span><span>g</span>
+					</div>
+				</div>
+			</div>
+			<div class="overlay"></div>
+		</div>
+
+	</article>
 
 	<div ng-include="'app-components/partials/socket-status.html'"></div>
 
@@ -74,8 +88,6 @@
 	<div id="flare-holder">
 		<flare-messages></flare-messages>
 	</div>
-
-
 
 </body>
 </html>

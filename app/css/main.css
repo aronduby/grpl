@@ -233,9 +233,9 @@ p.deprecated{
       .collapsible.closed header h1::before{ 
         content:'+'; 
       }
-      section.collapsible.closed .content,
-      .collapsible.closed .content,
-      .collapsible.closed .collapsible-content{
+      section.collapsible.closed > .content,
+      .collapsible.closed > .content,
+      .collapsible.closed > .collapsible-content{
         display:none;
       }
 
@@ -959,4 +959,18 @@ blockquote > cite{
   display:block;
   margin-top:.25em;
   text-align:right;
+}
+
+pre{
+  display: block;
+  font-family: monospace;
+  padding: 9.5px;
+  margin: 0 0 10px;
+  line-height: 1.42857143;
+  color: #333;
+  word-break: break-all;
+  word-wrap: break-word;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }

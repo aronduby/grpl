@@ -10,6 +10,7 @@ function(routingConfig){
 	var app = angular.module('grpl', [
 			'ngAnimate',
 			'ngSanitize',
+			'angular.filter',
 			'ui.router',
 			'ui.bootstrap',
 			'ipCookie',
@@ -25,12 +26,6 @@ function(routingConfig){
 	app.config([
 		'$stateProvider', '$urlRouterProvider', '$locationProvider', 'socketProvider', 'navApiProvider', 'routeResolverProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', 
 		function($stateProvider, $urlRouterProvider, $locationProvider, socketProvider, navApiProvider, routeResolverProvider, $controllerProvider, $compileProvider, $filterProvider, $provide){
-
-			socketProvider.setAddress('http://'+window.location.host+':834');
-			socketProvider.setOptions({
-				'sync disconnect on unload': true,
-				'max reconnection attempts': 5
-			});
 
 			navApiProvider.setDefaults('GRPL', 'Grand Rapids Pinball League');
 			
@@ -131,8 +126,8 @@ function(routingConfig){
 	]);
 
 	app.run([
-		'$rootScope', '$state', 'socket', 'api', 'ipCookie', 'Auth', 'flare', '$location', '$modalStack', '$templateCache',
-		function($rootScope, $state, socket, api, ipCookie, Auth, flare, $location, $modalStack, $templateCache){
+		'$rootScope', '$state', 'socket', 'api', 'ipCookie', 'Auth', 'flare', '$location', '$modalStack', '$templateCache', 'LeagueNights',
+		function($rootScope, $state, socket, api, ipCookie, Auth, flare, $location, $modalStack, $templateCache, LeagueNights){
 			// override the default flare tpl
 			$templateCache.put("directives/flaremessages/index.tpl.html",
 			    "<div ng-repeat=\"(key,message) in flareMessages\" ng-class=\"classes(message)\">\n" +
@@ -141,8 +136,9 @@ function(routingConfig){
 			    "</div>\n" +
 			"");
 
-
 			api.setSocket(socket);
+			LeagueNights.loadNights();
+
 			Auth.tryLogin();
 
 			// set the season cookie to whatever the node server thinks it is

@@ -41,8 +41,6 @@ define(['js/app'], function(app){
 						tpl = tpl.replace(comment_re, '');
 						tpl = tpl.replace(ng_re, '');
 
-						console.log(tpl);
-
 						inlineModalApi.add(attrs.id, tpl);	
 					});					
 				}, 500);

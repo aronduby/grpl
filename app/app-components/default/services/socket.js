@@ -1,8 +1,11 @@
-define([], function(){
+define(['js/socketConnector'], function(socket){
 
 	function Socket($rootScope, address, options){
-		var socket = io.connect(address, options),
-			scopes = {};
+		var scopes = {};
+
+		socket.on('connect', function(){
+			console.log('connected');
+		})
 
 		this.emit = function() {
 			var args = Array.prototype.slice.call(arguments);
