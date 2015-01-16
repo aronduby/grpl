@@ -126,8 +126,8 @@ function(routingConfig){
 	]);
 
 	app.run([
-		'$rootScope', '$state', 'socket', 'api', 'ipCookie', 'Auth', 'flare', '$location', '$modalStack', '$templateCache', 'LeagueNights',
-		function($rootScope, $state, socket, api, ipCookie, Auth, flare, $location, $modalStack, $templateCache, LeagueNights){
+		'$rootScope', '$state', 'socket', 'api', 'ipCookie', 'Auth', 'flare', '$location', '$modalStack', '$templateCache', 'LeagueNights', 'Machines',
+		function($rootScope, $state, socket, api, ipCookie, Auth, flare, $location, $modalStack, $templateCache, LeagueNights, Machines){
 			// override the default flare tpl
 			$templateCache.put("directives/flaremessages/index.tpl.html",
 			    "<div ng-repeat=\"(key,message) in flareMessages\" ng-class=\"classes(message)\">\n" +
@@ -138,6 +138,7 @@ function(routingConfig){
 
 			api.setSocket(socket);
 			LeagueNights.loadNights();
+			Machines.loadMachines();
 
 			Auth.tryLogin();
 

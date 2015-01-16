@@ -714,7 +714,9 @@ body.loading{
     width:14px; height:14px;
     text-indent:-999px;
     background:url(/layout_imgs/mobile_sprite.png) no-repeat 0 -211px;
-  }
+  
+    opacity: 1;
+}
   .popup header .pointer{
     position:absolute;
     top:-10px;
@@ -771,6 +773,14 @@ body.loading{
     border-radius:0 0 4px 0;
   }
 
+  .popup .button-holder .close{
+    float: none;
+    
+  
+    opacity: 1;
+    text-shadow: none;
+}
+
 .popup.dialog{
   position:fixed;
   width:auto;
@@ -786,7 +796,10 @@ body.loading{
   display:block;
   width: 100% !important;
   left:0;
-  margin:0;
+  margin-top:0 !important;
+  margin-right:0 !important;
+  margin-bottom:0 !important;
+  margin-left: 0 !important;
   box-shadow:none;
 }
   .modal .popup header a.close{ display:block !important; }

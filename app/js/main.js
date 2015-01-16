@@ -11,6 +11,7 @@ require(
 		'app-components/services/NavApi',
 		'app-components/services/api',
 		'app-components/services/LeagueNights',
+		'app-components/services/Machines',
 		'app-components/filters/pluck',
 		'app-components/filters/joinBy',
 		'app-components/filters/mathAbs',
