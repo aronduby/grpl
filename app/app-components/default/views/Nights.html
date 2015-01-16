@@ -54,7 +54,9 @@
 									ng-repeat="player in players" 
 									ng-class="{
 										'user starred': (user.logged_in && user.name_key == player.name_key),
-										'dnp': player.dnp
+										'dnp': player.dnp,
+										'tied': player.tied,
+										'even': player.tied && player.tied_index %2==1
 									}"
 									data-name-key="{{ player.name_key }}"
 									data-pre-total="{{ }}"
@@ -97,15 +99,12 @@
 			</div>
 		</section>
 
-		<div class="notes" ng-bind-html="night.note"></div>
-
-
-		<section collapsible="night-json">
-			<header><h1>Night Data</h1></header>
-			<div class="content">
-				<pre>{{ night | json}}</pre>
-			</div>
-		</section>
+		<div class="notes">
+			<p ng-bind-html="night.note"></p>
+			<ul>
+				<li ng-repeat="(sub, player) in night.subs">{{sub}} played on behalf of {{player}}</li>
+			</ul>
+		</div>
 
 	</article>
 

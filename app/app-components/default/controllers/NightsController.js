@@ -25,7 +25,7 @@ define(['js/app'], function(app){
 				}
 
 				if($scope.night === undefined)
-					$scope.night = LeaugeNights.getTotals();
+					$scope.night = LeagueNights.getTotals();
 
 				navApi.setTitle($scope.night.title, $scope.night.description);
 			})
@@ -34,6 +34,26 @@ define(['js/app'], function(app){
 				LeagueNights.getFullNight($scope.night.starts)
 					.then(function(night){
 						$scope.night = night;
+
+						// underscore chaining FTW!
+						var players = _.chain(night.divisions)
+							.map(function(obj){ return obj.player_list.players })
+							.flatten()
+							.value();
+
+						var ties = _.chain(players)
+							.groupBy('scoring_string')
+							.filter(function(arr){ return arr.length > 1; })
+							.value();
+
+						if(ties.length > 0 && (ties.length != 1 && ties[0].length != players.length)){
+							_.each(ties, function(group, tie_index){
+								_.each(group, function(player){
+									player.tied = true;
+									player.tied_index = tie_index;
+								})
+							});
+						}
 					})
 					.finally(function(){
 						loadingOverlayApi.hide();

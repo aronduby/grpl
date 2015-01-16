@@ -509,7 +509,7 @@ body > footer{
   float:left;
   margin:4px 5px 0 -5px;
 }
-  .player-holder li.tied[data-tied_count='even'] a:before{
+  .player-holder li.tied.even a:before{
     color:#8ad626;
   }
 
