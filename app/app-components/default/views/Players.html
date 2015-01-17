@@ -2,12 +2,12 @@
 
 	<article>
 		
-		<section class="nights-holder" collapsible="players.nights">
+		<section class="nights-holder" collapsible="players.nights" collapse-callback="nightsCollapsed(closed)">
 			<header>
 				<h1>League Nights</h1>
 			</header>
 			<div class="content">
-				<div id="players-nights-chart" class="chart" ui-chart="chart_data" chart-options="chart_options"></div>
+				<div id="players-nights-chart" class="chart" ui-chart="chart_data" chart-options="chart_options" control="chart_control"></div>
 
 				<fieldset class="points" ng-click="chart_show_points = !chart_show_points" ng-class="{'faded': !chart_show_points}">
 					<legend>Points</legend>
@@ -93,9 +93,7 @@
 				<h1>Head to Head (This Season)</h1>
 			</header>
 			<div class="content">
-				<div id="head-to-head" class="listview">
-					<p>Loading head to head information for this season, please wait</p>
-				</div>
+				<head-to-head data="head_to_head"></head-to-head>
 			</div>
 		</section>
 
@@ -104,9 +102,7 @@
 				<h1>Head to Head (All Time)</h1>
 			</header>
 			<div class="content">
-				<div id="head-to-head-all-time" class="listview">
-					<p>Loading head to head information for all time, please wait</p>
-				</div>
+				<head-to-head data="head_to_head_all_time"></head-to-head>
 			</div>
 		</section>
 

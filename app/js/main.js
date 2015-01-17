@@ -22,6 +22,7 @@ require(
 		'app-components/directives/AccessLevel',
 		'app-components/directives/Collapsible',
 		'app-components/directives/InlineModal',
+		'app-components/directives/HeadToHead',
 		'app-components/LoadingOverlay'
 	],
 	function () {

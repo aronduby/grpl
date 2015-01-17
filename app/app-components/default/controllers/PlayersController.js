@@ -20,6 +20,7 @@ define(['js/app'], function(app){
 		$scope.chart_options = {};
 		$scope.chart_show_points = true;
 		$scope.chart_show_places = true;
+		$scope.chart_control = {};
 
 		$scope.compare_to = null;
 		$scope.compare_machines = null;
@@ -95,27 +96,75 @@ define(['js/app'], function(app){
 
 		$scope.$watch('chart_show_points', function(val){
 			$scope.chart_options.series[1].show = $scope.chart_options.series[2].show = val;
+			$scope.chart_options.axes.y2axis.tickOptions.showGridline = !val;
 		});
+
+		$scope.nightsCollapsed = function(closed){
+			if(closed === false){
+				$scope.chart_control.redraw();
+			}			
+		}
 		
 
 
 		// hide the overlay once everyone and the full player is loaded
-		// head to head takes longer and can wait
+		// head to head takes longer and can wait (I think it takes longer, not sure I tested that ever)
 		$q.all([all_loaded, player_loaded])
 			.then(function(){
 				loadingOverlayApi.hide();
 			});
 
 
+		function reformatHeadToHeadData(data){
+			var new_data = [],
+				player = data.players[$scope.name_key];
+
+			delete data.players[$scope.name_key];
+
+			_.each(data.players, function(opponent){
+				var o = {
+					first_name: opponent.first_name,
+					last_name: opponent.last_name,
+					games: [],
+					wins: 0,
+					losses: 0
+				};
+
+				_.each(opponent.machines, function(nights, abbv){
+					_.each(nights, function(score, starts){
+						var starts_str = starts.match(/(\d{4})-0?(\d{1,2})-0?(\d{1,2})/);
+						starts_str = starts_str[2]+'/'+starts_str[3]+'/'+starts_str[1];
+
+						var game = {
+							'abbv': abbv,
+							'title': data.machines[abbv],
+							'starts': starts_str,
+							'player': player.machines[abbv][starts],
+							'opponent': score,
+							'won': player.machines[abbv][starts] > score
+						}
+						o.games.push(game);
+					});
+				});
+
+				o.wins = _.reduce(o.games, function(memo, game){ return memo + (game.won ? 1 : 0); }, 0);
+				o.losses = o.games.length - o.wins;
+
+				new_data.push(o);
+			});
+
+			return new_data;
+		}
+
 		head_to_head_loaded = Players.getHeadToHead($scope.name_key)
 			.then(function(data){
-				$scope.head_to_head = data;
+				$scope.head_to_head = reformatHeadToHeadData(data);
 			});
 		$scope.head_to_head_tracker.addPromise(head_to_head_loaded);
 
-		head_to_head_all_time_loaded = Players.getHeadToHead($scope.name_key)
+		head_to_head_all_time_loaded = Players.getHeadToHeadAllTime($scope.name_key)
 			.then(function(data){
-				$scope.head_to_head_all_time = data;
+				$scope.head_to_head_all_time = reformatHeadToHeadData(data);
 			});
 		$scope.head_to_head_all_time_tracker.addPromise(head_to_head_all_time_loaded);
 
@@ -173,9 +222,9 @@ define(['js/app'], function(app){
 					showTicks: false
 				},
 				y2axis: {
-					min: 33,
+					min: Players.players.length,
 					max: 0,
-					showTicks: false,
+					showTicks: true,
 					tickOptions: {
 						showGridline: false
 					}

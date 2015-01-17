@@ -3,7 +3,9 @@ define(['js/app'], function(app){
 	app.directive('collapsible', ['$localStorage', function($localStorage) {
 		return {
 			restrict: 'A',
-			scope: {},
+			scope: {
+				callback: '&collapseCallback'
+			},
 			link: function(scope, element, attrs) {
 				
 				var id = attrs.collapsible,
@@ -21,6 +23,8 @@ define(['js/app'], function(app){
 					}
 					if(save)
 						scope.storage.collapsibles[id] = closed;
+
+					scope.callback({'closed':closed});
 				});
 
 				if(id != ''){
@@ -44,7 +48,6 @@ define(['js/app'], function(app){
 				});
 
 				attrs.$observe('closed', function(closed){
-					console.log('attr', closed);
 					if(closed == '' || closed == 'true' || closed == '1'){
 						scope.closed = true;
 					} else {

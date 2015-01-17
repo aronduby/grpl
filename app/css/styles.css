@@ -997,6 +997,7 @@ label.confirmed{
 /* Head to Head */
 #players .head-to-head-holder li{
   padding:0;
+  border-bottom-width:0;
   background: #ffffff; /* Old browsers */
   background: -moz-linear-gradient(top,  #ffffff 0%, #e5e5e5 100%); /* FF3.6+ */
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#e5e5e5)); /* Chrome,Safari4+ */
@@ -1006,6 +1007,9 @@ label.confirmed{
   background: linear-gradient(to bottom,  #ffffff 0%,#e5e5e5 100%); /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e5e5e5',GradientType=0 ); /* IE6-9 */
 }
+  #players .head-to-head-holder li.closed{
+    border-bottom-width:1px;
+  }
   #players .head-to-head-holder li header{
     background:none;
     border:none;
@@ -1025,29 +1029,28 @@ label.confirmed{
       .head-to-head-holder .record::after{ content:')'; }
       
     
-  /* defaults to closed (unlike normal collapsibles) */
-  .head-to-head-holder li .content{
-    display:none;
-    border-radius:0;
-  }    
   .head-to-head-holder li h1::before{
-    content:'+';
+    content:'-';
     display:inline-block;
     width:1em;
     line-height:1em;
     text-align:center;
     color:#aaa;
     border:2px solid;
-    border-radius:50%;
-    margin-right:.25em;
+    border-radius:50%;  
+    float: none;
+    margin: 0 .25em 0 0;
+    font-size: inherit;
   }
+  .head-to-head-holder li.closed h1::before{ content:'+'; }
   
-  .head-to-head-holder li.open .content{ 
-    display:block; 
+  
+  .page article .head-to-head-holder li .content{
+    border-radius:0;
     background:#f7f7f7;
     box-shadow:inset 0 0 4px 0 rgba(0,0,0,.5);
   }
-  .head-to-head-holder li.open h1::before{ content:'-'; }
+  
   
   
   /* tables (in addition to machine chart styles above) */
