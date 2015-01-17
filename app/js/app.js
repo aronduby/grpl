@@ -11,6 +11,7 @@ function(routingConfig){
 			'ngAnimate',
 			'ngSanitize',
 			'angular.filter',
+			'ordinal',
 			'ui.router',
 			'ui.bootstrap',
 			'ipCookie',
@@ -20,7 +21,8 @@ function(routingConfig){
 			'angular-flare',
 			'LoadingOverlay',
 			'ordinal',
-			'ngStorage'
+			'ngStorage',
+			'ui.chart'
 		]);
 
 	app.config([
@@ -65,7 +67,7 @@ function(routingConfig){
 					baseName: 'About'
 				}))
 				.state('public.users', route.resolve({
-					url: '/players',
+					url: '/players/:name_key',
 					baseName: 'Players'
 				}))
 				.state('public.playground', route.resolve({
@@ -126,8 +128,8 @@ function(routingConfig){
 	]);
 
 	app.run([
-		'$rootScope', '$state', 'socket', 'api', 'ipCookie', 'Auth', 'flare', '$location', '$modalStack', '$templateCache', 'LeagueNights', 'Machines',
-		function($rootScope, $state, socket, api, ipCookie, Auth, flare, $location, $modalStack, $templateCache, LeagueNights, Machines){
+		'$rootScope', '$state', 'socket', 'api', 'ipCookie', 'Auth', 'flare', '$location', '$modalStack', '$templateCache', 'LeagueNights', 'Machines', 'Players',
+		function($rootScope, $state, socket, api, ipCookie, Auth, flare, $location, $modalStack, $templateCache, LeagueNights, Machines, Players){
 			// override the default flare tpl
 			$templateCache.put("directives/flaremessages/index.tpl.html",
 			    "<div ng-repeat=\"(key,message) in flareMessages\" ng-class=\"classes(message)\">\n" +
@@ -139,6 +141,7 @@ function(routingConfig){
 			api.setSocket(socket);
 			LeagueNights.loadNights();
 			Machines.loadMachines();
+			Players.loadPlayers();
 
 			Auth.tryLogin();
 

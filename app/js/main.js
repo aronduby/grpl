@@ -12,6 +12,7 @@ require(
 		'app-components/services/api',
 		'app-components/services/LeagueNights',
 		'app-components/services/Machines',
+		'app-components/services/Players',
 		'app-components/filters/pluck',
 		'app-components/filters/joinBy',
 		'app-components/filters/mathAbs',
@@ -26,6 +27,5 @@ require(
 	function () {
 		// defer bootstrap till called by our socket connection
 		window.name = 'NG_DEFER_BOOTSTRAP!';
-
 		angular.bootstrap(document, ['grpl']);
 	});

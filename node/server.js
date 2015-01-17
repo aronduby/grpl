@@ -796,11 +796,12 @@ if (cluster.isMaster) {
 			});
 		});
 
-		socket.on('players', function(season_id, cb){
+		socket.on('players', function(cb){
 			socket.get('season_id', function(err, socket_season_id){
-				if(err || socket_season_id == null)
+				if(!socket_season_id){
 					socket_season_id = season_id;
-
+				}
+				console.log(socket_season_id);
 				grpl.playerlist.getForSeason(socket_season_id)
 				.then(function(playerlist){
 					cb(null, playerlist.players);
