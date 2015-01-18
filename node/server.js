@@ -348,7 +348,7 @@ if (cluster.isMaster) {
 						s_season_id = season_id;
 
 					cb(null, {
-						'active': s_season_id, 
+						'active': parseInt(s_season_id,10), 
 						'current': season_id
 					});
 				}

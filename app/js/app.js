@@ -148,6 +148,7 @@ function(routingConfig){
 			// set the season cookie to whatever the node server thinks it is
 			api.get('getSeason')
 			.then(function(season){
+				$rootScope.season = season;
 				ipCookie('season_id', season.active);
 			});
 
