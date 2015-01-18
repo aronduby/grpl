@@ -70,9 +70,9 @@ function(routingConfig){
 					url: '/players/:name_key',
 					baseName: 'Players'
 				}))
-				.state('public.playground', route.resolve({
-					url: '/playground',
-					baseName: 'Playground'
+				.state('public.changelog', route.resolve({
+					url: '/changelog',
+					baseName: 'ChangeLog'
 				}));
 
 

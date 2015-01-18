@@ -1,36 +1,36 @@
-<div class="page" data-route="home" data-title="About the " id="home">
+<div class="page content-page" data-route="home" data-title="About the " id="home">
 	<article>
 		
-	<header>
-		<div class="bg"></div>
-		<div class="logo">
-			<h1>Grand Rapids Pinball League<img src="layout_imgs/banner.png" alt="Grand Rapids Pinball League" /></h1>
-			<p><a href="#/index" class="button">View the Current Rankings</a></p>
-		</div>		
-	</header>
+		<header>
+			<div class="bg"></div>
+			<div class="logo">
+				<h1>Grand Rapids Pinball League<img src="layout_imgs/banner.png" alt="Grand Rapids Pinball League" /></h1>
+				<p><a href="#/index" class="button">View the Current Rankings</a></p>
+			</div>		
+		</header>
 
-			<div class="content">
+		<div class="content">
 
-				<h1>About the Grand Rapids Pinball League</h1>
+			<h1>About the Grand Rapids Pinball League</h1>
 
-				<p>The Grand Rapids Pinball League was started in November 2012 by Rodney Minch to provide an opportunity for individuals to play competitive pinball in a fun and friendly environment. The league is open to anyone who has an interest in playing pinball and all skill levels are welcome.</p>
+			<p>The Grand Rapids Pinball League was started in November 2012 by Rodney Minch to provide an opportunity for individuals to play competitive pinball in a fun and friendly environment. The league is open to anyone who has an interest in playing pinball and all skill levels are welcome.</p>
 
-				<p>We are currently in our {{seasons.length | ordinal}} season with {{players.length}} players. A season has 8 league nights for 4 consecutive months. League nights are the 1st and 3rd Wednesday of each month at 7pm. League nights take place at Pyramid Scheme which is located at 68 Commerce Ave SW. Players are welcome and encouraged to come early and/or stay late to practice and socialize.</p>
+			<p>We are currently in our {{seasons.length | ordinal}} season with {{players.length}} players. A season has 8 league nights for 4 consecutive months. League nights are the 1st and 3rd Wednesday of each month at 7pm. League nights take place at Pyramid Scheme which is located at 68 Commerce Ave SW. Players are welcome and encouraged to come early and/or stay late to practice and socialize.</p>
 
-				<h2>The Venue</h2>
-				<p><a href="http://pyramidschemebar.com/" title="Pyramid Scheme">Pyramid Scheme</a> has <span class="machine-count">22</span> pinball machines available for play 7 days a week from 4pm - 2am. All machines are set to $.50/play (except Wizard of Oz at $.75/play) and includes the following titles:</p>
+			<h2>The Venue</h2>
+			<p><a href="http://pyramidschemebar.com/" title="Pyramid Scheme">Pyramid Scheme</a> has <span class="machine-count">22</span> pinball machines available for play 7 days a week from 4pm - 2am. All machines are set to $.50/play (except Wizard of Oz at $.75/play) and includes the following titles:</p>
 
-				<ul class="machine-list">
-					<li ng-repeat="machine in machines | orderBy:'name'">
-						{{machine.name}}
-					</li>
-				</ul>
+			<ul class="machine-list">
+				<li ng-repeat="machine in machines | orderBy:'name'">
+					{{machine.name}}
+				</li>
+			</ul>
 
-				<h2>Join</h2>
-				<p>If you are interested in joining the pinball league or have any questions, please check out the <a href="https://www.facebook.com/groups/GrandRapidsPinballLeague/" target="_blank">Grand Rapids Pinball League group on Facebook</a> or contact Rodney Minch at <a href="mailto:grpinball@gmail.com">grpinball@gmail.com</a>.</p>
+			<h2>Join</h2>
+			<p>If you are interested in joining the pinball league or have any questions, please check out the <a href="https://www.facebook.com/groups/GrandRapidsPinballLeague/" target="_blank">Grand Rapids Pinball League group on Facebook</a> or contact Rodney Minch at <a href="mailto:grpinball@gmail.com">grpinball@gmail.com</a>.</p>
 
-				<a class="view-rankings button green" href="#/index">View current rankings</a>
-			</div>
+			<a class="view-rankings button green" href="#/index">View current rankings</a>
+		</div>
 
 	</article>
 

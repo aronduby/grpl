@@ -36,7 +36,6 @@
   #index .player-holder,
   #players .nights-holder,
   #players .machine-holder,
-  #changelog .log,
   #home article > section{
     display:inline-block;
     vertical-align:top;
@@ -62,31 +61,6 @@
     z-index:1;
   }
 
-  #changelog-panel,
-  #homepage-panel{
-    display:block !important;
-    margin:0;
-    top:15px; 
-    left:1%;
-    width:20%;
-    z-index:auto;
-  }
-    #changelog-panel .pointer,
-    #changelog-panel .close,
-    #homepage-panel .pointer,
-    #homepage-panel .close{
-      display:none;
-    }
-    #changelog-panel header{ padding:15px; }
-    #changelog-panel header h1{ font-size:20px; }
-    #changelog-panel article{ padding-bottom:10px; }
-
-  #changelog .log,
-  #home article > section{
-    margin:auto 2% auto 23%;
-    width:75%;
-  }
-
 }
 
 /*
@@ -110,11 +84,9 @@
   #nights-panel,
   #scoring-machine-panel,
   #players-panel,
-  #changelog-panel,
   #user_admin-users-panel,
   #night_admin-night-panel,
   #order-admin-night-panel,
-  #homepage-panel,
   #season_admin-season-panel,
   #machine_admin-machine-panel{
     display:block !important;
@@ -130,8 +102,6 @@
     #scoring-machine-panel .close,
     #players-panel .pointer,
     #players-panel .close,
-    #changelog-panel .pointer,
-    #changelog-panel .close,
     #user_admin-users-panel .pointer,
     #user_admin-users-panel .close,
     #night_admin-night-panel .pointer,
@@ -141,43 +111,35 @@
     #season_admin-season-panel .pointer,
     #season_admin-season-panel .close,
     #machine_admin-machine-panel .pointer,
-    #machine_admin-machine-panel .close,
-    #homepage-panel .pointer,
-    #homepage-panel .close{
+    #machine_admin-machine-panel .close{
      display:none; 
    }
    #nights-panel header,
    #scoring-machine-panel header,
    #players-panel header,
-   #changelog-panel header,
    #user_admin-users-panel header,
    #night_admin-night-panel header,
    #order-admin-night-panel header,
    #season_admin-season-panel header,
-   #machine_admin-machine-panel header,
-   #homepage-panel header{ padding:15px; }
+   #machine_admin-machine-panel header{ padding:15px; }
 
    #nights-panel header h1,
    #scoring-machine-panel header h1,
    #players-panel header h1,
-   #changelog-panel header h1,
    #user_admin-users-panel header h1,
    #night_admin-night-panel header h1,
    #order-admin-night-panel header h1,
    #season_admin-season-panel header h1,
-   #machine_admin-machine-panel header h1,
-   #homepage-panel header h1{ font-size:20px; }
+   #machine_admin-machine-panel header h1{ font-size:20px; }
 
    #nights-panel article,
    #scoring-machine-panel article,
    #players-panel article,
-   #changelog-panel article,
    #user_admin-users-panel article,
    #night_admin-night-panel article,
    #order-admin-night-panel article,
    #season_admin-season-panel article,
-   #machine_admin-machine-panel article,
-   #homepage-panel article{ padding-bottom:10px; }
+   #machine_admin-machine-panel article{ padding-bottom:10px; }
 
    #index .randomizer-holder{
       width:76%;
@@ -208,15 +170,8 @@
   #night_admin .night-form,
   #order_admin .order-form,
   #season_admin .season-form,
-  #machine_admin .machine-form,
-  #changelog .log,
-  #home article > section{
+  #machine_admin .machine-form{
     margin:auto 2% auto 23%;
-  }
-
-  #changelog .log,
-  #home article > section{
-    width:75%;
   }
   
 }
@@ -256,20 +211,20 @@ abbv{
 }
 
 /*
- *  Homepage
+ *  General Content Pages
 */
-#home article{
+.content-page article{
   margin:0;
   padding:0;
   z-index:1;
 }
-#home article header{
+.content-page article header{
   position:relative;
   margin-top:10px;
   background-color:#0f0f0f;
   box-shadow:0 0 4px rgba(0,0,0,.6);
 }
-  #home article header .bg{
+  .content-page article header .bg{
     background-image: url(https://fbcdn-sphotos-d-a.akamaihd.net/hphotos-ak-xpa1/t31.0-8/10631246_10154949075805596_6871321870975590000_o.jpg);
     background-position:50%;
     background-size:cover;
@@ -280,22 +235,22 @@ abbv{
     z-index:1;
     opacity:.5;
   }
-  #home article header .logo{
+  .content-page article header .logo{
     position:relative;
     text-align:center;
     padding:10% 0;
     z-index:2;
   }
-    #home article header h1{
+    .content-page article header h1{
       position:relative;
       font-size:0;
     }
-      #home h1 img{
+      .content-page h1 img{
         max-width:98%;
         max-height:180px;
       }
 
-    #home header a.button{
+    .content-page header a.button{
       position:relative;
       left:8px;
       display:block;
@@ -307,11 +262,11 @@ abbv{
       background-image:none;
       transition: all 1s ease;
     }
-      #home header a.button:hover{
+      .content-page header a.button:hover{
         box-shadow:0 0 12px 1px rgba(0,255,0,.8);
       }
 
-#home .content{
+.content-page .content{
   padding:20px;
   margin:10px 10px;
   max-width:920px;
@@ -319,38 +274,42 @@ abbv{
   box-shadow:0 0 4px rgba(0,0,0,.6);
 }
   @media(min-width:980px){
-    #home .content{
+    .content-page .content{
       margin:10px auto;
     }
   }
 
-#home .content p,
-#home .content ul{
+.content-page .content p,
+.content-page .content ul{
   font-weight:300;
   font-size:1.1428em;
   line-height:1.45em;
   margin-bottom:.8em;
 }
 
-#home .content ul{
+.content-page .content ul{
   list-style:disc;
   padding-left:2em;
 }
 
-#home .content h1,
-#home .content h2{
+.content-page .content h1,
+.content-page .content h2{
   font-size:1.4285em;
   color:#707070;
   margin-bottom:.25em;
 }
-#home .content h2{
+.content-page .content h2{
   font-size:1.2857em;
 }
-#home .content a,
+.content-page .content a,
 .listview li a.inline{
   color:#6A9FB4;
 }
 
+
+/*
+ *  Home Page
+*/
 #home .content .machine-list{
   margin-left:auto;
   margin-right:auto;  
@@ -381,6 +340,81 @@ abbv{
   text-decoration:none;
   margin:20px 0 0 0;
   padding:15px 10px;
+}
+
+
+/*
+ *  Change Log
+*/
+#changelog article header .bg{
+  background-image: url(https://fbcdn-sphotos-f-a.akamaihd.net/hphotos-ak-xfa1/v/t1.0-9/421284_10151358815360004_1537843339_n.jpg?oh=302162838bfa66df88931a1c1ee0ab14&oe=55354FB4&__gda__=1429094331_a2d68dd97d35cd88de39cd71d4ed35fe);
+}
+
+#changelog section{
+  border-radius:0;
+  box-shadow: none;
+}
+
+#changelog #log{
+  margin-top:30px;
+}
+
+#changelog .push{
+  margin-bottom:2em;
+}
+  #changelog .push > time{
+    display:block;
+    font-weight:bold;
+    font-size:18px;
+    line-height:1.3em;
+    margin-bottom:.5em;
+  }
+
+  #changelog .commit + .commit{
+    margin-top:.25em;    
+    padding-top:1em;
+  }
+
+    #changelog .msg{
+      font-size:16px;
+      text-transform:none;
+      color:#808080;
+      white-space:normal;
+      line-height:1.2em;
+      margin-bottom:6px;
+    }
+
+    #changelog .commit_id{
+      float:right;
+      color:#aaa;
+      max-width:60px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      top:16px;
+      margin:0;
+    }
+    
+    #changelog .committed{
+        font-size:12px;
+        color:#919191;
+        text-transform:uppercase;
+    }
+
+@media(min-width:960px){
+  #changelog .push{
+    position:relative;
+    padding-left:110px;
+    margin-bottom:3em;
+  }
+    #changelog .push > time{
+      position:absolute;
+      left:0;
+      border:none;
+      font-size:18px;
+      font-weight:normal;
+      text-transform:uppercase;
+    }
 }
 
 /*
@@ -647,43 +681,6 @@ body.loading > footer{
 #scoring-live-panel .division .listview ul:first-child::before{
   content:none;
 }
-
-/*
- *  ChangeLog
-*/
-#changelog .pushed{
-  margin:0 -15px 10px -15px;
-  padding:0 15px 15px 15px;
-  border-bottom:1px solid #d7d7d7;
-}
-  #changelog .pushed h2{
-    font-size:18px;
-    margin-bottom:5px;
-  }
-  #changelog .pushed .listview{
-    margin:0;
-    box-shadow:1px 1px 5px rgba(0, 0, 0, 0.2);
-  }
-    #changelog .pushed .listview li{
-      padding-right:80px;
-    }
-    #changelog .pushed .listview h3{
-      font-size:16px;
-      text-transform:none;
-      color:#808080;
-      white-space:normal;
-      line-height:1.2em;
-      margin-bottom:6px;
-    }
-    #changelog .pushed .listview .right{
-      color:#aaa;
-      max-width:60px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      top:16px;
-      margin:0;
-    }
 
 
 /*
