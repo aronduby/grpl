@@ -423,7 +423,7 @@ abbv{
   }
 
 #season-changer{
-  margin-top:30px;
+  margin-top:10px;
   opacity:.6;
 }
   #season-changer label{
@@ -433,8 +433,8 @@ abbv{
 /*
  *  footer and links
 */
-body > footer{
-  display:none;  
+body.loading > footer{
+  display:none;
 }
   body > footer nav li{
     display:inline-block;

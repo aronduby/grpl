@@ -102,7 +102,7 @@
 		<div class="notes">
 			<p ng-bind-html="night.note"></p>
 			<ul>
-				<li ng-repeat="(sub, player) in night.subs">{{sub}} played on behalf of {{player}}</li>
+				<li ng-repeat="sub in night.subs">{{sub.sub}} played on behalf of {{sub.player}}</li>
 			</ul>
 		</div>
 

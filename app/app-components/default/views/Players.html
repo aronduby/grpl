@@ -20,9 +20,9 @@
 				<p class="note">click boxes above to toggle plot visibility</p>
 				<div class="listview">
 					<ul>
-						<li ng-repeat="night in player_data.nights | reverse">
+						<li ng-repeat="night in player_data.nights">
 							<a ng-href="#/index/{{ night.starts }}" title="view week">
-								<h2>{{ night.title }} <span ng-if="night.sub" class="sub" title="sub">night.sub</span></h2>
+								<h2>{{ night.title }} <span ng-if="night.sub" class="sub" title="sub">{{ night.sub }}</span></h2>
 								<p>{{ night.description }}</p>
 								<span class="score right double">
 									<span>{{ night.points }}</span>

@@ -336,7 +336,7 @@ if (cluster.isMaster) {
 		*/
 		socket.on('changeSeason', function(season_id, cb){
 			socket.set('season_id', season_id);
-			cb(season_id);
+			cb(null, season_id);
 		});
 
 		socket.on('getSeason', function(cb){

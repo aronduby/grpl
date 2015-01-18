@@ -19,6 +19,7 @@ require(
 		'app-components/filters/notZero',
 		'app-components/controllers/SocketStatusController',
 		'app-components/controllers/NavController',
+		'app-components/controllers/FooterController',
 		'app-components/directives/AccessLevel',
 		'app-components/directives/Collapsible',
 		'app-components/directives/InlineModal',

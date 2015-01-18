@@ -8,7 +8,7 @@ define([
 function(routingConfig){
 
 	var app = angular.module('grpl', [
-			'ngAnimate',
+			//'ngAnimate',
 			'ngSanitize',
 			'angular.filter',
 			'ordinal',

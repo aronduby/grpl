@@ -50,15 +50,17 @@ define(['js/app'], function(app){
 					},
 					j = 1;
 
+				player_data.nights.reverse();
+
 				_.each(player_data.nights, function(night, i){
 					chart_data.points.push([j, night.points]);
 					
 					// figure out the place we ended up in at the end of the night
 					var end_place = 0;
-					if(player_data.nights[j] == undefined){
+					if(player_data.nights[j] === undefined){
 						end_place = player_data.places.totals;
 					} else {
-						end_place = player_data.places[nights[j].starts];
+						end_place = player_data.places[player_data.nights[j].starts];
 					}
 					chart_data.places.push([j, end_place]);
 
@@ -178,7 +180,9 @@ define(['js/app'], function(app){
 				textColor: '#515151'
 			},
 			seriesDefaults: {
-				pointLabels: { show:true }
+				pointLabels: { 
+					show: true 
+				}
 			},
 			series:[
 				// series 1 is the place at the end of that night
@@ -196,22 +200,21 @@ define(['js/app'], function(app){
 						location: 's',
 						formatString: '%s (%%)',
 						formatter: $.jqplot.ordinal
-					},
-					show: $scope.chart_show_places
+					}
 				},
 				// series 2 - points for that night
 				{
-					color: '#699DB1',
-					show: $scope.chart_show_points
+					color: '#699DB1'
 				},
 				// series 3 is sub points so style it different
 				{
-					pointLabels: {show: false},
+					pointLabels: {
+						show: false
+					},
 					showLine: false,
 					markerOptions:{
 						color:'#8DB27B'
-					},
-					show: $scope.chart_show_points
+					}
 				}
 			],
 			axes:{
@@ -221,11 +224,20 @@ define(['js/app'], function(app){
 					},
 					showTicks: false
 				},
+				yaxis: {
+					min: 0,
+					max: 35,
+					tickOptions: {
+						formatString: '%d',
+					}
+				},
 				y2axis: {
 					min: Players.players.length,
-					max: 0,
+					max: 1,
 					showTicks: true,
 					tickOptions: {
+						formatString: '%d',
+						formatter: $.jqplot.ordinal,
 						showGridline: false
 					}
 				}
@@ -240,4 +252,15 @@ define(['js/app'], function(app){
 
 	PlayersController.$inject = injectParams;
 	app.register.controller('PlayersController', PlayersController);
+
+
+	(function($){
+		$.jqplot.ordinal = function(format, val){
+			// from http://ecommerce.shopify.com/c/ecommerce-design/t/ordinal-number-in-javascript-1st-2nd-3rd-4th-29259
+			val = Math.round(val);
+			var s=["th","st","nd","rd"],
+				v=val%100;
+			return val+(s[(v-20)%10]||s[v]||s[0]);
+		};
+	})(jQuery);
 });

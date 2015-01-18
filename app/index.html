@@ -45,10 +45,11 @@
 	<script src="bower_components/underscore/underscore-min.js"></script>
 	<script src="bower_components/moment/min/moment.min.js"></script>
 	<script src="bower_components/jquery/dist/jquery.min.js"></script>
-	<script src="bower_components/jqplot/jquery.jqplot.min.js"></script>
+	<script src="bower_components/jqplot/jquery.jqplot.js"></script>
+	<script src="bower_components/jqplot/plugins/jqplot.pointLabels.min.js"></script>
 
 	<script src="bower_components/angular/angular.min.js"></script>
-	<script src="bower_components/angular-animate/angular-animate.min.js"></script>
+	<!--<script src="bower_components/angular-animate/angular-animate.min.js"></script>-->
 	<script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
 	<script src="bower_components/angular-filter/dist/angular-filter.js"></script>
 	<script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
@@ -85,6 +86,8 @@
 		</div>
 
 	</article>
+
+	<footer ng-include="'app-components/partials/footer.html'" ng-controller="FooterController"></footer>
 
 	<div ng-include="'app-components/partials/socket-status.html'"></div>
 
