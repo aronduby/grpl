@@ -258,23 +258,70 @@ abbv{
 /*
  *  Homepage
 */
-#home .content #banner{
-  background:#000;
-  margin:-10px -15px 10px -15px;
-  border-radius:5px 5px 0 0;
-  background: #5a5a5a; /* Old browsers */
-  background: -moz-linear-gradient(top,  #5a5a5a 0%, #2f2f2f 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#5a5a5a), color-stop(100%,#2f2f2f)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top,  #5a5a5a 0%,#2f2f2f 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top,  #5a5a5a 0%,#2f2f2f 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top,  #5a5a5a 0%,#2f2f2f 100%); /* IE10+ */
-  background: linear-gradient(to bottom,  #5a5a5a 0%,#2f2f2f 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#5a5a5a', endColorstr='#2f2f2f',GradientType=0 ); /* IE6-9 */
+#home article{
+  margin:0;
+  padding:0;
+  z-index:1;
 }
-  #home #banner img{
-    width:100%;
-    max-width:350px;
-    margin:5px;
+#home article header{
+  position:relative;
+  margin-top:10px;
+  background-color:#0f0f0f;
+  box-shadow:0 0 4px rgba(0,0,0,.6);
+}
+  #home article header .bg{
+    background-image: url(https://fbcdn-sphotos-d-a.akamaihd.net/hphotos-ak-xpa1/t31.0-8/10631246_10154949075805596_6871321870975590000_o.jpg);
+    background-position:50%;
+    background-size:cover;
+    background-repeat:no-repeat;
+    position:absolute;
+    top:0; right:0;
+    bottom:0; left:0;
+    z-index:1;
+    opacity:.5;
+  }
+  #home article header .logo{
+    position:relative;
+    text-align:center;
+    padding:10% 0;
+    z-index:2;
+  }
+    #home article header h1{
+      position:relative;
+      font-size:0;
+    }
+      #home h1 img{
+        max-width:98%;
+        max-height:180px;
+      }
+
+    #home header a.button{
+      position:relative;
+      left:8px;
+      display:block;
+      text-decoration:none;
+      max-width:260px;
+      margin:0 auto;
+      font-size:16px;
+      background-color: #5aa52b;
+      background-image:none;
+      transition: all 1s ease;
+    }
+      #home header a.button:hover{
+        box-shadow:0 0 12px 1px rgba(0,255,0,.8);
+      }
+
+#home .content{
+  padding:20px;
+  margin:10px 10px;
+  max-width:920px;
+  background:#fff;
+  box-shadow:0 0 4px rgba(0,0,0,.6);
+}
+  @media(min-width:980px){
+    #home .content{
+      margin:10px auto;
+    }
   }
 
 #home .content p,
@@ -322,7 +369,7 @@ abbv{
         width:45%;
       }
   }
-  @media(min-width:900px){
+  @media(min-width:980px){
     #home .content .machine-list li{
       width:30%;
     }
