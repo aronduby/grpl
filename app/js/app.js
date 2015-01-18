@@ -73,6 +73,10 @@ function(routingConfig){
 				.state('public.changelog', route.resolve({
 					url: '/changelog',
 					baseName: 'ChangeLog'
+				}))
+				.state('public.playground', route.resolve({
+					url: '/playground',
+					baseName: 'Playground'
 				}));
 
 

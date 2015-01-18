@@ -406,7 +406,7 @@ a.button{
   }
   button span.title,
   a.button span.title{
-    margin-left:5px;
+    /* margin-left:5px; */
   }
 
   button.block,
@@ -781,11 +781,6 @@ body.loading{
     text-shadow: none;
 }
 
-.popup.dialog{
-  position:fixed;
-  width:auto;
-  max-width:500px;
-}
 .popup.dialog .content div{
   line-height:1.3em; 
 }
