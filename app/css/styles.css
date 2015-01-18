@@ -310,28 +310,21 @@ abbv{
 /*
  *  Home Page
 */
-#home .content .machine-list{
-  margin-left:auto;
-  margin-right:auto;  
-}
+#home .content .machine-list{}
   @media(min-width:500px){
-      #home .content .machine-list{
-        width:90%;
+      #home .content .machine-list{    
+        -moz-column-count: 4;
+        -moz-column-width: 150px;
+        -webkit-column-count: 4;
+        -webkit-column-width: 150px;
+        column-count: 4;
+        column-width: 150px;
       }
       #home .content .machine-list::after{
         content:'';
         display:table;
         clear:both;
       }
-      #home .content .machine-list li{
-        float:left;
-        width:45%;
-      }
-  }
-  @media(min-width:980px){
-    #home .content .machine-list li{
-      width:30%;
-    }
   }
 
 #home .content .view-rankings{
