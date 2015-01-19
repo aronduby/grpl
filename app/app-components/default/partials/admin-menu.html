@@ -1,4 +1,4 @@
-<div id="admin-menu-holder" ng-controller="AdminMenuController">
+<div id="admin-menu-holder" ng-controller="AdminMenuController" ng-click="close()"><!-- ngClick here to catch bubbled link click -->
 	<div class="bg" ng-click="close()"></div>
 	<div id="admin-menu" class="popup left show-header">
 		<header>
@@ -23,13 +23,10 @@
 					<h1>Scoring</h1>
 				</header>
 				<section class="collapsible-content">
-					<button class="stop-scoring red" disabled="disabled">
-						<span class="title">Stop Scoring</span>
-					</button>
-
-					<button class="prepare-scoring green" disabled="disabled">
-						<span class="title">Start Scoring</span>
-					</button>
+					<div class="button-holder">
+						<button class="stop-scoring red" ng-disabled="true"> <span class="title">Stop Scoring</span></button>
+						<button class="prepare-scoring green" ng-disabled="true"> <span class="title">Start Scoring</span></button>
+					</div>
 
 					<h2>Group Progress</h2>
 					<div class="listview scoring-groups">
@@ -43,9 +40,11 @@
 					<h1>League Nights</h1>
 				</header>
 				<section class="collapsible-content">
-					<button class="new-league-night blue plus">
-						<span class="title">New League Night</span>
-					</button>
+					<div class="button-holder">
+						<a class="button blue plus" ng-href="#/admin/nights/new">
+							<span class="title">New League Night</span>
+						</a>
+					</div>
 
 					<h2>All Nights</h2>
 					<div class="listview league-nights">
@@ -68,9 +67,11 @@
 					<h1>Users</h1>
 				</header>
 				<section class="collapsible-content">
-					<button class="admin-users blue plus">
-						<span class="title">Add a User</span>
-					</button>
+					<div class="button-holder">
+						<a class="button blue plus" ng-href="#/admin/users/new">
+							<span class="title">Add a User</span>
+						</a>
+					</div>
 
 					<h2>Edit a User</h2>
 					<div class="listview edit-user-list">
@@ -93,9 +94,11 @@
 					<h1>Seasons</h1>
 				</header>
 				<section class="collapsible-content">
-					<button class="new-season blue plus">
-						<span class="title">Add a Season</span>
-					</button>
+					<div class="button-holder">
+						<a class="button blue plus" ng-href="#/admin/seasons/new">
+							<span class="title">Add a Season</span>
+						</a>
+					</div>
 
 					<h2>Edit a Season</h2>
 					<div class="listview edit-season-list">
@@ -117,9 +120,11 @@
 					<h1>Machines</h1>
 				</header>
 				<section class="collapsible-content">
-					<button class="new-machine blue plus">
-						<span class="title">Add a Machine</span>
-					</button>
+					<div class="button-holder">
+						<a class="button blue plus" ng-href="#/admin/machines/new">
+							<span class="title">Add a Machine</span>
+						</a>
+					</div>
 
 					<h2>Edit a Machine</h2>
 					<div class="listview edit-machine-list">

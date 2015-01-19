@@ -690,12 +690,11 @@ body.loading > footer{
   transition:all .5s ease;
 }
   #admin-menu-holder .bg{
-    position:absolute;
-    top:0; right:0;
-    bottom:0; left:0;
+    position: fixed;
+    top:0; left:0;
     background:#000;
     opacity:0;
-    transition:all .5s ease;
+    transition:opacity .5s ease;
   }
 
 #admin-menu{
@@ -716,6 +715,8 @@ body.loading > footer{
 }
   .amo #admin-menu-holder .bg{
     opacity:.5;
+    width:100%;
+    height:100%;
   }
   .amo #admin-menu{
     transform: translate3d(0,0,0);
@@ -774,9 +775,20 @@ body.loading > footer{
   border-bottom:1px solid #d5d5d5;
   margin-bottom:0; /* undo popup .content h2 */
 }
-#admin-menu button{
-  width:276px;
-  margin:10px;
+
+#admin-menu .button-holder{
+  padding:10px;
+  background:none;
+  border-radius:0;
+  border-top: none;
+}
+#admin-menu button,
+#admin-menu .button{
+  box-sizing:border-box;
+  display:block;
+  width: 100%;
+  border-radius:4px;
+  margin: 0;
 }
 
 #admin-menu span.count{

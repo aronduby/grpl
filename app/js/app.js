@@ -95,6 +95,11 @@ function(routingConfig){
 					path: 'admin/',
 					baseName: 'Ties'
 				}))
+				.state('admin.nights', route.resolve({
+					url: '/admin/nights/:starts',
+					path: 'admin/',
+					baseName: 'Nights'
+				}));
 
 			$urlRouterProvider.otherwise('/index');
 
