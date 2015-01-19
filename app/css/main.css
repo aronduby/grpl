@@ -11,6 +11,9 @@ body{
   color:#515151;
   position:relative;
 }
+  body.amo{
+    overflow-y: hidden;
+  }
 
 input,
 select,

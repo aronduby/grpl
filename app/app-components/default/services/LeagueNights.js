@@ -58,6 +58,24 @@ define(['js/app'], function(app){
 			});
 		};
 
+		this.getMostRecentNight = function getMostRecentNight(){
+			var today = moment().startOf('day');
+
+			return _.find(this.nights, function(night){
+				if(night.starts === 'totals')
+					return false;
+				return night.moment.isBefore(today);
+			})
+		};
+
+		this.getNextOrMostRecentNight = function getNextOrMostRecentNight(){
+			var r = this.getNextNight();
+			if(r === undefined){
+				r = this.getMostRecentNight();
+			}
+			return r;
+		}
+
 		this.getTotals = function getTotals(){
 			return this.getNight('totals');
 		};

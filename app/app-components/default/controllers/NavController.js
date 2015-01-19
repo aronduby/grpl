@@ -1,7 +1,11 @@
 define(['js/app'], function(app){
 
-	app.controller('NavController', ['navApi', '$scope', 'inlineModalApi', function(navApi, $scope, inlineModalApi) {
+	app.controller('NavController', ['$scope', 'adminMenu', 'navApi', 'inlineModalApi', function($scope, adminMenu, navApi, inlineModalApi) {
 		$scope.api = navApi;
+
+		$scope.toggleAdminMenu = function toggleAdminMenu(){
+			adminMenu.toggle();
+		}
 
 		$scope.$watchGroup(['api.title', 'api.subtitle'], function(newValues, oldValues, scope){
 			$scope.title = newValues[0];

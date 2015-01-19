@@ -60,6 +60,12 @@ define(['app-components/services/api', 'js/routingConfig'], function(servicesApp
 		 *	accessLevel and role is set in js/routingConfig.js
 		*/
 		this.authorize = function(accessLevel, role) {
+			if(angular.isString(accessLevel))
+				accessLevel = this.accessLevels[accessLevel];
+
+			if(angular.isNumber(role))
+				role = this.getRoleForMask(role);
+
 			if(role === undefined)
 				role = this.user.role;
 

@@ -65,7 +65,7 @@
 	<script src="bower_components/requirejs/require.js" data-main="js/main"></script>
 
 </head>	
-<body loading-overlay-classes class="loading">
+<body body-classes class="loading">
 	<div id="fb-root"></div>
 
 	<ng-include src="'app-components/partials/season-notifier.html'" ></ng-include>
@@ -87,6 +87,10 @@
 	</article>
 
 	<footer ng-include="'app-components/partials/footer.html'" ng-controller="FooterController"></footer>
+
+	
+	<ng-include ng-if="admin" src="'app-components/partials/admin-menu.html'" access-level="admin"></ng-include>
+
 
 	<div ng-include="'app-components/partials/socket-status.html'"></div>
 

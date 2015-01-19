@@ -19,6 +19,7 @@ function(routingConfig){
 			'socketServices',
 			'ajoslin.promise-tracker',
 			'angular-flare',
+			'BodyClasses',
 			'LoadingOverlay',
 			'ordinal',
 			'ngStorage',
@@ -132,8 +133,8 @@ function(routingConfig){
 	]);
 
 	app.run([
-		'$rootScope', '$state', 'socket', 'api', 'ipCookie', 'Auth', 'flare', '$location', '$modalStack', '$templateCache', 'LeagueNights', 'Machines', 'Players',
-		function($rootScope, $state, socket, api, ipCookie, Auth, flare, $location, $modalStack, $templateCache, LeagueNights, Machines, Players){
+		'$rootScope', '$state', 'socket', 'api', 'ipCookie', 'Auth', 'flare', '$location', '$modalStack', '$templateCache', 'LeagueNights', 'Machines', 'Players', 'Seasons', '$timeout',
+		function($rootScope, $state, socket, api, ipCookie, Auth, flare, $location, $modalStack, $templateCache, LeagueNights, Machines, Players, Seasons, $timeout){
 			// override the default flare tpl
 			$templateCache.put("directives/flaremessages/index.tpl.html",
 			    "<div ng-repeat=\"(key,message) in flareMessages\" ng-class=\"classes(message)\">\n" +
@@ -146,13 +147,21 @@ function(routingConfig){
 			LeagueNights.loadNights();
 			Machines.loadMachines();
 			Players.loadPlayers();
+			Seasons.loadSeasons();
+			
+			$rootScope.auth = Auth;
+			$rootScope.admin = false;
+			$rootScope.$watch('auth.user', function(user){
+				$rootScope.admin = Auth.authorize('admin');
+			}, true);
 
 			Auth.tryLogin();
 
 			// set the season cookie to whatever the node server thinks it is
 			api.get('getSeason')
 			.then(function(season){
-				$rootScope.season = season;
+				Seasons.setActive(season.active);
+				Seasons.setCurrent(season.current);
 				ipCookie('season_id', season.active);
 			});
 

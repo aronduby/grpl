@@ -1,55 +1,142 @@
-<div id="main-menu" role="navigation" access-level="admin" ng-controller="AdminMenuController">
-	<div id="main-menu-inner">
-		<div class="menu-content top" id="menu-content-demo">
-			<div class="text-bg"><span class="text-slim">Welcome,</span> <span class="text-semibold">{{user.first_name}}</span></div>
+<div id="admin-menu-holder" ng-controller="AdminMenuController">
+	<div class="bg" ng-click="close()"></div>
+	<div id="admin-menu" class="popup left show-header">
+		<header>
+			<a class="close" ng-click="close()">Close</a>
+			<h1>Admin Panel</h1>
+		</header>
+		<article>
+			<div class="listview"><ul><li><a ng-href="#/index" title="Home"><h3>Home</h3></a></li></ul></div>
 
-			<!--<img src="assets/demo/avatars/1.jpg" alt="" class="">-->
-			<div class="btn-group">
-				<a href="#" class="btn btn-xs btn-primary btn-outline dark"><i class="fa fa-envelope"></i></a>
-				<a href="#" class="btn btn-xs btn-primary btn-outline dark"><i class="fa fa-user"></i></a>
-				<a href="#" class="btn btn-xs btn-primary btn-outline dark"><i class="fa fa-cog"></i></a>
-				<a href="#" class="btn btn-xs btn-danger btn-outline dark"><i class="fa fa-power-off"></i></a>
-			</div>
-		</div>
+			<section class="ties" ng-show="show_ties" collapsible closed collapse-callback="sectionCollapsed(closed, 'ties')">
+				<header>
+				 	<span class="count red">15</span>
+					<h1>Ties</h1>
+				</header>
+				<div class="listview tie-groups collapsible-content">
+					<img ng-if="!ties" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
+				</div>
+			</section>
 
-		<ul class="navigation">
-			<li active-nav>
-				<a ng-href="#/admin/ties">
-					<i class="menu-icon fa fa-code-fork"></i>
-					<span class="mm-text">Ties</span>
-					<span class="label label-warning">4</span>
-				</a>
-			</li>
-			<li active-nav>
-				<a ui-sref="admin.scoring">
-					<i class="menu-icon fa fa-bolt"></i>
-					<span class="mm-text">Scoring</span>
-				</a>
-			</li>
-			<li active-nav>
-				<a ui-sref="admin.league-nights">
-					<i class="menu-icon fa fa-calendar-o"></i>
-					<span class="mm-text">League Nights</span>
-				</a>
-			</li>
-			<li active-nav>
-				<a ui-sref="admin.users">
-					<i class="menu-icon fa fa-users"></i>
-					<span class="mm-text">Users</span>
-				</a>
-			</li>
-			<li active-nav>
-				<a ui-sref="admin.machines">
-					<i class="menu-icon fa fa-cogs"></i>
-					<span class="mm-text">Machines</span>
-				</a>
-			</li>
-			<li active-nav>
-				<a ui-sref="admin.season">
-					<i class="menu-icon fa fa-database"></i>
-					<span class="mm-text">Seasons</span>
-				</a>
-			</li>			
-		</ul> <!-- / .navigation -->
+			<section class="scoring" ng-show="show_scoring" collapsible closed collapse-callback="sectionCollapsed(closed, 'scoring')">
+				<header>
+					<h1>Scoring</h1>
+				</header>
+				<section class="collapsible-content">
+					<button class="stop-scoring red" disabled="disabled">
+						<span class="title">Stop Scoring</span>
+					</button>
+
+					<button class="prepare-scoring green" disabled="disabled">
+						<span class="title">Start Scoring</span>
+					</button>
+
+					<h2>Group Progress</h2>
+					<div class="listview scoring-groups">
+						<img ng-if="!scoring_groups" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
+					</div>
+				</section>
+			</section>
+
+			<section class="nights" collapsible closed collapse-callback="sectionCollapsed(closed, 'nights')">
+				<header>
+					<h1>League Nights</h1>
+				</header>
+				<section class="collapsible-content">
+					<button class="new-league-night blue plus">
+						<span class="title">New League Night</span>
+					</button>
+
+					<h2>All Nights</h2>
+					<div class="listview league-nights">
+						<img ng-if="!nights" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
+						<ul ng-if="nights">
+							<li ng-repeat="night in nights" ng-if="night.starts != 'totals'" data-starts="{{night.starts}}">
+								<a ng-href="#/admin/night/{{night.starts}}">
+									<h3>{{ night.title }}</h3>
+									<p>{{ night.description }}</p>
+								</a>
+							</li>
+							<li ng-if="!nights.length">no nights added yet</li>
+						</ul>
+					</div>
+				</section>
+			</section>
+
+			<section class="users" collapsible closed collapse-callback="sectionCollapsed(closed, 'users')">
+				<header>
+					<h1>Users</h1>
+				</header>
+				<section class="collapsible-content">
+					<button class="admin-users blue plus">
+						<span class="title">Add a User</span>
+					</button>
+
+					<h2>Edit a User</h2>
+					<div class="listview edit-user-list">
+						<img ng-if="!users" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
+						<ul ng-if="users">
+							<li ng-repeat="user in users">
+								<a ng-href="#/admin/users/{{user.name_key}}">
+									<h3>{{ user.full_name }}</h3>
+									<p ng-if="auth.authorize('admin', user.role)">admin</p>
+								</a>
+							</li>
+							<li ng-if="!users.length">no users?</li>
+						</ul>
+					</div>
+				</section>
+			</section>
+
+			<section class="seasons" collapsible closed collapse-callback="sectionCollapsed(closed, 'seasons')">
+				<header>
+					<h1>Seasons</h1>
+				</header>
+				<section class="collapsible-content">
+					<button class="new-season blue plus">
+						<span class="title">Add a Season</span>
+					</button>
+
+					<h2>Edit a Season</h2>
+					<div class="listview edit-season-list">
+						<img ng-if="!seasons" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
+						<ul ng-if="seasons">
+						<li ng-repeat="this_season in seasons | reverse">
+							<a ng-href="#/admin/seasons/{{this_season.season_id}}">
+								<h3>{{ this_season.title }}</h3>
+								<p ng-if="this_season.season_id == season.current_id">current season</p></a></li>
+
+							<li ng-if="!seasons.length">no seasons added</li>
+						</ul>
+					</div>
+				</section>
+			</section>
+
+			<section class="machines" collapsible closed collapse-callback="sectionCollapsed(closed, 'machines')">
+				<header>
+					<h1>Machines</h1>
+				</header>
+				<section class="collapsible-content">
+					<button class="new-machine blue plus">
+						<span class="title">Add a Machine</span>
+					</button>
+
+					<h2>Edit a Machine</h2>
+					<div class="listview edit-machine-list">
+						<img ng-if="!machines" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
+						<ul ng-if="machines">
+							<li ng-repeat="machine in machines">
+								<a ng-href="#/admin/machines/{{machine.abbv}}">
+									<h3>{{ machine.name }}</h3>
+									<p ng-if="machine.active">active</p>
+								</a>
+							</li>
+							<li ng-if="!machines.length">there are no machines added</li>
+						</ul>
+					</div>
+				</section>
+			</section>
+
+		</article>
 	</div>
 </div>

@@ -1,43 +1,18 @@
-define([], function(){
+define(['app-components/BodyClasses'], function(){
 	
-	var LoadingOverlay = angular.module('LoadingOverlay', []);
+	var LoadingOverlay = angular.module('LoadingOverlay', ['BodyClasses']);
 
-	LoadingOverlay.factory('loadingOverlayApi', function(){
+	LoadingOverlay.factory('loadingOverlayApi', ['bodyClassesApi', function(bodyClassesApi){
 		return {
 			open: false,
 			show: function(){
-				this.open = true;
+				bodyClassesApi.add('loading');
 			},
 			hide: function(){
-				this.open = false;
+				bodyClassesApi.remove('loading');
 			},
 			toggle: function(){
-				this.open = !this.open;
-			}
-		}
-	});
-
-	LoadingOverlay.directive('loadingOverlayClasses', ['loadingOverlayApi', function(loadingOverlayApi){
-		return {
-			restrict: 'A',
-			scope: {},
-			link: function(scope, element, attrs){
-				scope.api = loadingOverlayApi;
-
-				scope.show = function(){
-					element.addClass('loading');
-				};
-
-				scope.hide = function(){
-					element.removeClass('loading');
-				};
-
-				scope.$watch('api.open', function(open){
-					if(open)
-						scope.show();
-					else
-						scope.hide();
-				});
+				bodyClassesApi.toggle('loading');
 			}
 		}
 	}]);

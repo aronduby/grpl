@@ -1,16 +1,17 @@
 define(['js/app'], function(app){
 
-	app.controller('FooterController', ['$scope', '$window', 'api', 'ipCookie', function($scope, $window, api, ipCookie) {
+	app.controller('FooterController', ['$scope', '$window', 'api', 'ipCookie', 'Seasons', function($scope, $window, api, ipCookie, Seasons) {
 		$scope.seasons = [];
 		$scope.cur_season = null;
+		$scope.season = Seasons;
 
 		var season_id = ipCookie('season_id');
 
-		api.get('seasons.getAll')
-			.then(function(seasons){
-				$scope.seasons = seasons;
-				$scope.cur_season = _.find(seasons, {'season_id': season_id});
-			});
+		Seasons.loading
+		.then(function(seasons){
+			$scope.seasons = Seasons.all;
+			$scope.cur_season = _.find(Seasons.all, {'season_id': season_id});
+		});
 
 		$scope.changeSeason = function changeSeason(season){
 			ipCookie('season_id', season.season_id);
