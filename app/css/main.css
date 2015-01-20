@@ -178,17 +178,11 @@ p.deprecated{
     }
 
   .page article section .content,
-  .popup article{
+  .popup article,
+  .panel article{
     padding:10px 15px;
     border-radius:0 0 5px 5px;
-    background: #ffffff; /* Old browsers */
-    background: -moz-linear-gradient(top,  #ffffff 0%, #d7d7d7 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#d7d7d7)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top,  #ffffff 0%,#d7d7d7 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top,  #ffffff 0%,#d7d7d7 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top,  #ffffff 0%,#d7d7d7 100%); /* IE10+ */
     background: linear-gradient(to bottom,  #ffffff 0%,#d7d7d7 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#d7d7d7',GradientType=0 ); /* IE6-9 */
   }
   /* if there's no header do full rounded corners */
   .page article section .content:first-child{ border-radius:5px; }
@@ -198,16 +192,10 @@ p.deprecated{
     cursor:pointer !important;
   }
   .page article section.collapsible > header,
-  .popup article .collapsible > header{
+  .popup article .collapsible > header,
+  .panel article .collapsible > header{
     border-color:#2290c4;
-    background: #5cc8f5; /* Old browsers */
-    background: -moz-linear-gradient(top,  #5cc8f5 0%, #0ba4ee 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#5cc8f5), color-stop(100%,#0ba4ee)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top,  #5cc8f5 0%,#0ba4ee 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top,  #5cc8f5 0%,#0ba4ee 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top,  #5cc8f5 0%,#0ba4ee 100%); /* IE10+ */
     background: linear-gradient(to bottom,  #5cc8f5 0%,#0ba4ee 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#5cc8f5', endColorstr='#0ba4ee',GradientType=0 ); /* IE6-9 */    
   }
     .collapsible > header h1::before{
       content:'-';
@@ -223,15 +211,10 @@ p.deprecated{
       border-bottom:none;
     }
     .page article section.collapsible.closed > header,
-    .popup article .collapsible.closed > header{
+    .popup article .collapsible.closed > header,
+    .panel article .collapsible.closed > header{
       background: #b89470; /* Old browsers */
-      background: -moz-linear-gradient(top,  #b89470 0%, #894e14 100%); /* FF3.6+ */
-      background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#b89470), color-stop(100%,#894e14)); /* Chrome,Safari4+ */
-      background: -webkit-linear-gradient(top,  #b89470 0%,#894e14 100%); /* Chrome10+,Safari5.1+ */
-      background: -o-linear-gradient(top,  #b89470 0%,#894e14 100%); /* Opera 11.10+ */
-      background: -ms-linear-gradient(top,  #b89470 0%,#894e14 100%); /* IE10+ */
       background: linear-gradient(to bottom,  #b89470 0%,#894e14 100%); /* W3C */
-      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b89470', endColorstr='#894e14',GradientType=0 ); /* IE6-9 */
     }
       .collapsible.closed header h1::before{ 
         content:'+'; 
@@ -247,13 +230,7 @@ p.deprecated{
   .page article section.collapsible.closed.live header,
   button.live{
     background: #f4c95b; /* Old browsers */
-    background: -moz-linear-gradient(top,  #f4c95b 0%, #eea80c 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f4c95b), color-stop(100%,#eea80c)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top,  #f4c95b 0%,#eea80c 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top,  #f4c95b 0%,#eea80c 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top,  #f4c95b 0%,#eea80c 100%); /* IE10+ */
     background: linear-gradient(to bottom,  #f4c95b 0%,#eea80c 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f4c95b', endColorstr='#eea80c',GradientType=0 ); /* IE6-9 */
     border-color:#db9b0c;
   }
 
@@ -693,26 +670,23 @@ body.loading{
     margin-left:-160px;
   }
 
-.popup > header{
-  background: #f29e40; /* Old browsers */
+.popup > header,
+.panel > header{
   border-radius:5px 5px 0 0;
   padding:15px 15px 10px 15px;
-  background: -moz-linear-gradient(top,  #f29e40 0%, #ee7c0b 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f29e40), color-stop(100%,#ee7c0b)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top,  #f29e40 0%,#ee7c0b 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top,  #f29e40 0%,#ee7c0b 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top,  #f29e40 0%,#ee7c0b 100%); /* IE10+ */
   background: linear-gradient(to bottom,  #f29e40 0%,#ee7c0b 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f29e40', endColorstr='#ee7c0b',GradientType=0 ); /* IE6-9 */
 }
-  .popup header h1{
+  .popup header h1,
+  .panel header h1{
     font-size:18px;
     font-weight:bold;
     color:#fff;
     text-shadow:0 0 2px rgba(0,0,0,.6);
   }
-  .popup header h1 a{ color:#fff; }
-  .popup header a.close{ 
+  .popup header h1 a,
+  .panel header h1 a{ color:#fff; }
+  .popup header a.close,
+  .panel header a.close{ 
     display:block;
     position:absolute;
     top:18px; right:10px;
@@ -723,7 +697,8 @@ body.loading{
   
     opacity: 1;
 }
-  .popup header .pointer{
+  .popup header .pointer,
+  .panel header .pointer{
     position:absolute;
     top:-10px;
     display:block;
@@ -739,60 +714,67 @@ body.loading{
     transform:rotate(45deg);
     transform-origin:15px;
   }
-  .popup.right .pointer{ right:5px; }
-  .popup.left .pointer{ left:5px; }
-  .popup.center .pointer{
+  .popup.right .pointer,
+  .panel.right .pointer{ right:5px; }
+  .popup.left .pointer,
+  .panel.left .pointer{ left:5px; }
+  .popup.center .pointer,
+  .panel.center .pointer{
     left:50%;
     margin-left:-15px;
   }
-.popup article{
+.popup article,
+.panel article{
   padding:0;
   margin:0 !important;
   color:#696969;
 }
-  .popup article.content{
+  .popup article.content,
+  .panel article.content{
     padding:8px 10px;
   }
-  .popup .content h2{
+  .popup .content h2,
+  .panel .content h2{
     font-size:18px;
     margin-bottom:5px;
   }
-  .popup .content p{
+  .popup .content p,
+  .panel .content p{
     line-height:1.2em;
     margin-bottom:10px;
   }
 
-.popup .button-holder{
+.popup .button-holder,
+.panel .button-holder{
   border-radius:0 0 5px 5px;
   background:#c4c4c4;
   border-top:1px solid #b5b5b5; 
 }
-  .popup .content .button-holder{
+  .popup .content .button-holder,
+  .panel .content .button-holder{
     margin:15px -10px -8px -10px;
   }
 
-  .popup .button-holder button{
+  .popup .button-holder button,
+  .panel .button-holder button{
     border-radius:0 0 0 0;
     border-width:0 0 0 1px;
   }
-  .popup .button-holder button:last-child{
+  .popup .button-holder button:last-child,
+  .panel .button-holder button:last-child{
     border-radius:0 0 4px 0;
   }
 
-  .popup .button-holder .close{
-    float: none;
-    
-  
+  .popup .button-holder .close,
+  .panel .button-holder .close{
+    float: none;  
     opacity: 1;
     text-shadow: none;
-}
-
-.popup.dialog .content div{
-  line-height:1.3em; 
-}
+  }
 
 /* used with a bootstrap modal */
-.modal .popup{
+.modal .popup,
+.modal .panel{
   position: static;
   display:block;
   width: 100% !important;
@@ -803,10 +785,13 @@ body.loading{
   margin-left: 0 !important;
   box-shadow:none;
 }
-  .modal .popup header a.close{ display:block !important; }
-  .modal .popup header .pointer{ display:none; }
+  .modal .popup header a.close,
+  .modal .panel header a.close{ display:block !important; }
+  .modal .popup header .pointer,
+  .modal .panel header .pointer{ display:none; }
 
-  .modal .popup article{
+  .modal .popup article,
+  .modal .panel article{
     padding-bottom:10px;
   }
 
@@ -917,13 +902,15 @@ form .listview fieldset input[type="checkbox"]{
 }
 
 form .listview fieldset input,
-form .listview fieldset select{
+form .listview fieldset select,
+form .listview fieldset textarea{
+  box-sizing: border-box;
   border-radius:5px;
-  width:98%;
+  width: 100%;
   border:none;
   font-family:'Roboto Condensed';
   font-size:1.2857em;
-  padding:1%;
+  padding: 10px;
   color:#666;
 }
   form .listview fieldset select{

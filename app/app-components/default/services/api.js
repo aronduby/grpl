@@ -48,6 +48,10 @@ define(['app-components/services/socket'], function(servicesApp){
 
 			return d.promise;
 		};
+
+		this.post = function(method, argument, opts){
+			return this.get(method, argument, opts);
+		};
 	}
 
 	servicesApp.provider('api', function apiProvider(){

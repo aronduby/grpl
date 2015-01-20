@@ -28,6 +28,7 @@ if (cluster.isMaster) {
 		}),
 		https = require('https'),
 		Q = require('q'),
+		auth = require('./auth.js'),
 		season_id;
 
 	var logger = require('tracer').colorConsole();
@@ -53,8 +54,24 @@ if (cluster.isMaster) {
 		redisSub : sub,
 		RedisClient : client
 	}));
-	if(process.argv[2] != 'DEV')
+	
+	if(process.argv[2] != 'DEV'){
 		io.set('log level',2);
+	} else {
+		logger.log('Started with DEV');
+	}
+
+
+	function handleError(err){
+		logger.error(err.stack);
+		return {
+			title: 'Error',
+			headline: 'Something Went Wrong',
+			msg: '<p>The best thing to do now is screenshot this and send it to Duby.</p><blockquote>'+err.message+'</blockquote>',
+			additional_classes: 'error'
+		};
+	};
+
 
 	io.configure(function (){
 		io.set('authorization', function (handshakeData, callback) {
@@ -68,12 +85,12 @@ if (cluster.isMaster) {
 			if(cookies.user_hash != undefined){
 				handshakeData.user_hash = cookies.user_hash;
 			} else {
-				// else step them up with an anonymous hash
+				// else set them up with an anonymous hash
 				// this way we can keep track of season data
 				handshakeData.user_hash = 'ANON'+(+new Date()).toString(36);
 			}
 
-			callback(null, true); // error first callback style 
+			callback(null, true);
 		});
 	});
 
@@ -102,73 +119,53 @@ if (cluster.isMaster) {
 			});
 		}
 
+		function logPlayerIn(player, cb){
+			socket.set('user.name_key', player.name_key);
+			socket.set('user.admin', !!auth.authorize('admin', player.role));
+			client.set('uh'+player.hash, socket.id);
+
+			// remove our anon hash and update the handshake data
+			if(socket.handshake.user_hash.substr(0, 4) == 'ANON'){
+				client.del('uh'+socket.handshake.user_hash);
+				socket.handshake.user_hash = player.hash;
+			}
+
+			cb(null, player);
+		}
+
 		/*
 		 *	LOGIN METHODS
 		*/
 		// cookie hash
 		socket.on('user.loginFromHash', function(hash, cb){
-			console.log('user.loginFromHash');
 			grpl.player.getByHash(hash)
 			.then(function(player){
-				socket.set('user.name_key', player.name_key);
-				socket.set('user.admin', player.admin);
-				client.set('uh'+player.hash, socket.id);
-
-				// remove our anon hash and update the handshake data
-				if(socket.handshake.user_hash.substr(0, 4) == 'ANON'){
-					client.del('uh'+socket.handshake.user_hash);
-					socket.handshake.user_hash = player.hash;
-				}
-
-				cb(null, player);
+				logPlayerIn(player, cb);
 			})
 			.fail(function(err){
-				cb(err);
+				cb(handleError(err));
 			}).done();
 		});
 
 		// facebook access token
 		socket.on('user.loginFromAccessToken', function(token, cb){
-			console.log('user.loginFromAccessToken');
 			grpl.player.getByFBToken(token)
 			.then(function(player){
-				socket.set('user.name_key', player.name_key);
-				socket.set('user.admin', player.admin);
-				client.set('uh'+player.hash, socket.id);
-
-				// remove our anon hash and update the handshake data
-				if(socket.handshake.user_hash.substr(0, 4) == 'ANON'){
-					client.del('uh'+socket.handshake.user_hash);
-					socket.handshake.user_hash = player.hash;
-				}
-
-				cb(null, player);
+				logPlayerIn(player, cb);
 			})
 			.fail(function(err){
-				cb(err);
+				cb(handleError(err));
 			}).done();
 		});
 
 		// email/password login
 		socket.on('user.loginFromForm', function(data, cb){
-			console.log('user.loginFromForm');
-
 			grpl.player.getByEmailAndPassword(data.email, data.password)
 			.then(function(player){
-				socket.set('user.name_key', player.name_key);
-				socket.set('user.admin', player.admin);
-				client.set('uh'+player.hash, socket.id);
-
-				// remove our anon hash and update the handshake data
-				if(socket.handshake.user_hash.substr(0, 4) == 'ANON'){
-					client.del('uh'+socket.handshake.user_hash);
-					socket.handshake.user_hash = player.hash;
-				}
-
-				cb(null, player);
+				logPlayerIn(player, cb);
 			})
 			.fail(function(err){
-				cb(err);
+				cb(handleError(err));
 			}).done();
 		});
 
@@ -179,7 +176,7 @@ if (cluster.isMaster) {
 				cb(null, bool);
 			})
 			.fail(function(err){
-				cb(err);
+				cb(handleError(err));
 			}).done();
 		});
 
@@ -193,7 +190,7 @@ if (cluster.isMaster) {
 				io.sockets.emit('tiesbroken', data.night_id, name_key);
 			})
 			.fail(function(err){
-				cb(err);
+				cb(handleError(err));
 			});
 		});
 
@@ -211,8 +208,7 @@ if (cluster.isMaster) {
 				}
 			})
 			.fail(function(err){
-				logger.error(err.stack);
-				socket.emit('error', err);
+				cb(handleError(err));
 			}).done();
 		});
 
@@ -222,21 +218,25 @@ if (cluster.isMaster) {
 				cb(null, started);
 			})
 			.fail(function(err){
-				cb(err);
+				cb(handleError(err));
 			}).done();
 		});
 
 		socket.on('scoring.start', function(starts, cb){
 			socket.get('user.admin', function(err, admin){
 				if(admin != true && admin != 'true'){
-					socket.emit('error', {
+					cb({
 						title:'Error',
 						headline: 'Nope...',
 						msg: '<p>Only Admins can start scoring. If you think you should be an admin talk to the people in charge.</p>'
 					});
 				} else {
 					if(!starts){
-						socket.emit('error', 'You must supply a date for the scoring system');
+						cb({
+							title: 'Error',
+							headline: 'Missing Required Information',
+							msg: '<p>You must supply a date for the scoring system</p>'
+						});
 						return false;
 					}
 					grpl.scoring.start(season_id, starts)
@@ -244,7 +244,12 @@ if (cluster.isMaster) {
 						io.sockets.emit('scoring_started', data);
 					})
 					.fail(function(err){
-						socket.emit('error', err);
+						cb({
+							title: 'Error',
+							headline: 'Something Went Wrong',
+							msg: '<p>The best thing to do now is screenshot this and send it to Duby.</p><blockquote>'+err.message+'</blockquote>',
+							additional_classes: 'error'
+						});
 					})
 					.done();
 				}
@@ -254,11 +259,10 @@ if (cluster.isMaster) {
 		socket.on('scoring.stop', function(cb){
 			socket.get('user.admin', function(err, admin){
 				if(admin != true && admin != 'true'){
-					socket.emit('error', {
+					cb({
 						title:'Error',
 						headline: 'Nope...',
-						msg: '<p>Only Admins can stop scoring. If you think you should be an admin talk to the people in charge.</p>',
-						btn: false
+						msg: '<p>Only Admins can stop scoring. If you think you should be an admin talk to the people in charge.</p>'
 					});
 				} else {				
 					grpl.scoring.stop();
@@ -273,7 +277,7 @@ if (cluster.isMaster) {
 				cb(null, d);
 			})
 			.fail(function(err){
-				cb(err);
+				cb(handleError(err));
 			}).done();
 		});
 
@@ -283,7 +287,7 @@ if (cluster.isMaster) {
 				cb(null, d);
 			})
 			.fail(function(err){
-				cb(err);
+				cb(handleError(err));
 			}).done();
 		});
 
@@ -293,7 +297,7 @@ if (cluster.isMaster) {
 				cb(null, d);
 			})
 			.fail(function(err){
-				cb(err);
+				cb(handleError(err));
 			}).done();
 		});
 
@@ -303,17 +307,16 @@ if (cluster.isMaster) {
 				cb(null, d);
 			})
 			.fail(function(err){
-				logger.error(err.stack);
-				cb(err);
+				cb(handleError(err));
 			}).done();
 		});
 
 		socket.on('scoring.login', function(cb){
 			socket.get('user.name_key', function(err, name_key){
 				if(err){
-					socket.emit('error', err.message);
+					cb(handleError(err));
 				} else {
-					cb(name_key);
+					cb(null, name_key);
 					socket.emit('scoring_logged_in', name_key);
 				}
 			});
@@ -326,7 +329,7 @@ if (cluster.isMaster) {
 				if(cb)
 					cb(data);
 			}).fail(function(err){
-				socket.emit('error', err.msg);
+				cb(handleError(err));
 			});	
 		});
 
@@ -342,7 +345,7 @@ if (cluster.isMaster) {
 		socket.on('getSeason', function(cb){
 			socket.get('season_id', function(err, s_season_id){
 				if(err)
-					cb(err);
+					cb(handleError(err));
 				else {
 					if(s_season_id == null)
 						s_season_id = season_id;
@@ -360,14 +363,14 @@ if (cluster.isMaster) {
 			.then(function(seasons){
 				cb(null, seasons);	
 			}).fail(function(err){
-				cb(err);
+				cb(handleError(err));
 			}).done();
 		});
 
 		socket.on('season.update', function(data, cb){
 			socket.get('user.admin', function(err, admin){
 				if(admin != true && admin != 'true'){
-					socket.emit('error', {
+					cb({
 						title:'Error',
 						headline: 'Nope...',
 						msg: '<p>Only Admins can edit season. If you think you should be an admin talk to the people in charge.</p>'
@@ -398,20 +401,17 @@ if (cluster.isMaster) {
 								io.sockets.emit('season_updated', season);		
 							})
 							.fail(function(err){
-								logger.error(err.stack);
-								cb(err);
+								cb(handleError(err));
 							}).done();
 
 						})
 						.fail(function(err){
-							logger.error(err.stack);
-							cb(err);
+							cb(handleError(err));
 						}).done();
 						
 						
-					}).catch(function(err){
-						logger.error(err.stack);
-						cb(err);
+					}).fail(function(err){
+						cb(handleError(err));
 					}).done();					
 				}
 			});
@@ -436,7 +436,7 @@ if (cluster.isMaster) {
 					cb(null, nights);
 				})
 				.fail(function(err){
-					cb(err);
+					cb(handleError(err));
 				}).done();
 			});
 			
@@ -452,8 +452,7 @@ if (cluster.isMaster) {
 				.then(function(ties){
 					cb(null, ties);
 				}).fail(function(err){
-					logger.error(err.stack);
-					cb(err);
+					cb(handleError(err));
 				}).done();
 			});
 			
@@ -477,8 +476,7 @@ if (cluster.isMaster) {
 					cb(null, night);
 				})
 				.fail(function(err){
-					logger.error(err.stack);
-					cb(err);
+					cb(handleError(err));
 				}).done();
 			});
 			
@@ -501,8 +499,7 @@ if (cluster.isMaster) {
 						cb(null, night);
 
 					}).fail(function(err){ 
-						logger.error(err);
-						cb(err); 
+						cb(handleError(err));
 					}).done();
 
 				}).fail(function(err){ cb(err); }).done();
@@ -519,7 +516,11 @@ if (cluster.isMaster) {
 					
 					cb(null, order);					
 
-				}).fail(function(err){ cb(err); }).done();
+				})
+				.fail(function(err){ 
+					cb(handleError(err));
+				})
+				.done();
 			});
 		});
 
@@ -529,7 +530,7 @@ if (cluster.isMaster) {
 		socket.on('leaguenight.update', function(data, cb){
 			socket.get('user.admin', function(err, admin){
 				if(admin != true && admin != 'true'){
-					socket.emit('error', {
+					cb({
 						title:'Error',
 						headline: 'Nope...',
 						msg: '<p>Only Admins can edit league nights. If you think you should be an admin talk to the people in charge.</p>'
@@ -581,11 +582,11 @@ if (cluster.isMaster) {
 							io.sockets.emit('leaguenight_updated', night);
 
 						}).fail(function(err){
-							cb(err);
+							cb(handleError(err));
 						}).done();
 
 					}).fail(function(err){
-						cb(err);
+						cb(handleError(err));
 					}).done();
 				}
 			});			
@@ -594,7 +595,7 @@ if (cluster.isMaster) {
 		socket.on('leaguenight.update.order', function(data, cb){
 			socket.get('user.admin', function(err, admin){
 				if(admin != true && admin != 'true'){
-					socket.emit('error', {
+					cb({
 						title:'Error',
 						headline: 'Nope...',
 						msg: '<p>Only Admins can edit league nights. If you think you should be an admin talk to the people in charge.</p>'
@@ -613,7 +614,7 @@ if (cluster.isMaster) {
 						//nd.setMilliseconds(0);
 
 					if(nd < today){
-						socket.emit('error', {
+						cb({
 							title:'Error',
 							headline: 'Nope...',
 							msg: '<p>You can\'t edit the start order of a night that already happened</p>'
@@ -630,20 +631,17 @@ if (cluster.isMaster) {
 								io.sockets.emit('leaguenight_updated', night);
 							})
 							.fail(function(err){
-								cb(err);
+								cb(handleError(err));
 							}).done();
 							
 						})
 						.fail(function(err){
-							cb(err);
+							cb(handleError(err));
 						}).done();
 					}
 				}
 			});
 		});
-
-
-
 
 
 		socket.on('playerlist.createStartOrderForNight', function(starts, cb){
@@ -666,15 +664,18 @@ if (cluster.isMaster) {
 							cb(null, true);
 						})
 						.fail(function(err){
-							cb(err);
+							cb(handleError(err));
 						}).done();
 					})
 					.fail(function(err){
-						logger.error(err.stack);
-						cb(err);
+						cb(handleError(err));
 					}).done();
 					
-				}).fail(function(err){ cb(err); }).done();
+				})
+				.fail(function(err){ 
+					cb(handleError(err));
+				})
+				.done();
 			});
 		});
 
@@ -683,21 +684,33 @@ if (cluster.isMaster) {
 			grpl.division.getForSeason(season_id, true)
 			.then(function(divisions){
 				cb(null, divisions);
-			}).fail(function(err){ cb(err); }).done();
+			})
+			.fail(function(err){ 
+				cb(handleError(err));
+			})
+			.done();
 		});
 
 		socket.on('division.getForSeasonNoPlayers', function(season_id, cb){
 			grpl.division.getForSeasonNoPlayers(season_id)
 			.then(function(divisions){
 				cb(null, divisions);
-			}).fail(function(err){ cb(err); }).done();
+			})
+			.fail(function(err){ 
+				cb(handleError(err));
+			})
+			.done();
 		});
 
 		socket.on('division.checkCapsForSeason', function(season_id, cb){
 			grpl.division.checkCapsForSeason(season_id)
 			.then(function(data){
 				cb(null, data);
-			}).fail(function(err){ cb(err); }).done();
+			})
+			.fail(function(err){ 
+				cb(handleError(err));
+			})
+			.done();
 		});
 
 
@@ -709,7 +722,11 @@ if (cluster.isMaster) {
 				grpl.machine.getForSeason(socket_season_id)
 				.then(function(machines){
 					cb(null, machines);
-				}).fail(function(err){ cb(err); }).done();
+				})
+				.fail(function(err){ 
+					cb(handleError(err));
+				})
+				.done();
 			});				
 		});
 
@@ -717,27 +734,39 @@ if (cluster.isMaster) {
 			grpl.machine.getAll()
 			.then(function(machines){
 				cb(null, machines);
-			}).fail(function(err){ cb(err); }).done();
+			})
+			.fail(function(err){ 
+				cb(handleError(err));
+			})
+			.done();
 		});
 
 		socket.on('machine.active', function(cb){
 			grpl.machine.getActive()
 			.then(function(machines){
 				cb(null, machines);
-			}).fail(function(err){ cb(err); }).done();
+			})
+			.fail(function(err){ 
+				cb(handleError(err));
+			})
+			.done();
 		});
 
 		socket.on('machine.abbv', function(abbv, cb){
 			grpl.machine.getByAbbv(abbv)
 			.then(function(machine){
 				cb(null, machine);
-			}).fail(function(err){ cb(err); }).done();
+			})
+			.fail(function(err){ 
+				cb(handleError(err));
+			})
+			.done();
 		});
 
 		socket.on('machine.update', function(data, cb){
 			socket.get('user.admin', function(err, admin){
 				if(admin != true && admin != 'true'){
-					socket.emit('error', {
+					cb({
 						title:'Error',
 						headline: 'Nope...',
 						msg: '<p>Only Admins can edit machines. If you think you should be an admin talk to the people in charge.</p>'
@@ -783,12 +812,14 @@ if (cluster.isMaster) {
 
 						m.save().then(function(m){
 							cb(null, m);
-						}).fail(function(err){ 
-							cb(err); 
+						})
+						.fail(function(err){ 
+							cb(handleError(err));
 						}).done();
 
-					}).fail(function(err){ 
-						cb(err); 
+					})
+					.fail(function(err){ 
+						cb(handleError(err));
 					}).done();
 
 
@@ -801,11 +832,15 @@ if (cluster.isMaster) {
 				if(!socket_season_id){
 					socket_season_id = season_id;
 				}
-				console.log(socket_season_id);
+
 				grpl.playerlist.getForSeason(socket_season_id)
 				.then(function(playerlist){
 					cb(null, playerlist.players);
-				}).fail(function(err){ cb(err); }).done();
+				})
+				.fail(function(err){ 
+					cb(handleError(err));
+				})
+				.done();
 			});
 		});
 
@@ -813,21 +848,33 @@ if (cluster.isMaster) {
 			grpl.playerlist.getActive(season_id)
 			.then(function(playerlist){
 				cb(null, playerlist.players);
-			}).fail(function(err){ cb(err); }).done();
+			})
+			.fail(function(err){ 
+				cb(handleError(err));
+			})
+			.done();
 		});
 
 		socket.on('players.all', function(cb){
 			grpl.playerlist.getAll()
 			.then(function(playerlist){
 				cb(null, playerlist.players);
-			}).fail(function(err){ cb(err); }).done();
+			})
+			.fail(function(err){ 
+				cb(handleError(err));
+			})
+			.done();
 		});
 
 		socket.on('players.all.namekey', function(name_key, cb){
 			grpl.player.getByNameKey(name_key)
 			.then(function(player){
 				cb(null, player);
-			}).fail(function(err){ cb(err); }).done();
+			})
+			.fail(function(err){
+				cb(handleError(err));
+			})
+			.done();
 		});
 
 		socket.on('players.namekey', function(name_key, cb){
@@ -855,14 +902,11 @@ if (cluster.isMaster) {
 						cb(null, data);
 
 					}).fail(function(err){ 
-						logger.error(err); 
-						logger.trace(err.stack);
-						cb(err); 
+						cb(handleError(err));
 					}).done();
 				
 				}).fail(function(err){ 
-					logger.error(err); 
-					cb(err); 
+					cb(handleError(err));
 				}).done();
 			});				
 		});
@@ -871,7 +915,11 @@ if (cluster.isMaster) {
 			grpl.player.getSeasonsForNameKey(name_key)
 			.then(function(season_ids){
 				cb(null, season_ids);
-			}).fail(function(err){ logger.error(err); cb(err); }).done();
+			})
+			.fail(function(err){ 
+				cb(handleError(err));
+			})
+			.done();
 		});
 
 
@@ -890,14 +938,12 @@ if (cluster.isMaster) {
 						cb(null, data);
 					})
 					.fail(function(err){
-						logger.error(err);
-						cb(err)
+						cb(handleError(err));
 					}).done();
 					
 				})
 				.fail(function(err){
-					logger.error(err);
-					cb(err);
+					cb(handleError(err));
 				}).done();
 			});
 		});
@@ -911,14 +957,12 @@ if (cluster.isMaster) {
 					cb(null, data);
 				})
 				.fail(function(err){
-					logger.error(err);
-					cb(err)
+					cb(handleError(err));
 				}).done();
 				
 			})
 			.fail(function(err){
-				logger.error(err);
-				cb(err);
+				cb(handleError(err));
 			}).done();
 		});
 
@@ -926,7 +970,11 @@ if (cluster.isMaster) {
 			grpl.changelog.get()
 			.then(function(data){
 				cb(null, data);
-			}).fail(function(err){ cb(err); }).done();
+			})
+			.fail(function(err){ 
+				cb(handleError(err));
+			})
+			.done();
 		});
 
 		

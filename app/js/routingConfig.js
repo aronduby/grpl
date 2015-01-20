@@ -1,5 +1,6 @@
 define([], function(){
 
+	// config should match the node file
 	var config = {
 
 		/* List all the roles you wish to use in the app

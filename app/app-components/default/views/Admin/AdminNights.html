@@ -1,0 +1,120 @@
+<div class="page" id="night_admin">
+
+	<article>
+		<form class="night-form" autocomplete="off">
+			<section ng-if="night">
+				<header>
+					<a class="button gear edit-night-order" ng-disabled="!night.has_order" ng-href="#/admin/nights/order/{{night.starts}}"> Edit Order</a>
+					<h1>Edit This Night</h1>
+				</header>
+				<div class="content">
+					<input type="hidden" name="night_id" id="night_id" ng-model="night.night_id" />
+					<input type="hidden" name="season_id" id="season_id" ng-model="night.season_id" />
+					<div class="fields listview"><ul>
+						<li>
+							<label for="title">Title</label>
+							<fieldset><input type="text" name="title" id="title" placeholder="ie. League Night #8" ng-model="night.title" /></fieldset>
+						</li>
+						<li>
+							<label for="starts-month">Starts</label>
+							<fieldset>
+								<datepicker class="datepicker" ng-model="night.moment" min-date="today" show-weeks="false"></datepicker>
+							</fieldset>
+						</li>
+						<li>
+							<label for="note">Note</label>
+							<fieldset><textarea id="note" placeholder="notes" ng-model="night.note"></textarea></fieldset>
+						</li>
+						<li class="machinelist-holder subsection">
+							<h2>Machines</h2>
+							<p>Enter machines in the order that the first group will play them</p>
+							<div class="listview" ng-repeat="division in night.divisions">
+								<header>
+									<h3>{{ division.title }}</h3>
+								</header>
+								<input type="hidden" name="division_id" ng-model="division.division_id">
+								<ul>
+									<li ng-repeat="(key, title) in ['First', 'Second', 'Third', 'Fourth', 'Fifth']">
+										<label>{{ title }}</label>
+										<fieldset>
+											<select class="machine" ng-options="machine.abbv+': '+machine.name for machine in machines | orderBy:'abbv' " ng-model="division.machines[key]">
+												<option></option>
+											</select>
+										</fieldset>
+									</li>
+								</ul>
+							</div>
+						</li>
+						<li class="sublist-holder subsection">
+							<h2>Subs</h2><p>Enter any subbed players</p>
+							<div class="listview" id="sublist">
+								<ul>
+									<li ng-repeat="sub in night.subs">
+										<input type="hidden" ng-model="sub.sub_id" />
+										<button class="remove red" ng-click="removeSub($index)">-</button>
+										<fieldset>
+											<input type="text" placeholder="subs name" ng-model="sub.sub" />
+											<select ng-model="sub.player" ng-options="player.full_name for player in players | orderBy:'name_key'"></select>				
+										</fieldset>
+									</li>
+									<li ng-if="!night.subs.length">no subs entered</li>
+								</ul>
+							</div>
+							<button class="blue add-sub" ng-click="addSub()">add sub</button>
+						</li>
+						<li class="subsection">
+							<h2>Post Save Action</h2>
+							<p>What would you like to do after saving?</p>
+							<div class="listview">
+								<ul>
+									<li>
+										<fieldset>
+											<select ng-model="post_save" ng-options="opts.label for opts in post_save_options"></select>
+										</fieldset>
+									</li>
+								</ul>
+							</div>
+						</li>
+					</ul></div>
+				</div>
+			</section>
+			<div class="button-holder right" ng-if="night">
+				<button type="submit" class="inline" ng-click="save()">Save</button>
+			</div>
+
+			<section ng-if="!night">
+				<header>
+					<h1>Edit a Night</h1>
+				</header>
+				<div class="content">
+					<h2>Pick a night</h2>
+					<p>Pick a night to edit using the night listing, which is either to the left or in the drop-down in the nav</p>
+				</div>
+			</section>
+		</form>
+	</article>
+
+
+	<div id="admin-nights-panel" class="popup center show-header" inline-modal>
+		<header>
+			<span class="pointer"></span>
+			<h1>Edit a Night</h1>
+			<a class="close" ng-click="close()">Close</a>
+		</header>
+		<article class="listview">
+			<ul>
+				<li><a ng-href="#/admin/nights/new">
+					<h2>New League Night</h2>
+					<p>create a new night</p>
+				</a></li>
+				<li ng-repeat="night in nights track by night.night_id" ng-if="night.starts != 'totals'">
+					<a ng-href="#/admin/nights/{{ night.starts }}">
+						<h2>{{ night.title }}</h2>
+						<p>{{ night.description }}</p>
+					</a>
+				</li>
+			</ul>
+		</article>
+	</div>
+
+</div>

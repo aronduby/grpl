@@ -63,7 +63,7 @@ require(['js/app'], function(app){
 
 		api.get('leaguenight.ties', LeagueNights.getNextOrMostRecentNight().starts)
 		.then(function(ties){
-			console.log(ties);
+			// console.log(ties);
 		})
 
 

@@ -18,7 +18,7 @@ define(['js/app'], function(app){
 	};
 
 
-	app.register.service('dialog', ['$modal', function($modal){
+	app.service('dialog', ['$modal', function($modal){
 		var defaults = {
 			title: '',
 			headline: '',

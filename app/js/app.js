@@ -87,7 +87,8 @@ function(routingConfig){
 					abstract: true,
 					template: '<ui-view />',
 					data:{
-						access: access.admin
+						access: access.admin,
+						currentSeasonOnly: true
 					}
 				})
 				.state('admin.ties', route.resolve({
@@ -98,7 +99,7 @@ function(routingConfig){
 				.state('admin.nights', route.resolve({
 					url: '/admin/nights/:starts',
 					path: 'admin/',
-					baseName: 'Nights'
+					baseName: 'AdminNights'
 				}));
 
 			$urlRouterProvider.otherwise('/index');
@@ -140,7 +141,7 @@ function(routingConfig){
 	app.run([
 		'$rootScope', '$state', 'socket', 'api', 'ipCookie', 'Auth', 'flare', '$location', '$modalStack', '$templateCache', 'LeagueNights', 'Machines', 'Players', 'Seasons', '$timeout',
 		function($rootScope, $state, socket, api, ipCookie, Auth, flare, $location, $modalStack, $templateCache, LeagueNights, Machines, Players, Seasons, $timeout){
-			// override the default flare tpl
+			// override the default flare tpl to add ability to do html in message content
 			$templateCache.put("directives/flaremessages/index.tpl.html",
 			    "<div ng-repeat=\"(key,message) in flareMessages\" ng-class=\"classes(message)\">\n" +
 			    "  <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\" ng-click=\"dismiss(key)\">&times;</button>\n" +
@@ -160,7 +161,7 @@ function(routingConfig){
 				$rootScope.admin = Auth.authorize('admin');
 			}, true);
 
-			Auth.tryLogin();
+			var logging_in = Auth.tryLogin();
 
 			// set the season cookie to whatever the node server thinks it is
 			api.get('getSeason')
@@ -180,14 +181,25 @@ function(routingConfig){
 				//save location.search so we can add it back after transition is done
 				locationSearch = $location.search();
 
-				if (!Auth.authorize(toState.data.access)) {
-					flare.error("Seems like you tried accessing a route you don't have access to...", 3000);
-					event.preventDefault();
+				// add a check to see if we're loggin in and then run after the promise is done?
+				logging_in.finally(function(){
+					if (!Auth.authorize(toState.data.access)) {
+						flare.error("Seems like you tried accessing a route you don't have access to...", 3000);
+						event.preventDefault();
 
-					if(Auth.isLoggedIn()){
-						$state.go('user.home');
-					} else {
-						$state.go('anon.login');
+						if(Auth.isLoggedIn()){
+							$state.go('public.nights');
+						} else {
+							$state.go('anon.login');
+						}
+					}
+				});				
+
+				if(toState.data.currentSeasonOnly){
+					if(Seasons.active_id !== Seasons.current_id){
+						flare.error('That page is unavailable when you are in a past season. To view the current season click the button in the big red header.');
+						event.preventDefault();
+						$state.go('public.nights');
 					}
 				}
 			});
