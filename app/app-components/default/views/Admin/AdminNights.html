@@ -4,7 +4,7 @@
 		<form class="night-form" autocomplete="off">
 			<section ng-if="night">
 				<header>
-					<a class="button gear edit-night-order" ng-disabled="!night.has_order" ng-href="#/admin/nights/order/{{night.starts}}"> Edit Order</a>
+					<a class="button gear edit-night-order" ng-disabled="!night.has_order" ui-sref="admin.nights.order({starts:night.starts})"> Edit Order</a>
 					<h1>Edit This Night</h1>
 				</header>
 				<div class="content">

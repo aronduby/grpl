@@ -23,7 +23,8 @@ function(routingConfig){
 			'LoadingOverlay',
 			'ordinal',
 			'ngStorage',
-			'ui.chart'
+			'ui.chart',
+			'slip'
 		]);
 
 	app.config([
@@ -96,10 +97,19 @@ function(routingConfig){
 					path: 'admin/',
 					baseName: 'Ties'
 				}))
-				.state('admin.nights', route.resolve({
-					url: '/admin/nights/:starts',
+				.state('admin.nights', {
+					abstract: true,
+					template: '<ui-view />'
+				})
+				.state('admin.nights.edit', route.resolve({
+					url: '^/admin/nights/:starts',
 					path: 'admin/',
 					baseName: 'AdminNights'
+				}))
+				.state('admin.nights.order', route.resolve({
+					url:'^/admin/nights/order/:starts',
+					path: 'admin/',
+					baseName: 'AdminNightsOrder'
 				}));
 
 			$urlRouterProvider.otherwise('/index');

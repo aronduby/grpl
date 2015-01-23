@@ -180,8 +180,8 @@
 	
 	#scoring .scoring-form,
 	#user_admin .user-form,
-	#night_admin .night-form,
-	#order_admin .order-form,
+	#night_admin .night-form,	
+	#night-order-admin .order-form,
 	#season_admin .season-form,
 	#machine_admin .machine-form{
 		margin:auto 2% auto 23%;
@@ -1477,13 +1477,6 @@ li.subsection fieldset{
 		border-bottom: 1px solid #b3b3b3;
 		padding:0;
 	}
-	
-	#player-order li.dnp > *{
-		opacity:.35 !important;
-	}
-		#player-order li.dnp > .dnp:hover{
-			opacity:1 !important;
-		}
 
 	#player-order li.error{
 		color:#900;
@@ -1537,6 +1530,12 @@ li.subsection fieldset{
 				text-transform:uppercase;
 			}
 
+	#player-order li.dnp > *{
+		opacity:.35;
+	}
+		#player-order li.dnp > .dnp:hover{
+			opacity:.55;
+		}
 
 
 /*
