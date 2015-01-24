@@ -33,13 +33,17 @@ define(['js/app'], function(app){
 
 		this.setCurrent = function setCurrent(id){
 			this.current_id = id;
-			this.current = _.find(this.all, {'season_id': id});
+			this.current = this.getBySeasonId(id);
 		};
 
 		this.setActive = function setActive(id){
 			this.active_id = id;
-			this.active = _.find(this.all, {'season_id': id});
+			this.active = this.getBySeasonId(id);
 		};
+
+		this.getBySeasonId = function getBySeasonId(id){
+			return _.find(this.all, {'season_id': id});
+		}
 
 		// add socket callbacks for adding/removing machines
 	}

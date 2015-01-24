@@ -115,6 +115,11 @@ function(routingConfig){
 					url:'/admin/users/:name_key',
 					path: 'admin/',
 					baseName: 'AdminUsers'
+				}))
+				.state('admin.seasons', route.resolve({
+					url: '/admin/seasons/:season_id',
+					path: 'admin/',
+					baseName: 'AdminSeasons'
 				}));
 
 			$urlRouterProvider.otherwise('/index');

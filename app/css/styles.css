@@ -86,7 +86,7 @@
 	#players-panel,
 	#admin-nights-panel,
 	#order-admin-nights-panel,
-	#season_admin-season-panel,
+	#admin-seasons-panel,
 	#machine_admin-machine-panel,
 	.panel{
 		display:block !important;
@@ -108,8 +108,8 @@
 		#admin-users-panel .close,
 		#order-admin-nights-panel .pointer,
 		#order-admin-nights-panel .close,
-		#season_admin-season-panel .pointer,
-		#season_admin-season-panel .close,
+		#admin-seasons-panel .pointer,
+		#admin-seasons-panel .close,
 		#machine_admin-machine-panel .pointer,
 		#machine_admin-machine-panel .close,
 		.panel .pointer,
@@ -122,7 +122,7 @@
 	#players-panel header,
 	#admin-nights-panel header,
 	#order-admin-nights-panel header,
-	#season_admin-season-panel header,
+	#admin-seasons-panel header,
 	#machine_admin-machine-panel header,
 	.panel header{ 
 		padding:15px; 
@@ -133,7 +133,7 @@
 	#players-panel header h1,
 	#admin-nights-panel header h1,
 	#order-admin-nights-panel header h1,
-	#season_admin-season-panel header h1,
+	#admin-seasons-panel header h1,
 	#machine_admin-machine-panel header h1,
 	.panel header h1{ 
 		font-size:20px; 
@@ -144,7 +144,7 @@
 	#players-panel article,
 	#admin-nights-panel article,
 	#order-admin-nights-panel article,
-	#season_admin-season-panel article,
+	#admin-seasons-panel article,
 	#machine_admin-machine-panel article,
 	.panel article{
 		padding-bottom:10px; 
