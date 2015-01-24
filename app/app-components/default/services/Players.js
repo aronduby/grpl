@@ -56,7 +56,7 @@ define(['js/app'], function(app){
 					.then(function(players){
 						self.all = players;
 
-						d.resolve(self.players);
+						d.resolve(self.all);
 					})
 					.catch(function(err){
 						d.reject(err);

@@ -8,13 +8,20 @@
 		<article>
 			<div class="listview"><ul><li><a ng-href="#/index" title="Home"><h3>Home</h3></a></li></ul></div>
 
-			<section class="ties" ng-show="show_ties" collapsible closed collapse-callback="sectionCollapsed(closed, 'ties')">
+			<section class="ties" ng-show="ties.length > 0" collapsible closed collapse-callback="sectionCollapsed(closed, 'ties')">
 				<header>
-				 	<span class="count red">15</span>
+				 	<span class="count red">{{ ties.length }}</span>
 					<h1>Ties</h1>
 				</header>
 				<div class="listview tie-groups collapsible-content">
-					<img ng-if="!ties" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
+					<img ng-if="!ties.length" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
+					<ul ng-if="ties.length">
+						<li ng-repeat="tie in ties">
+							<a ng-href="#/admin/tiebreaker/{{ tie.name_key }}">
+								<h3>{{ tie.names.join(' | ') }}</h3>
+							</a>
+						</li>
+					</ul>
 				</div>
 			</section>
 
@@ -73,17 +80,31 @@
 						</a>
 					</div>
 
-					<h2>Edit a User</h2>
+					<h2>Active Users</h2>
 					<div class="listview edit-user-list">
 						<img ng-if="!users" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
-						<ul ng-if="users">
-							<li ng-repeat="user in users">
+						<ul ng-if="users[true].length">
+							<li ng-repeat="user in users[true]">
 								<a ng-href="#/admin/users/{{user.name_key}}">
 									<h3>{{ user.full_name }}</h3>
 									<p ng-if="auth.authorize('admin', user.role)">admin</p>
 								</a>
 							</li>
-							<li ng-if="!users.length">no users?</li>
+							<li ng-if="!users[true].length">no active users?</li>
+						</ul>
+					</div>
+
+					<h2>Inactive Users</h2>
+					<div class="listview edit-user-list">
+						<img ng-if="!users" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
+						<ul ng-if="users[false].length">
+							<li ng-repeat="user in users[false]">
+								<a ng-href="#/admin/users/{{user.name_key}}">
+									<h3>{{ user.full_name }}</h3>
+									<p ng-if="auth.authorize('admin', user.role)">admin</p>
+								</a>
+							</li>
+							<li ng-if="!users[false].length">no inactive users</li>
 						</ul>
 					</div>
 				</section>
@@ -126,17 +147,31 @@
 						</a>
 					</div>
 
-					<h2>Edit a Machine</h2>
+					<h2>Active Machines</h2>
 					<div class="listview edit-machine-list">
-						<img ng-if="!machines" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
-						<ul ng-if="machines">
-							<li ng-repeat="machine in machines">
+						<img ng-if="!machines[1].length" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
+						<ul ng-if="machines[1].length">
+							<li ng-repeat="machine in machines[1]">
 								<a ng-href="#/admin/machines/{{machine.abbv}}">
 									<h3>{{ machine.name }}</h3>
 									<p ng-if="machine.active">active</p>
 								</a>
 							</li>
-							<li ng-if="!machines.length">there are no machines added</li>
+							<li ng-if="!machines[1].length">there are no active machines</li>
+						</ul>
+					</div>
+
+					<h2>Inactive Machines</h2>
+					<div class="listview edit-machine-list">
+						<img ng-if="!machines[0].length" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
+						<ul ng-if="machines[0].length">
+							<li ng-repeat="machine in machines[0]">
+								<a ng-href="#/admin/machines/{{machine.abbv}}">
+									<h3>{{ machine.name }}</h3>
+									<p ng-if="machine.active">active</p>
+								</a>
+							</li>
+							<li ng-if="!machines[0].length">there are no inactive machines</li>
 						</ul>
 					</div>
 				</section>

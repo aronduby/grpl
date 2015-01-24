@@ -856,7 +856,7 @@ if (cluster.isMaster) {
 		});
 
 		socket.on('players.all', function(cb){
-			grpl.playerlist.getAll()
+			grpl.playerlist.getAll(season_id)
 			.then(function(playerlist){
 				cb(null, playerlist.players);
 			})

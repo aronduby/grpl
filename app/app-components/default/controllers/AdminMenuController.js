@@ -26,7 +26,7 @@ require(['js/app'], function(app){
 
 		$scope.show_scoring = true;
 
-		$scope.ties = null;
+		$scope.ties = [];
 		$scope.scoring_groups = null;
 		$scope.nights  = null;
 		$scope.users = null;
@@ -48,12 +48,12 @@ require(['js/app'], function(app){
 
 		Machines.loading
 		.then(function(machines){
-			$scope.machines = Machines.all;
+			$scope.machines = _.groupBy(Machines.all, 'active');
 		});
 
-		Players.loading
+		Players.getAllPlayers()
 		.then(function(players){
-			$scope.users = Players.players;
+			$scope.users = _.groupBy(players, 'active');
 		});
 
 		Seasons.loading
@@ -63,7 +63,17 @@ require(['js/app'], function(app){
 
 		api.get('leaguenight.ties', LeagueNights.getNextOrMostRecentNight().starts)
 		.then(function(ties){
-			// console.log(ties);
+			_.each(ties, function(group){
+				var data = {
+					name_key: group[0].name_key,
+					names: []
+				};
+
+				data.names = _.map(group, function(player){
+					return player.first_name+' '+player.last_name[0]+'.';
+				});
+				$scope.ties.push(data);
+			});
 		})
 
 
