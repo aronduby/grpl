@@ -101,15 +101,20 @@ function(routingConfig){
 					abstract: true,
 					template: '<ui-view />'
 				})
-				.state('admin.nights.edit', route.resolve({
-					url: '^/admin/nights/:starts',
+					.state('admin.nights.edit', route.resolve({
+						url: '^/admin/nights/:starts',
+						path: 'admin/',
+						baseName: 'AdminNights'
+					}))
+					.state('admin.nights.order', route.resolve({
+						url:'^/admin/nights/order/:starts',
+						path: 'admin/',
+						baseName: 'AdminNightsOrder'
+					}))
+				.state('admin.users', route.resolve({
+					url:'/admin/users/:name_key',
 					path: 'admin/',
-					baseName: 'AdminNights'
-				}))
-				.state('admin.nights.order', route.resolve({
-					url:'^/admin/nights/order/:starts',
-					path: 'admin/',
-					baseName: 'AdminNightsOrder'
+					baseName: 'AdminUsers'
 				}));
 
 			$urlRouterProvider.otherwise('/index');

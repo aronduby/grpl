@@ -111,6 +111,28 @@ define(['js/app'], function(app){
 			return d.promise;
 		};
 
+		this.getFullAndSeasons = function getFullAndSeasons(name_key){
+			var self = this,
+				d = $q.defer(),
+				full, seasons;
+
+			full = api.get('players.all.namekey', name_key);
+			seasons = api.get('players.getSeasons', name_key);
+
+			$q.all([full, seasons])
+			.then(function(promises){
+				d.resolve({
+					player: promises[0],
+					seasons: promises[1]
+				});
+			})
+			.catch(function(err){
+				d.reject(err);
+			});
+
+			return d.promise;
+		};
+
 		this.getHeadToHead = function getHeadToHead(name_key){
 			var self = this,
 				d = $q.defer();

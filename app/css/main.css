@@ -697,8 +697,7 @@ body.loading{
   
     opacity: 1;
 }
-  .popup header .pointer,
-  .panel header .pointer{
+  .popup header .pointer{
     position:absolute;
     top:-10px;
     display:block;
@@ -844,63 +843,6 @@ form .listview fieldset{
   box-shadow:0 0 2px rgba(0,0,0,.6);
 }
 
-form .listview fieldset label{
-  position:relative;
-  cursor:pointer;
-  display:inline-block;
-  font-size:20px;
-  font-weight:bold;
-  color:#878787;
-  text-shadow:1px 1px 0 #fff;
-  padding:10px 0;
-  width:20%;
-  text-align:center;
-  background: #e1e1e1; /* Old browsers */
-  background: -moz-linear-gradient(top,  #e1e1e1 0%, #c5c5c5 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e1e1e1), color-stop(100%,#c5c5c5)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top,  #e1e1e1 0%,#c5c5c5 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top,  #e1e1e1 0%,#c5c5c5 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top,  #e1e1e1 0%,#c5c5c5 100%); /* IE10+ */
-  background: linear-gradient(to bottom,  #e1e1e1 0%,#c5c5c5 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e1e1e1', endColorstr='#c5c5c5',GradientType=0 ); /* IE6-9 */
-}
-  /* fake right border which doesn't mess with width */
-  form .listview fieldset label:after{
-    content:'';
-    border-right:1px solid #c0c0c0;
-    position:absolute;
-    top:0;right:0;
-    height:100%;
-    background:#00f;
-  }  
-  form .listview fieldset label:first-child {
-    border-radius:5px 0 0 5px; 
-  }
-  form .listview fieldset label:last-child{
-    border-radius:0 5px 5px 0;
-  }
-  form .listview fieldset label:last-child:after{ display:none; }
-
-form .listview fieldset label.checked{
-  color:#fff;
-  text-shadow:1px 1px 0 #1f98ec;
-  background: #9ce0fa; /* Old browsers */
-  background: -moz-linear-gradient(top,  #9ce0fa 0%, #1f98ec 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#9ce0fa), color-stop(100%,#1f98ec)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top,  #9ce0fa 0%,#1f98ec 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top,  #9ce0fa 0%,#1f98ec 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top,  #9ce0fa 0%,#1f98ec 100%); /* IE10+ */
-  background: linear-gradient(to bottom,  #9ce0fa 0%,#1f98ec 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9ce0fa', endColorstr='#1f98ec',GradientType=0 ); /* IE6-9 */
-}
-
-form .listview fieldset input[type="radio"],
-form .listview fieldset input[type="checkbox"]{
-  position:absolute;
-  display:none;
-  z-index:9;
-}
-
 form .listview fieldset input,
 form .listview fieldset select,
 form .listview fieldset textarea{
@@ -944,6 +886,10 @@ form .listview fieldset.multiple select{
     -khtml-box-sizing: border-box; /* konqueror */    
   }
 
+  form .listview fieldset + p{
+    margin-top:10px;
+  }
+
 @media only screen and (max-width: 767px){
   form .listview li h2,
   form .listview li > label,
@@ -954,6 +900,63 @@ form .listview fieldset.multiple select{
   form .listview li h2,
   form .listview li > label{ margin:0 0 8px 0 !important; }
 }
+
+
+/*
+ *  Button Groups
+*/
+.btn-group{
+  position:relative;  
+}
+.btn-group label{
+  position:relative;
+  cursor:pointer;
+  display:block;
+  font-size:20px;
+  font-weight:bold;
+  color:#878787;
+  text-shadow:1px 1px 0 #fff;
+  padding:10px 0;
+  text-align:center;
+  background: linear-gradient(to bottom,  #e1e1e1 0%,#c5c5c5 100%);
+  border-style:solid;
+  border-color:#c0c0c0;
+  border-width:0 0 1px 0;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+  .btn-group label:first-child { border-radius:5px 5px 0 0; }
+  .btn-group label:last-child{ border-radius:0 0 5px 5px; }
+
+  .btn-group label.checked,
+  .btn-group label.active{
+    color:#fff;
+    text-shadow:1px 1px 0 #1f98ec;
+    background: linear-gradient(to bottom,#9ce0fa 0%,#1f98ec 100%); /* W3C */
+    border-color:#1c84c9;
+  }
+
+@media(min-width:600px){
+  .btn-group{
+    display:flex;    
+  }
+    .btn-group label{
+      flex:1 1;
+      border-width:0 1px 0 0;      
+    }
+    .btn-group label:first-child{ border-radius:5px 0 0 5px; }
+    .btn-group label:last-child{ border-radius:0 5px 5px 0; }
+}
+
+
+
+
+
 
 
 blockquote > cite{
