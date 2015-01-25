@@ -87,7 +87,7 @@
 	#admin-nights-panel,
 	#order-admin-nights-panel,
 	#admin-seasons-panel,
-	#machine_admin-machine-panel,
+	#admin-machines-panel,
 	.panel{
 		display:block !important;
 		margin:0;
@@ -110,8 +110,8 @@
 		#order-admin-nights-panel .close,
 		#admin-seasons-panel .pointer,
 		#admin-seasons-panel .close,
-		#machine_admin-machine-panel .pointer,
-		#machine_admin-machine-panel .close,
+		#admin-machines-panel .pointer,
+		#admin-machines-panel .close,
 		.panel .pointer,
 		.panel .close{
 			display:none; 
@@ -123,7 +123,7 @@
 	#admin-nights-panel header,
 	#order-admin-nights-panel header,
 	#admin-seasons-panel header,
-	#machine_admin-machine-panel header,
+	#admin-machines-panel header,
 	.panel header{ 
 		padding:15px; 
 	}
@@ -134,7 +134,7 @@
 	#admin-nights-panel header h1,
 	#order-admin-nights-panel header h1,
 	#admin-seasons-panel header h1,
-	#machine_admin-machine-panel header h1,
+	#admin-machines-panel header h1,
 	.panel header h1{ 
 		font-size:20px; 
 	}
@@ -145,7 +145,7 @@
 	#admin-nights-panel article,
 	#order-admin-nights-panel article,
 	#admin-seasons-panel article,
-	#machine_admin-machine-panel article,
+	#admin-machines-panel article,
 	.panel article{
 		padding-bottom:10px; 
 	}
