@@ -149,29 +149,29 @@
 
 					<h2>Active Machines</h2>
 					<div class="listview edit-machine-list">
-						<img ng-if="!machines[1].length" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
-						<ul ng-if="machines[1].length">
-							<li ng-repeat="machine in machines[1]">
+						<img ng-if="!machines[true].length" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
+						<ul ng-if="machines[true].length">
+							<li ng-repeat="machine in machines[true]">
 								<a ng-href="#/admin/machines/{{machine.abbv}}">
 									<h3>{{ machine.name }}</h3>
 									<p ng-if="machine.active">active</p>
 								</a>
 							</li>
-							<li ng-if="!machines[1].length">there are no active machines</li>
+							<li ng-if="!machines[true].length">there are no active machines</li>
 						</ul>
 					</div>
 
 					<h2>Inactive Machines</h2>
 					<div class="listview edit-machine-list">
-						<img ng-if="!machines[0].length" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
-						<ul ng-if="machines[0].length">
-							<li ng-repeat="machine in machines[0]">
+						<img ng-if="!machines[false].length" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
+						<ul ng-if="machines[false].length">
+							<li ng-repeat="machine in machines[false]">
 								<a ng-href="#/admin/machines/{{machine.abbv}}">
 									<h3>{{ machine.name }}</h3>
 									<p ng-if="machine.active">active</p>
 								</a>
 							</li>
-							<li ng-if="!machines[0].length">there are no inactive machines</li>
+							<li ng-if="!machines[false].length">there are no inactive machines</li>
 						</ul>
 					</div>
 				</section>
