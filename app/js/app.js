@@ -92,10 +92,10 @@ function(routingConfig){
 						currentSeasonOnly: true
 					}
 				})
-				.state('admin.ties', route.resolve({
-					url: '/admin/ties',
+				.state('admin.tiebreaker', route.resolve({
+					url: '/admin/tiebreaker/:name_key',
 					path: 'admin/',
-					baseName: 'Ties'
+					baseName: 'AdminTiebreaker'
 				}))
 				.state('admin.nights', {
 					abstract: true,

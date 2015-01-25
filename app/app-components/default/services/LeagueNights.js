@@ -49,12 +49,14 @@ define(['js/app'], function(app){
 			return _.find(this.nights, {'starts': starts});
 		};
 
-		this.getNextNight = function getNextNight(){
+		this.getNextNight = function getNextNight(include_today){
 			var today = moment().startOf('day');
 			return _.find(this.nights, function(night){
 				if(night.starts === 'totals')
 					return false;
-				return night.moment.isAfter(today);
+				return include_today ? 
+					night.moment.isSame(today) || night.moment.isAfter(today)
+					: night.moment.isAfter(today);
 			});
 		};
 
