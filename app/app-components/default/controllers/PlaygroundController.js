@@ -63,6 +63,9 @@ define(['js/app', 'app-components/services/dialog'], function(app){
 				});
 			}
 
+
+		loadingOverlayApi.hide();
+
 	};
 
 	PlaygroundController.$inject = injectParams;

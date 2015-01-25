@@ -66,6 +66,9 @@
 /*
 		DESKTOP
 */
+.panel{
+	display:none;
+}
 @media only screen and (min-width: 1025px){  
 	.page > article{
 		margin:0;
@@ -89,12 +92,14 @@
 	#admin-seasons-panel,
 	#admin-machines-panel,
 	.panel{
+		position:absolute;
 		display:block !important;
 		margin:0;
 		top: 15px; 
 		left:1%;
 		width:20%;
 		z-index:auto;
+		box-shadow:1px 1px 5px rgba(0,0,0,.7);
 	}
 		#nights-panel .pointer,
 		#nights-panel .close,
