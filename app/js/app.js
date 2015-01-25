@@ -120,6 +120,11 @@ function(routingConfig){
 					url: '/admin/seasons/:season_id',
 					path: 'admin/',
 					baseName: 'AdminSeasons'
+				}))
+				.state('admin.machines', route.resolve({
+					url: '/admin/machines/:abbv',
+					path: 'admin/',
+					baseName: 'AdminMachines'
 				}));
 
 			$urlRouterProvider.otherwise('/index');
@@ -159,8 +164,8 @@ function(routingConfig){
 	]);
 
 	app.run([
-		'$rootScope', '$state', 'socket', 'api', 'ipCookie', 'Auth', 'flare', '$location', '$modalStack', '$templateCache', 'LeagueNights', 'Machines', 'Players', 'Seasons', '$timeout',
-		function($rootScope, $state, socket, api, ipCookie, Auth, flare, $location, $modalStack, $templateCache, LeagueNights, Machines, Players, Seasons, $timeout){
+		'$rootScope', '$window', '$state', 'socket', 'api', 'ipCookie', 'Auth', 'flare', '$location', '$modalStack', '$templateCache', 'LeagueNights', 'Machines', 'Players', 'Seasons', '$timeout',
+		function($rootScope, $window, $state, socket, api, ipCookie, Auth, flare, $location, $modalStack, $templateCache, LeagueNights, Machines, Players, Seasons, $timeout){
 			// override the default flare tpl to add ability to do html in message content
 			$templateCache.put("directives/flaremessages/index.tpl.html",
 			    "<div ng-repeat=\"(key,message) in flareMessages\" ng-class=\"classes(message)\">\n" +
@@ -227,6 +232,7 @@ function(routingConfig){
 			$rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
 				//restore all query string parameters back to $location.search
 				$location.search(locationSearch);
+				$window.scrollTo(0,0);
 			});
 		}
 	]);

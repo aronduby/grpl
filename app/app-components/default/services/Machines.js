@@ -14,6 +14,11 @@ define(['js/app'], function(app){
 
 			api.get('machine.all')
 				.then(function(machines){
+
+					_.each(machines, function(machine){
+						machine.active = !!machine.active;
+					});
+
 					self.all = machines;
 					self.active = _.filter(machines, 'active');
 
@@ -26,6 +31,10 @@ define(['js/app'], function(app){
 
 		this.randomMachine = function randomMachine(include_inactive){
 			return _.sample( include_inactive===true ? this.all : this.active );
+		};
+
+		this.getMachine = function getMachine(abbv){
+			return _.find( this.all, {'abbv': abbv});
 		}
 
 		// add socket callbacks for adding/removing machines

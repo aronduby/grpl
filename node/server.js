@@ -772,7 +772,7 @@ if (cluster.isMaster) {
 						msg: '<p>Only Admins can edit machines. If you think you should be an admin talk to the people in charge.</p>'
 					});
 				} else {
-					var http = require('http'),
+					var http = require('https'),
 						fs = require('fs'),
 						d = Q.defer();
 
@@ -790,11 +790,11 @@ if (cluster.isMaster) {
 						});
 					};
 
-					if(data.new_url.length){
+					if(data.new_image.length){
 						var u = 'layout_imgs/machines/'+data.abbv+'.jpg';
 						download(
-							data.new_url, 
-							'../site/'+u, 
+							data.new_image, 
+							'../app/'+u, 
 							function(){ 
 								d.resolve(u); 
 							}, 
