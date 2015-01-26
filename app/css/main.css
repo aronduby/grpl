@@ -647,12 +647,14 @@ body.loading{
   .loading .overlay{ z-index:999999; }
   
 
-.panel > header{
+.panel > header,
+#admin-menu > header{
   border-radius:5px 5px 0 0;
   padding:15px 15px 10px 15px;
   background: linear-gradient(to bottom,  #f29e40 0%,#ee7c0b 100%); /* W3C */
 }
-  .panel header h1{
+  .panel header h1,
+  #admin-menu > header h1{
     font-size:18px;
     font-weight:bold;
     color:#fff;
@@ -661,7 +663,8 @@ body.loading{
 
   .panel header h1 a{ color:#fff; }
 
-  .panel header a.close{ 
+  .panel header a.close,
+  #admin-menu > header a.close{ 
     display:block;
     position:absolute;
     top:18px; right:10px;
