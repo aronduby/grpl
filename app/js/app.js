@@ -24,7 +24,8 @@ function(routingConfig){
 			'ordinal',
 			'ngStorage',
 			'ui.chart',
-			'slip'
+			'slip',
+			'ngOptionsDisabled'
 		]);
 
 	app.config([

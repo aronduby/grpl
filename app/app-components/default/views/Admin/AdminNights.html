@@ -54,7 +54,11 @@
 										<button class="remove red" ng-click="removeSub($index)">-</button>
 										<fieldset>
 											<input type="text" placeholder="subs name" ng-model="sub.sub" />
-											<select ng-model="sub.player" ng-options="player.full_name for player in players | orderBy:'name_key'"></select>				
+											<select 
+												ng-model="sub.player" 
+												ng-options="(player.full_name + (player.had_sub ? ' - had sub' : '')) for player in players | orderBy:'name_key'" 
+												ng-options-disabled="player.had_sub == true for player in players"
+												></select>				
 										</fieldset>
 									</li>
 									<li ng-if="!night.subs.length">no subs entered</li>
