@@ -1426,10 +1426,8 @@ li.subsection fieldset{
 /*
  *  Radomizer
 */
-#random-panel{
-	width:80%;
-	margin-left:-40%;
-}
+#random-panel{}
+
 	#random-panel .listview{
 		margin:-8px -10px 10px -10px;
 	}
