@@ -1,5 +1,5 @@
 // keeps angular from bootstraping until we're connected
-define([], function(){
+define(['bower_components/angular/angular.min.js'], function(){
 
 	var address = 'http://'+window.location.host+':834',
 		options = {
