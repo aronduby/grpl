@@ -22,7 +22,7 @@ define(['js/app', 'app-components/services/socket'], function(app){
 
 
 		function scoringStarted(data){
-			flare.info('<h1>Scoring has been Started</h1><p>Hope you have multiple jackpots!</p>');
+			flare.info('<h1>Scoring has been Started</h1><p>Hope you have multiple jackpots!</p>', 3000);
 		}
 		socket.on('scoring_started', scoringStarted);
 	}
