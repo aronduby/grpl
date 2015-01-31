@@ -4,12 +4,14 @@
 |  X   | tiesbroken                |   X    | data        |           |
 |  X   | scoring_started           |   X    | data        |           |
 |  X   | scoring_stopped           |   X    |             |           |
-|      | scoring_logged_in         |        | name_key    |           |
-|      | scoring_update            |   X    | data        |           |
+|  X   | scoring_logged_in         |        | name_key    |           |
+|  X   | scoring_update            |   X    | data        |           |
+|      |                           |        |             |           |
 |      | season_updated            |   X    | season      |           |
 |      | leaguenight_updated       |   X    | night       |           |
 |      | leaguenight_order_updated |   X    | night       |           |
 |      | user_updated              |   X    | data        |           |
 |      | machine_updated           |   X    | machine     |           |
 |      |                           |        |             |           |
+
 

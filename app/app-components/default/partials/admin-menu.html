@@ -45,9 +45,9 @@
 					<h2 ng-if="scoring_groups">Group Progress</h2>
 					<div class="listview scoring-groups" ng-if="scoring_groups">
 						<ul>
-							<li ng-repeat="group in scoring_groups">
+							<li ng-repeat="group in scoring_groups | orderBy:'order'">
 								<a ui-sref="admin.scoring({name_key: group.name_key})">
-									<h3>#{{$index + 1}} {{ group.initials.join(' ') }}</h3>
+									<h3>#{{group.order + 1}} {{ group.initials.join(' ') }}</h3>
 									<p class="machines">
 										<span class="abbv" ng-repeat="(abbv, value) in group.machines" ng-class="{'done':value}">{{ abbv }}</span>
 									</p>

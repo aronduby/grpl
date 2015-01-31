@@ -114,7 +114,6 @@ define(['js/app'], function(app){
 
 		function stopped(data){
 			// private function to "disassemble" the object when scoring is stopped
-			console.log('Scoring Stopped', data);
 			this.started = false;
 			this.night = {};
 			// this.players = [];
@@ -127,7 +126,13 @@ define(['js/app'], function(app){
 
 		function updated(data){
 			// private function to update the data
-			console.log('scoring updated', data);
+			var players = _.flatten(_.pluck(_.pluck(this.night.divisions, 'player_list'),'players'));
+
+			_.each(data.players, function(score, name_key){
+				var player = _.find(players, {'name_key': name_key});
+				player.machines[data.abbv] = score;
+			});
+
 		};
 
 

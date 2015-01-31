@@ -98,22 +98,68 @@ require(['js/app'], function(app){
 			});
 		});
 
+		/*
+		 *	Socket Events
+		*/
+		function tiesbroken(d){
+			// remove the tie
+			var idx = _.indexOf($scope.ties, _.find($scope.ties, {'name_key': d.name_key}));
+			$scope.ties.splice(idx, 1);
+		};
+
 		function scoringStarted(d){
 			$scope.show_scoring = true;
 			$scope.scoring_night_starts = d.starts;
 
+			$scope.scoring_groups = _.chain(Scoring.night.divisions)
+				.pluck('player_list')
+				.pluck('players')
+				.flatten()
+				.groupBy('grouping')
+				.map(function(g, i){
+					var obj = {
+						initials: _.pluck(g, 'initials'),
+						name_key: g[0].name_key,
+						machines: g[0].machines,
+						players: g,
+						order: parseInt(i, 10)
+					};
+
+					var finished_machines = _.countBy(obj.machines);
+					switch(finished_machines[""]){
+						case undefined:
+						case 0:
+							obj.status = 'on';
+							break;
+						case 5:
+							obj.status = 'off';
+							break;
+						default:
+							obj.status = 'half';
+					};
+
+					return obj;
+				})
+				.value();
+
+			/*
 			var groups = _.chain(Scoring.night.divisions)
 				.map(function(obj){ return obj.player_list.players })
 				.flatten()
 				.groupBy('grouping')
 				.value();
 
-			_.each(groups, function(group){
-				group.initials = _.pluck(group, 'initials');
-				group.name_key = group[0].name_key;
-				group.machines = group[0].machines;
+			_.each(groups, function(group, i){
+				group = {
+					players: group
+				}
+
+				group.initials = _.pluck(group.players, 'initials');
+				group.name_key = group.players[0].name_key;
+				group.machines = group.players[0].machines;
+				group.order = parseInt(i, 10);
 				
-				var finished_machines = _.countBy(group.machines);
+				var finished_machines = _.countBy(group.players.machines);
 				switch(finished_machines[""]){
 					case undefined:
 					case 0:
@@ -127,24 +173,40 @@ require(['js/app'], function(app){
 				};
 
 			});
-
 			$scope.scoring_groups = groups;
+			*/
 		};
-
+		
 		if(Scoring.started){
 			scoringStarted({starts: Scoring.night.starts});
 		}
 
-		function tiesbroken(d){
-			// remove the tie
-			var idx = _.indexOf($scope.ties, _.find($scope.ties, {'name_key': d.name_key}));
-			$scope.ties.splice(idx, 1);
-		};
+		function scoringUpdated(d){
+			// find the group and update the status
+			var updated_players = _.keys(d.players);
+			var group = _.find($scope.scoring_groups, function(group){
+				return _.contains(updated_players, group.name_key);
+			});
+
+			var finished_machines = _.countBy(group.machines);
+			switch(finished_machines[""]){
+				case undefined:
+				case 0:
+					group.status = 'on';
+					break;
+				case 5:
+					group.status = 'off';
+					break;
+				default:
+					group.status = 'half';
+			};
+		}
 
 
 		socket
+			.on('tiesbroken', tiesbroken)
 			.on('scoring_started', scoringStarted)
-			.on('tiesbroken', tiesbroken);
+			.on('scoring_update', scoringUpdated);
 
 
 	};
