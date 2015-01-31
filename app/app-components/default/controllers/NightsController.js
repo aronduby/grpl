@@ -21,7 +21,7 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 				$scope.nights = LeagueNights.nights;
 
 				if($stateParams.starts === ''){
-					$scope.night = LeagueNights.getNextNight();
+					$scope.night = LeagueNights.getNextNight(true);
 				} else {
 					$scope.night = LeagueNights.getNight($stateParams.starts);
 				}
@@ -38,6 +38,9 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 						$scope.night = night;
 
 						$scope.live = Scoring.started && $scope.night.starts == Scoring.night.starts;
+						if($scope.live){
+							$scope.night = Scoring.night;
+						}
 
 						// underscore chaining FTW!
 						var players = _.chain(night.divisions)
