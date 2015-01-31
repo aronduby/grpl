@@ -45,7 +45,24 @@ define(['js/app'], function(app){
 			return _.find(this.all, {'season_id': id});
 		}
 
-		// add socket callbacks for adding/removing machines
+		/*
+		 *	Socket Events
+		*/
+		function seasonUpdated(data){
+			
+			var season = _.find(this.all, {'season_id': data.season_id});
+			if(season != undefined){
+				season.title = data.title;
+			} else {
+				this.all.push(data);
+			}
+
+			if(data.current === true){
+				this.setCurrent(data.season_id);
+			}
+		};
+
+		socket.on('season_updated', angular.bind(this, seasonUpdated));
 	}
 	
 	app.service('Seasons', ['$q', 'api', 'socket', Seasons]);
