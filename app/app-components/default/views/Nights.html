@@ -78,7 +78,7 @@
 											{{ player.first_name }} {{ player.last_name }}
 											<span ng-if="night.subs[player.name_key]" class="sub" title="sub">{{ night.subs[player.name_key].sub }}</span>
 										</h3>
-										<p ng-if="player.machines" class="player-points"><!-- hide until scoring started or past night -->
+										<p ng-if="player.machines && ((night.today == false && night.future == false) || live )" class="player-points">
 											<span ng-repeat="(abbv, points) in player.machines" class="player-machine" data-abbv="{{ abbv }}">
 												<span class="abbv">{{ abbv }}</span>
 												<span class="machine-points">{{ points }}</span>
