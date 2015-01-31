@@ -23,8 +23,13 @@ define(['js/app', 'app-components/services/socket'], function(app){
 
 		function scoringStarted(data){
 			flare.info('<h1>Scoring has been Started</h1><p>Hope you have multiple jackpots!</p>', 3000);
-		}
+		};
 		socket.on('scoring_started', scoringStarted);
+
+		function scoringStopped(){
+			flare.info('<h1>Scoring has been Stopped</h1><p>The scores are in, check how you did</p>', 3000);
+		}
+		socket.on('scoring_stopped', scoringStopped);
 	}
 
 	app.service('SocketMessages', ['$filter', 'socket', 'flare', 'Players', SocketMessages]);
