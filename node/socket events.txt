@@ -2,7 +2,7 @@
 | :--: | ------------------------- | :----: | ----------- | --------- |
 |  X   | write_cookie              |        | 'user_hash' | user_hash |
 |  X   | tiesbroken                |   X    | data        |           |
-|      | scoring_started           |   X    | data        |           |
+|  X   | scoring_started           |   X    | data        |           |
 |      | scoring_stopped           |   X    |             |           |
 |      | scoring_logged_in         |        | name_key    |           |
 |      | scoring_update            |   X    | data        |           |
