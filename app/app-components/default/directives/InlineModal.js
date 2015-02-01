@@ -35,7 +35,7 @@ define(['js/app'], function(app){
 					$scope.$apply(function(){
 						var tpl = element[0].outerHTML,
 							comment_re = /<!--.*?-->/g,
-							ng_re = /ng-.*=".*" /g;
+							ng_re = /\bng-.*=".*" /g;
 
 						tpl = tpl.replace('inline-modal=""', '');
 						tpl = tpl.replace(comment_re, '');
