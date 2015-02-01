@@ -14,6 +14,7 @@ require(
 		'app-components/services/Machines',
 		'app-components/services/Players',
 		'app-components/services/Seasons',
+		'app-components/services/Scoring',
 		'app-components/services/dialog',
 		'app-components/filters/pluck',
 		'app-components/filters/joinBy',

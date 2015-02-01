@@ -97,7 +97,6 @@ if (cluster.isMaster) {
 
 	io.sockets.on('connection', function(socket){
 
-		// console.log('connected to '+ cluster.worker.id);
 		if(socket.handshake.user_hash != undefined){
 			client.getset('uh'+socket.handshake.user_hash, socket.id, function(err, prev_socket_id){
 				if(prev_socket_id != undefined){
@@ -174,6 +173,7 @@ if (cluster.isMaster) {
 			grpl.player.register(data)
 			.then(function(bool){
 				cb(null, bool);
+				io.sockets.emit('user_updated', data);
 			})
 			.fail(function(err){
 				cb(handleError(err));
@@ -204,6 +204,8 @@ if (cluster.isMaster) {
 			grpl.scoring.resolveWithData(d)
 			.then(function(data){
 				if(data.started == true){
+					// only respond to this specific socket
+					// since this is used to check if it's already started
 					socket.emit('scoring_started', data);
 				}
 			})
@@ -239,15 +241,17 @@ if (cluster.isMaster) {
 						});
 						return false;
 					}
+
 					grpl.scoring.start(season_id, starts)
 					.then(function(data){
 						io.sockets.emit('scoring_started', data);
+						cb(null, data);
 					})
 					.fail(function(err){
 						cb({
 							title: 'Error',
 							headline: 'Something Went Wrong',
-							msg: '<p>The best thing to do now is screenshot this and send it to Duby.</p><blockquote>'+err.message+'</blockquote>',
+							msg: '<p>The server said:</p><blockquote>'+err.msg+'</blockquote>',
 							additional_classes: 'error'
 						});
 					})
@@ -267,6 +271,7 @@ if (cluster.isMaster) {
 				} else {				
 					grpl.scoring.stop();
 					io.sockets.emit('scoring_stopped');
+					cb(null, true);
 				}
 			});
 		});
@@ -325,9 +330,9 @@ if (cluster.isMaster) {
 		socket.on('scoring.update', function(data, cb){
 			grpl.scoring.update(data)
 			.then(function(data){
-				socket.broadcast.emit('scoring_update', data);
+				io.sockets.emit('scoring_update', data);
 				if(cb)
-					cb(data);
+					cb(null, data);
 			}).fail(function(err){
 				cb(handleError(err));
 			});	
@@ -628,7 +633,7 @@ if (cluster.isMaster) {
 							night.saveOrder(data)
 							.then(function(order){
 								cb(null, true);
-								io.sockets.emit('leaguenight_updated', night);
+								io.sockets.emit('leaguenight_order_updated', night);
 							})
 							.fail(function(err){
 								cb(handleError(err));
@@ -812,6 +817,7 @@ if (cluster.isMaster) {
 
 						m.save().then(function(m){
 							cb(null, m);
+							io.sockets.emit('machine_updated', m);
 						})
 						.fail(function(err){ 
 							cb(handleError(err));

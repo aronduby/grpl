@@ -6,7 +6,11 @@
 			<h1>Admin Panel</h1>
 		</header>
 		<article>
-			<div class="listview"><ul><li><a ng-href="#/index" title="Home"><h3>Home</h3></a></li></ul></div>
+			<div class="listview">
+				<ul>
+					<li><a ng-href="#/index" title="Home"><h3>Home</h3></a></li>
+				</ul>
+			</div>
 
 			<section class="ties" ng-show="ties.length > 0" collapsible closed collapse-callback="sectionCollapsed(closed, 'ties')">
 				<header>
@@ -29,15 +33,28 @@
 				<header>
 					<h1>Scoring</h1>
 				</header>
-				<section class="collapsible-content">
+				<section class="collapsible-content" ng-if="ties.length">
+					<p class="note">you must resolve the ties before you can start scoring</p>
+				</section>
+				<section class="collapsible-content" ng-if="!ties.length">
 					<div class="button-holder">
-						<button class="stop-scoring red" ng-disabled="true"> <span class="title">Stop Scoring</span></button>
-						<button class="prepare-scoring green" ng-disabled="true"> <span class="title">Start Scoring</span></button>
+						<button class="stop-scoring red" ng-show="scoring.started" ng-disabled="!scoring.started" ng-click="stopScoring()"> <span class="title">Stop Scoring</span></button>
+						<button class="prepare-scoring green" ng-show="!scoring.started" ng-disabled="scoring.started" ng-click="startScoring()"> <span class="title">Start Scoring</span></button>
 					</div>
 
-					<h2>Group Progress</h2>
-					<div class="listview scoring-groups">
-						<img ng-if="!scoring_groups" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
+					<h2 ng-if="scoring_groups">Group Progress</h2>
+					<div class="listview scoring-groups" ng-if="scoring_groups">
+						<ul>
+							<li ng-repeat="group in scoring_groups">
+								<a ui-sref="admin.scoring({name_key: group.name_key})">
+									<h3>#{{$index + 1}} {{ group.initials.join(' ') }}</h3>
+									<p class="machines">
+										<span class="abbv" ng-repeat="(abbv, value) in group.machines" ng-class="{'done':value}">{{ abbv }}</span>
+									</p>
+									<span class="status-indicator {{group.status}}"></span> 
+								</a>
+							</li>
+						</ul>
 					</div>
 				</section>
 			</section>

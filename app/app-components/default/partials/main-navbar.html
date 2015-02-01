@@ -8,10 +8,10 @@
 
 <div class="right">
 	<section class="user-area">
-		<button class="login" title="Login" access-level="anon">
+		<button class="login" title="Login" access-level="anon" ng-click="login()">
 			<span class="title">Login</span>
 		</button>
-		<button class="scoring" title="Start Scoring" ng-show="scoring_started && logged_in">
+		<button class="scoring" title="Start Scoring" access-level="user" ng-show="scoring_started" ng-click="scoringLogin()">
 			<span class="title">Start Scoring</span>
 		</button>
 	</section>

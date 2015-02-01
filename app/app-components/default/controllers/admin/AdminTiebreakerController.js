@@ -7,7 +7,7 @@ define(['js/app'], function(app){
 		navApi.defaultTitle();
 
 		// find the night to break ties
-		var next = 	LeagueNights.getNextOrMostRecentNight();
+		var next = 	LeagueNights.getNextOrMostRecentNight(true);
 		$scope.ties = null;
 		$scope.places = [];
 

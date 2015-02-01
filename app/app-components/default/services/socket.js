@@ -1,11 +1,24 @@
 define(['js/socketConnector'], function(socket){
 
+	/*
+	 *	Usage example, from within controller
+
+		socket.addScope($scope.$id)
+			.on('score.new', updateScore)
+			.on('score.update', updateScore)
+			.on('score.delete', deleteScore)
+			.on('reconnect', function(){
+				loadTournament($scope.current_tournament.id);
+			});
+
+
+		$scope.$on("$destroy", function() {
+			socket.getScope($scope.$id).clear();
+		});	
+	*/
+
 	function Socket($rootScope, address, options){
 		var scopes = {};
-
-		socket.on('connect', function(){
-			console.log('connected');
-		})
 
 		this.emit = function() {
 			var args = Array.prototype.slice.call(arguments);
@@ -30,7 +43,7 @@ define(['js/socketConnector'], function(socket){
 		};
 
 		this.addScope = function(id){
-			var scope  = glue.getScope(id);
+			var scope  = this.getScope(id);
 			if(scope == false){
 				scope = new Scope(id);
 			}

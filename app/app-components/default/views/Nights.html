@@ -39,9 +39,9 @@
 					</div>
 				</section>
 				
-				<section class="player-holder" collapsible="index.division.{{division.division_id}}.players">
+				<section class="player-holder" ng-class="{'live': live }" collapsible="index.division.{{division.division_id}}.players">
 					<header>
-						<h1>Scores</h1>
+						<h1>{{ live ? 'Live Results' : 'Scores' }}</h1>
 					</header>
 					<div class="content">
 						
@@ -114,14 +114,19 @@
 			<h1>Choose a Night</h1>
 			<a class="close" ng-click="close()">Close</a>
 		</header>
-		<article class="listview">
-			<li ng-repeat="night in nights track by night.night_id">
+		<article class="listview"><ul>
+			<li 
+				ng-repeat="night in nights track by night.night_id" 
+				ng-class="{
+					'live': scoring.started && scoring.night.starts == night.starts
+				}"
+			>
 				<a ng-href="#/index/{{ night.starts }}">
 					<h2>{{ night.title }}</h2>
 					<p>{{ night.description }}</p>
 				</a>
 			</li>
-		</article>
+		</ul></article>
 	</div>
 
 </div>

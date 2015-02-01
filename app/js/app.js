@@ -82,6 +82,21 @@ function(routingConfig){
 					baseName: 'Playground'
 				}));
 
+			// User Routes
+			$stateProvider
+				.state('user', {
+					abstract: true,
+					template: '<ui-view />',
+					data: {
+						access: access.user,
+						currentSeasonOnly: true
+					}
+				})
+				.state('user.scoring', route.resolve({
+					url: '/scoring/:offset',
+					baseName: 'Scoring'
+				}));
+
 
 			// Admin Routes
 			$stateProvider
@@ -126,6 +141,10 @@ function(routingConfig){
 					url: '/admin/machines/:abbv',
 					path: 'admin/',
 					baseName: 'AdminMachines'
+				}))
+				.state('admin.scoring', route.resolve({
+					url: '/admin/scoring/:name_key/:offset',
+					baseName: 'Scoring'
 				}));
 
 			$urlRouterProvider.otherwise('/index');
@@ -165,8 +184,8 @@ function(routingConfig){
 	]);
 
 	app.run([
-		'$rootScope', '$window', '$state', 'socket', 'api', 'ipCookie', 'Auth', 'flare', '$location', '$modalStack', '$templateCache', 'LeagueNights', 'Machines', 'Players', 'Seasons', '$timeout',
-		function($rootScope, $window, $state, socket, api, ipCookie, Auth, flare, $location, $modalStack, $templateCache, LeagueNights, Machines, Players, Seasons, $timeout){
+		'$rootScope', '$window', '$state', 'socket', 'api', 'ipCookie', 'Auth', 'flare', '$location', '$modalStack', '$templateCache', 'LeagueNights', 'Machines', 'Players', 'Seasons', 'Scoring', '$timeout',
+		function($rootScope, $window, $state, socket, api, ipCookie, Auth, flare, $location, $modalStack, $templateCache, LeagueNights, Machines, Players, Seasons, Scoring, $timeout){
 			// override the default flare tpl to add ability to do html in message content
 			$templateCache.put("directives/flaremessages/index.tpl.html",
 			    "<div ng-repeat=\"(key,message) in flareMessages\" ng-class=\"classes(message)\">\n" +
@@ -180,6 +199,11 @@ function(routingConfig){
 			Machines.loadMachines();
 			Players.loadPlayers();
 			Seasons.loadSeasons();
+			Scoring.emitIfStarted();
+
+			socket.on('write_cookie', function(key,val){
+				ipCookie(key, val);
+			})
 			
 			$rootScope.auth = Auth;
 			$rootScope.admin = false;

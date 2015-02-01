@@ -1,6 +1,6 @@
 define(['js/app'], function(app){
 
-	function LeagueNights($q, api, socket){
+	function LeagueNights($q, api, socket, Scoring){
 
 		this.loading = undefined;
 		this.nights = [];
@@ -70,8 +70,8 @@ define(['js/app'], function(app){
 			})
 		};
 
-		this.getNextOrMostRecentNight = function getNextOrMostRecentNight(){
-			var r = this.getNextNight();
+		this.getNextOrMostRecentNight = function getNextOrMostRecentNight(include_today){
+			var r = this.getNextNight(include_today);
 			if(r === undefined){
 				r = this.getMostRecentNight();
 			}
@@ -129,7 +129,7 @@ define(['js/app'], function(app){
 		// add socket callbacks for adding/removing nights
 	}
 	
-	app.service('LeagueNights', ['$q', 'api', 'socket', LeagueNights]);
+	app.service('LeagueNights', ['$q', 'api', 'socket', 'Scoring', LeagueNights]);
 
 	return app;
 })

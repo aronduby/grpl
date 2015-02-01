@@ -201,10 +201,6 @@ abbv{
 	border-bottom:1px dotted #aaa;
 }
 
-/* hide scoring to start */
-#main-navbar button.scoring,
-#main-navbar button.login{ display:none; }
-
 /* player subs */
 .listview li span.sub{
 	margin-left:5px;
@@ -475,7 +471,8 @@ abbv{
 /*
  * Dialogs
 */
-.dialog.error header{
+.dialog.error header,
+.modal-dialog .error header{
 	background: linear-gradient(to bottom, #ff3019 0%,#cf0404 100%);
 }
 .dialog .content div{
@@ -741,6 +738,15 @@ body.loading > footer{
 	trasition: all .5s ease;  
 }
 
+#admin-menu p.note{
+	padding:15px;
+	font-size:1.1em;
+	line-height:1.4em;
+	color:#808080;
+	text-shadow:1px 1px 1px #fff;
+	text-align:Center;
+}
+
 .amo #admin-menu-holder{
 	width:100%;
 }
@@ -752,8 +758,6 @@ body.loading > footer{
 	.amo #admin-menu{
 		transform: translate3d(0,0,0);
 	}
-
-
 
 	#admin-menu > header{
 		border-radius: 0;
@@ -837,10 +841,6 @@ body.loading > footer{
 #admin-menu section.scoring{
 	
 }
-/* set the scoring buttons on top of each other */
-#admin-menu button.stop-scoring{
-		display:none;
-}
 
 
 
@@ -910,6 +910,19 @@ body.loading > footer{
 	letter-spacing:-.06em;
 }
 #scoring .players li span.number:after{ content:'.'; }
+
+#scoring .players li.dnp{
+	opacity:.6;
+}
+
+.scoring_error ul{
+    list-style: disc inside;	
+    padding-left: 10px;
+    line-height: 1.4em;
+}
+	.scoring_error ul li{
+		margin-bottom:.1em;
+	}
 
 
 

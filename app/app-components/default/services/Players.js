@@ -164,7 +164,9 @@ define(['js/app'], function(app){
 		};
 
 
-
+		this.playerData = function playerData(name_key){
+			return _.find(this.players, {'name_key': name_key});
+		}
 		
 
 		// add socket callbacks for adding/removing machines

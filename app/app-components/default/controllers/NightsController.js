@@ -1,8 +1,8 @@
 define(['js/app', 'app-components/controllers/RandomizerController'], function(app, RandomizerController){
 
-	var injectParams = ['$stateParams', '$scope', 'Auth', 'navApi', 'api', 'promiseTracker', 'loadingOverlayApi', 'flare', 'LeagueNights', '$filter', '$modal', 'Machines'];
+	var injectParams = ['$stateParams', '$scope', 'Auth', 'navApi', 'api', 'promiseTracker', 'loadingOverlayApi', 'flare', 'LeagueNights', '$filter', '$modal', 'Machines', 'Scoring', 'socket'];
 
-	var NightsController = function($stateParams, $scope, Auth, navApi, api, promiseTracker, loadingOverlayApi, flare, LeagueNights, $filter, $modal, Machines){
+	var NightsController = function($stateParams, $scope, Auth, navApi, api, promiseTracker, loadingOverlayApi, flare, LeagueNights, $filter, $modal, Machines, Scoring, socket){
 		loadingOverlayApi.show();
 		navApi.defaultTitle();
 		navApi.setCenterPanelKey('nights-panel');		
@@ -11,6 +11,8 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 		$scope.params = $stateParams;
 		$scope.nights = [];
 		$scope.night = {};
+		$scope.live = false;
+		$scope.scoring = Scoring;
 
 		var all_nights_promise, this_nights_promise;
 
@@ -34,6 +36,8 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 				LeagueNights.getFullNight($scope.night.starts)
 					.then(function(night){
 						$scope.night = night;
+
+						$scope.live = Scoring.started && $scope.night.starts == Scoring.night.starts;
 
 						// underscore chaining FTW!
 						var players = _.chain(night.divisions)
@@ -78,6 +82,26 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 				}
 			});
 		}
+
+		
+		function scoringStarted(data){
+			$scope.live = $scope.night.starts == Scoring.night.starts;
+			if($scope.live){
+				$scope.night = Scoring.night;
+			}
+		};
+		function scoringStopped(){
+			$scope.live = false;
+		};
+
+
+		socket.addScope($scope.$id)
+			.on('scoring_started', scoringStarted)
+			.on('scoring_stopped', scoringStopped);
+
+		$scope.$on("$destroy", function() {
+			socket.getScope($scope.$id).clear();
+		});	
 		
 	};
 
