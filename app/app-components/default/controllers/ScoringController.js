@@ -41,9 +41,16 @@ define(['js/app'], function(app){
 				next_state = {
 					state: '',
 					params: {}
-				},
-				places = [1,2,3,4,'DNP'],
-				points = [7,5,3,1,0];
+				};
+
+			// default places
+			$scope.places = {
+				1: {points: 7, place: 1},
+				2: {points: 5, place: 2},
+				3: {points: 3, place: 3},
+				4: {points: 1, place: 4},
+				'DNP': {points: 0, place: 5}
+			};
 
 			$scope.group = null;
 			$scope.machine = null;
@@ -68,39 +75,48 @@ define(['js/app'], function(app){
 				navApi.setTitle($scope.machine.name, $scope.machine.abbv);
 
 				// set a score parameter on player to make shit easier
-				_.each(group.players, function(player){
-					player.score = player.machines[$scope.machine.abbv] 
-						? player.machines[$scope.machine.abbv] 
-						: (player.dnp ? 0 : null);
+				// set DNPs as 0
+				var total_to_play = 0;
+				_.each($scope.group.players, function(player){
+					if(player.machines[$scope.machine.abbv] != null){
+						player.score = player.machines[$scope.machine.abbv];
+						if(player.score > 0)
+							total_to_play++;
+					} else {
+						if(player.dnp){
+							player.score = 0;
+						} else {
+							player.score = null;
+							total_to_play++;
+						}
+					}
+				});
+
+				// edit the places based on the number of players
+				if(total_to_play < 4){
+					switch(total_to_play){
+						case 3:
+							$scope.places[2].points = 4;
+							$scope.places[3].points = 1;
+							$scope.places[4].points = undefined;
+							break;
+						case 2:
+							$scope.places[2].points = 1;
+							$scope.places[3].points = undefined;
+							$scope.places[4].points = undefined;
+							break;
+					}
+				}
+
+				// set the place obj on the player
+				_.each($scope.group.players, function(player){
+					player.place = _.find($scope.places, {'points': player.score});
 				});
 
 				// set the proper order of the players
 				var tmp = group.players.slice(0).reverse(),
 					slice_index = offset > tmp.length ? offset - tmp.length : offset;
 				$scope.group.players = tmp.slice(slice_index).concat(tmp.slice(0,slice_index));
-
-				// change the points values based on DNPs
-				var dnps = _.filter($scope.ties, 'dnp').length;
-				switch($scope.group.players.length - dnps){
-					case 4:
-						break;
-					case 3:
-						places = [1,2,3,'DNP','DNP'];
-						points = [7,4,1,0,0];
-						break;
-					case 2:
-						places = [1,2,'DNP','DNP','DNP'];
-						points = [7,1,0,0,0];
-						break;
-				}
-
-				$scope.places = [];
-				_.each(places, function(place, idx){
-					$scope.places.push({
-						place: place,
-						points: points[idx]
-					});
-				});
 
 				// figure out the next machine
 				var macs = group.machines.slice(0),
@@ -151,46 +167,49 @@ define(['js/app'], function(app){
 						3: 'You have multiple people marked as 3rd',
 						4: 'You have multiple people marked as 4th',
 					},
-					taken_places = [false, false, false, false],
-					dnps = _.filter($scope.group.players, 'dnp'),
-					total_to_play = $scope.group.players.length - dnps.length;
+					taken_places = [null, false, false, false, false];
 
 				// make sure everyone has a score (DNP counts as a score here)
-				if(_.filter($scope.group.players, function(p){ return p.score != undefined }).length != $scope.group.players.length ){
+				if(_.filter($scope.group.players, function(p){ return p.place != undefined }).length != $scope.group.players.length ){
 					scoringError('You must give everyone a place.');
 					return false;
 				}
 
-				// mark any places higer than the number of people to play as DNP
-				if(total_to_play < 4){
-					for(var i = total_to_play; i <= 3; i++){
-						taken_places[i] = true;
-						error_msgs[i] = 'You only have '+total_to_play+' people, skip '+i+' place';
-					}
-				}
+				var dnps = _.filter($scope.group.players, function(p){ return p.place.points === 0});
 
-				// if we have DNPs make the lower X places as obtained
-				// that way you can't have a 4th place and a DNP
+				// mark any places higer than the number of people to play as DNP
+				// rework the points as well
 				if(dnps.length > 0){
-					var keys = [4,3,2,1];
-					for(i=0; i<dnps.length; i++){
-						taken_places[keys[i]] = true;
-						error_msgs[keys[i]] = 'Your DNP player counts as '+keys[i];
+					var total_to_play = $scope.group.players.length - dnps.length;
+					for(var i = total_to_play; i <= 3; i++){
+						taken_places[i + 1] = true;
+						error_msgs[(i + 1)] = 'Only '+total_to_play+' people played, skip '+(i + 1)+' place';
+					}
+
+					switch(total_to_play){
+						case 3:
+							$scope.places[2].points = 4;
+							$scope.places[3].points = 1;
+							$scope.places[4].points = 0;
+							break;
+						case 2:
+							$scope.places[2].points = 1;
+							$scope.places[3].points = 0;
+							$scope.places[4].points = 0;
+							break;
 					}
 				}
 
 				_.each($scope.group.players, function(player, idx){
-					var val = player.score;
+					var val = player.place.place;
 					// can have multiple dnps
-					if(val == 0)
+					if(val == 5)
 						return true;
 
-					var idx = _.indexOf(points, val);
-
-					if(taken_places[idx] === false){
-						taken_places[idx] = true;
+					if(taken_places[val] === false){
+						taken_places[val] = true;
 					} else {
-						var msg = error_msgs[idx + 1];
+						var msg = error_msgs[val];
 						if(errors.indexOf(msg) == -1)
 							errors.push(msg);
 					}
@@ -210,7 +229,7 @@ define(['js/app'], function(app){
 				};
 				
 				_.each($scope.group.players, function(player){
-					d.players[player.name_key] = player.score;
+					d.players[player.name_key] = player.place.points;
 				});
 
 				Scoring.submit(d)

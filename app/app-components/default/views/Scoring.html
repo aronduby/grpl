@@ -17,10 +17,10 @@
 								<fieldset>
 									<div class="btn-group">
 										<label 
-											ng-repeat="place in places"
-											ng-model="player.score" 
-											btn-radio="place.points"
-										>{{ place.place }}</label>
+											ng-repeat="(place, points) in places"
+											ng-model="player.place" 
+											btn-radio="points"
+										>{{ place }}</label>
 									</div>
 								</fieldset>
 							</li>
