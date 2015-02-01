@@ -5,12 +5,16 @@ define(['bower_components/angular/angular.min.js'], function(){
 		options = {
 			'sync disconnect on unload': true,
 			'max reconnection attempts': 5
-		};
+		},
+		bootstrapped = false;
 
 	var socket = io.connect(address, options);
 
 	socket.on('connect', function(){
-		angular.resumeBootstrap();
+		if(bootstrapped === false){
+			angular.resumeBootstrap();
+			bootstrapped = true;	
+		}		
 	});
 
 	return socket;
