@@ -185,9 +185,9 @@ if (cluster.isMaster) {
 		*/
 		socket.on('tiebreaker', function(data, cb){
 			grpl.scoring.tiebreaker(data)
-			.then(function(name_key){
-				cb(null, name_key);
-				io.sockets.emit('tiesbroken', data.night_id, name_key);
+			.then(function(resolved){
+				cb(null, resolved);
+				io.sockets.emit('tiesbroken', resolved);
 			})
 			.fail(function(err){
 				cb(handleError(err));

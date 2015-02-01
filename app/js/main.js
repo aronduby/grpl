@@ -16,6 +16,7 @@ require(
 		'app-components/services/Seasons',
 		'app-components/services/Scoring',
 		'app-components/services/dialog',
+		'app-components/services/SocketMessages',
 		'app-components/filters/pluck',
 		'app-components/filters/joinBy',
 		'app-components/filters/mathAbs',

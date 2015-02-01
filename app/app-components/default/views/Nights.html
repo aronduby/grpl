@@ -51,7 +51,7 @@
 								data-group="{{ $index + 1 }}"
 							>
 								<li 
-									ng-repeat="player in players" 
+									ng-repeat="player in players | orderBy:'start_order' track by player.name_key" 
 									ng-class="{
 										'user starred': (user.logged_in && user.name_key == player.name_key),
 										'dnp': player.dnp,
@@ -77,7 +77,7 @@
 											></span>
 											{{ player.first_name }} {{ player.last_name }}
 											<span ng-if="night.subs[player.name_key]" class="sub" title="sub">{{ night.subs[player.name_key].sub }}</span>
-										</h3>											
+										</h3>
 										<p ng-if="player.machines" class="player-points"><!-- hide until scoring started or past night -->
 											<span ng-repeat="(abbv, points) in player.machines" class="player-machine" data-abbv="{{ abbv }}">
 												<span class="abbv">{{ abbv }}</span>

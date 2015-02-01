@@ -90,14 +90,39 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 				$scope.night = Scoring.night;
 			}
 		};
+
 		function scoringStopped(){
 			$scope.live = false;
+		};
+
+		function tiesBroken(data){
+			if($scope.night.night_id == data.night_id){
+				var players = _.flatten(_.pluck(_.pluck($scope.night.divisions, 'player_list'),'players'));
+
+				_.each(data.players, function(p){
+					var player = _.find(players, {'name_key': p.name_key}),
+						ss = player.scoring_string;
+
+					// replace the tie-breaker portion of scoring string
+					ss = ss.split('.');
+					ss[6] = p.place;
+					player.scoring_string = ss.join('.');
+
+					// update the group and order
+					player.grouping = p.grouping;
+					player.start_order = p.start_order;
+
+					// remove the tied class
+					player.tied = false;
+				});
+			}
 		};
 
 
 		socket.addScope($scope.$id)
 			.on('scoring_started', scoringStarted)
-			.on('scoring_stopped', scoringStopped);
+			.on('scoring_stopped', scoringStopped)
+			.on('tiesbroken', tiesBroken);
 
 		$scope.$on("$destroy", function() {
 			socket.getScope($scope.$id).clear();

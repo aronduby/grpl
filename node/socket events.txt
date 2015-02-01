@@ -1,0 +1,15 @@
+| Done |           Event           | Global |    Param    |   Param   |
+| :--: | ------------------------- | :----: | ----------- | --------- |
+|  X   | write_cookie              |        | 'user_hash' | user_hash |
+|  X   | tiesbroken                |   X    | data        |           |
+|      | scoring_started           |   X    | data        |           |
+|      | scoring_stopped           |   X    |             |           |
+|      | scoring_logged_in         |        | name_key    |           |
+|      | scoring_update            |   X    | data        |           |
+|      | season_updated            |   X    | season      |           |
+|      | leaguenight_updated       |   X    | night       |           |
+|      | leaguenight_order_updated |   X    | night       |           |
+|      | user_updated              |   X    | data        |           |
+|      | machine_updated           |   X    | machine     |           |
+|      |                           |        |             |           |
+

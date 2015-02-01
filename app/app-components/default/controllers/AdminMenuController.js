@@ -135,9 +135,16 @@ require(['js/app'], function(app){
 			scoringStarted({starts: Scoring.night.starts});
 		}
 
+		function tiesbroken(d){
+			// remove the tie
+			var idx = _.indexOf($scope.ties, _.find($scope.ties, {'name_key': d.name_key}));
+			$scope.ties.splice(idx, 1);
+		};
+
 
 		socket
-			.on('scoring_started', scoringStarted);
+			.on('scoring_started', scoringStarted)
+			.on('tiesbroken', tiesbroken);
 
 
 	};

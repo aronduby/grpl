@@ -71,6 +71,7 @@ define(['js/app'], function(app){
 				var data = {
 					starts: next.starts,
 					night_id: next.night_id,
+					name_key: $scope.ties[0].name_key,
 					players: []
 				};
 

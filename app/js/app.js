@@ -184,8 +184,8 @@ function(routingConfig){
 	]);
 
 	app.run([
-		'$rootScope', '$window', '$state', 'socket', 'api', 'ipCookie', 'Auth', 'flare', '$location', '$modalStack', '$templateCache', 'LeagueNights', 'Machines', 'Players', 'Seasons', 'Scoring', '$timeout',
-		function($rootScope, $window, $state, socket, api, ipCookie, Auth, flare, $location, $modalStack, $templateCache, LeagueNights, Machines, Players, Seasons, Scoring, $timeout){
+		'$rootScope', '$window', '$state', 'socket', 'api', 'SocketMessages', 'ipCookie', 'Auth', 'flare', '$location', '$modalStack', '$templateCache', 'LeagueNights', 'Machines', 'Players', 'Seasons', 'Scoring', '$timeout',
+		function($rootScope, $window, $state, socket, api, SocketMessages, ipCookie, Auth, flare, $location, $modalStack, $templateCache, LeagueNights, Machines, Players, Seasons, Scoring, $timeout){
 			// override the default flare tpl to add ability to do html in message content
 			$templateCache.put("directives/flaremessages/index.tpl.html",
 			    "<div ng-repeat=\"(key,message) in flareMessages\" ng-class=\"classes(message)\">\n" +
@@ -194,7 +194,7 @@ function(routingConfig){
 			    "</div>\n" +
 			"");
 
-			api.setSocket(socket);
+			api.setSocket(socket); // I don't think this is necessary any more?
 			LeagueNights.loadNights();
 			Machines.loadMachines();
 			Players.loadPlayers();

@@ -2,6 +2,7 @@ define(['app-components/services/socket'], function(servicesApp){
 
 	function Api($q, Socket){
 
+		// I don't think this is used any more
 		this.setSocket = function(sock){
 			Socket = sock;
 		}
