@@ -159,6 +159,22 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 				loadNight(data.starts);
 				flare.warn('<h1>Order Changed</h1><p>The order for the night has changed, so we\'re grabbing you the proper information.</p>', 5000);
 			}
+		};
+
+		function userUpdated(data){
+			var players = _.chain($scope.night.divisions)
+				.pluck('player_list')
+				.pluck('players')
+				.flatten()
+				.value();
+
+			var player = _.find(players, {'player_id': data.player_id});
+			if(player != undefined){
+				player.first_name = data.first_name;
+				player.full_name = data.full_name;
+				player.initials = data.initials;
+				player.last_name = data.last_name;
+			}
 		}
 
 
@@ -167,7 +183,8 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 			.on('scoring_started', scoringStarted)
 			.on('scoring_stopped', scoringStopped)
 			.on('leaguenight_updated', leaguenightUpdated)
-			.on('leaguenight_order_updated', leaguenightOrderUpdated);
+			.on('leaguenight_order_updated', leaguenightOrderUpdated)
+			.on('user_updated', userUpdated);
 
 		$scope.$on("$destroy", function() {
 			socket.getScope($scope.$id).clear();
