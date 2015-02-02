@@ -177,6 +177,22 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 			}
 		}
 
+		function machineUpdated(data){
+			var machines = _.chain($scope.night.divisions)
+				.pluck('machines')
+				.flatten()
+				.value();
+
+			var machine = _.find(machines, {'machine_id': data.machine_id});
+			if(machine != undefined){
+				machine.abbv = data.abbv;
+				machine.image = data.image;
+				machine.name = data.name;
+				machine.note = data.note;
+				machine.url = data.url;
+			}
+		};
+
 
 		socket.addScope($scope.$id)
 			.on('tiesbroken', tiesBroken)
@@ -184,7 +200,8 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 			.on('scoring_stopped', scoringStopped)
 			.on('leaguenight_updated', leaguenightUpdated)
 			.on('leaguenight_order_updated', leaguenightOrderUpdated)
-			.on('user_updated', userUpdated);
+			.on('user_updated', userUpdated)
+			.on('machine_updated', machineUpdated);
 
 		$scope.$on("$destroy", function() {
 			socket.getScope($scope.$id).clear();

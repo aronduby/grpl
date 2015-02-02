@@ -10,8 +10,8 @@
 |  X   | season_updated            |   X    | season      |           |
 |  X   | leaguenight_updated       |   X    | night       |           |
 |  X   | leaguenight_order_updated |   X    | night       |           |
-|      | user_updated              |   X    | data        |           |
-|      | machine_updated           |   X    | machine     |           |
+|  X   | user_updated              |   X    | data        |           |
+|  X   | machine_updated           |   X    | machine     |           |
 |      |                           |        |             |           |
 
 
