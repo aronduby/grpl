@@ -8,7 +8,7 @@
 |  X   | scoring_update            |   X    | data        |           |
 |      |                           |        |             |           |
 |  X   | season_updated            |   X    | season      |           |
-|      | leaguenight_updated       |   X    | night       |           |
+|  X   | leaguenight_updated       |   X    | night       |           |
 |      | leaguenight_order_updated |   X    | night       |           |
 |      | user_updated              |   X    | data        |           |
 |      | machine_updated           |   X    | machine     |           |

@@ -86,18 +86,10 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 			});
 		}
 
-		
-		function scoringStarted(data){
-			$scope.live = $scope.night.starts == Scoring.night.starts;
-			if($scope.live){
-				$scope.night = Scoring.night;
-			}
-		};
 
-		function scoringStopped(){
-			$scope.live = false;
-		};
-
+		/*
+		 *	Socket Events
+		*/		
 		function tiesBroken(data){
 			if($scope.night.night_id == data.night_id){
 				var players = _.flatten(_.pluck(_.pluck($scope.night.divisions, 'player_list'),'players'));
@@ -121,11 +113,42 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 			}
 		};
 
+		function scoringStarted(data){
+			$scope.live = $scope.night.starts == Scoring.night.starts;
+			if($scope.live){
+				$scope.night = Scoring.night;
+			}
+		};
+
+		function scoringStopped(){
+			$scope.live = false;
+		};
+
+		function leaguenightUpdated(data){
+			if($scope.night.night_id == data.night_id){
+				// copy over the relevant fields
+				$scope.night.description = data.description;
+				$scope.night.future = data.future;
+				$scope.night.has_order = data.has_order;
+				$scope.night.moment = data.moment;
+				$scope.night.note = data.note;
+				$scope.night.starts = data.starts;
+				$scope.night.title = data.title;
+				$scope.night.today = data.today;
+				$scope.night.totals = data.totals;
+				
+				navApi.setTitle($scope.night.title, $scope.night.description);
+
+				flare.info('<h1>Heads Up</h1><p>The night you are viewing has been updated, so if it looks like something changed, it\'s because it did.</p>', 5000);
+			}
+		};
+
 
 		socket.addScope($scope.$id)
+			.on('tiesbroken', tiesBroken)
 			.on('scoring_started', scoringStarted)
 			.on('scoring_stopped', scoringStopped)
-			.on('tiesbroken', tiesBroken);
+			.on('leaguenight_updated', leaguenightUpdated);
 
 		$scope.$on("$destroy", function() {
 			socket.getScope($scope.$id).clear();

@@ -56,6 +56,7 @@ define(['js/app', 'app-components/services/socket'], function(app){
 			flare.success(msg, 5000);
 		}
 		socket.on('scoring_update', scoringUpdated);
+
 	}
 
 	app.service('SocketMessages', ['$filter', 'socket', 'flare', 'Players', SocketMessages]);

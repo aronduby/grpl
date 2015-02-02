@@ -116,7 +116,7 @@
 		</header>
 		<article class="listview"><ul>
 			<li 
-				ng-repeat="night in nights track by night.night_id" 
+				ng-repeat="night in nights | orderBy:'starts':true track by night.night_id" 
 				ng-class="{
 					'live': scoring.started && scoring.night.starts == night.starts
 				}"

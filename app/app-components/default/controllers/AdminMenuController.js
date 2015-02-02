@@ -141,40 +141,6 @@ require(['js/app'], function(app){
 					return obj;
 				})
 				.value();
-
-			/*
-			var groups = _.chain(Scoring.night.divisions)
-				.map(function(obj){ return obj.player_list.players })
-				.flatten()
-				.groupBy('grouping')
-				.value();
-
-			_.each(groups, function(group, i){
-				group = {
-					players: group
-				}
-
-				group.initials = _.pluck(group.players, 'initials');
-				group.name_key = group.players[0].name_key;
-				group.machines = group.players[0].machines;
-				group.order = parseInt(i, 10);
-				
-				var finished_machines = _.countBy(group.players.machines);
-				switch(finished_machines[""]){
-					case undefined:
-					case 0:
-						group.status = 'on';
-						break;
-					case 5:
-						group.status = 'off';
-						break;
-					default:
-						group.status = 'half';
-				};
-
-			});
-			$scope.scoring_groups = groups;
-			*/
 		};
 		
 		if(Scoring.started){

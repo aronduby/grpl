@@ -2,6 +2,8 @@ define(['js/app'], function(app){
 
 	function LeagueNights($q, api, socket, Scoring){
 
+		var today = moment().startOf('day');
+
 		this.loading = undefined;
 		this.nights = [];
 
@@ -16,22 +18,7 @@ define(['js/app'], function(app){
 					var today = moment().startOf('day');
 
 					_.each(nights, function(night){
-						if(night.starts == 'totals'){
-							night.moment = moment();
-							night.totals = true;
-							night.today = false;
-							night.future = true;
-						} else {
-							night.moment = moment(night.starts);
-							if(night.moment.isSame(today)){
-								night.today = true;
-								night.future = false;
-							} else {
-								night.today = false;
-								night.future = night.moment.isAfter(today);
-							}
-							night.totals = false;
-						}
+						setupNight(night);
 					});
 
 					self.nights = nights;
@@ -99,24 +86,7 @@ define(['js/app'], function(app){
 
 			this_nights_promise = api.get('leaguenight.'+method, arg)
 				.then(function(night){
-					var today = moment().startOf('day');
-					
-					if(night.starts == 'totals'){
-						night.moment = moment();
-						night.totals = true;
-						night.today = false;
-						night.future = true;
-					} else {
-						night.moment = moment(night.starts);
-						if(night.moment.isSame(today)){
-							night.today = true;
-							night.future = false;
-						} else {
-							night.today = false;
-							night.future = night.moment.isAfter(today);
-						}
-						night.totals = false;
-					}
+					setupNight(night);
 					d.resolve(night);
 				})
 				.catch(function(err){
@@ -126,7 +96,40 @@ define(['js/app'], function(app){
 			return d.promise;
 		};
 
-		// add socket callbacks for adding/removing nights
+		function setupNight(night){
+			if(night.starts == 'totals'){
+				night.moment = moment();
+				night.totals = true;
+				night.today = false;
+				night.future = true;
+			} else {
+				night.moment = moment(night.starts);
+				if(night.moment.isSame(today)){
+					night.today = true;
+					night.future = false;
+				} else {
+					night.today = false;
+					night.future = night.moment.isAfter(today);
+				}
+				night.totals = false;
+			}
+		}
+
+		/*
+		 *	Socket Events
+		*/
+		function leaguenightUpdated(data){
+			setupNight(data);
+			var idx = _.indexOf(_.pluck(this.nights, 'night_id'), data.night_id);
+			if(idx == -1){
+				this.nights.push(data);
+			} else {
+				this.nights.splice(idx, 1, data);
+			}
+		};
+
+		socket
+			.on('leaguenight_updated', angular.bind(this, leaguenightUpdated));
 	}
 	
 	app.service('LeagueNights', ['$q', 'api', 'socket', 'Scoring', LeagueNights]);
