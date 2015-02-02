@@ -70,7 +70,7 @@ require(['js/app'], function(app){
 
 		Machines.loading
 		.then(function(machines){
-			$scope.machines = _.groupBy(Machines.all, 'active');
+			$scope.machines = Machines.all;
 		});
 
 		Players.getAllPlayers()

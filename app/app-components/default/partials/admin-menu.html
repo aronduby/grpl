@@ -152,31 +152,19 @@
 						</a>
 					</div>
 
-					<h2>Active Machines</h2>
-					<div class="listview edit-machine-list">
-						<img ng-if="!machines[true].length" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
-						<ul ng-if="machines[true].length">
-							<li ng-repeat="machine in machines[true]">
+					<h2 ng-repeat-start="(key, group) in machines | groupBy:'active' | toArray:true | orderBy:'active'">
+						{{ !key ? 'Active' : 'Inactive' }} Machines
+					</h2>
+					<div class="listview edit-machine-list" ng-repeat-end>
+						<img ng-if="!group.length" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
+						<ul ng-if="group.length">
+							<li ng-repeat="machine in group track by machine.machine_id">
 								<a ng-href="#/admin/machines/{{machine.abbv}}">
 									<h3>{{ machine.name }}</h3>
-									<p ng-if="machine.active">active</p>
+									<p>{{ machine.abbv }}</p>
 								</a>
 							</li>
-							<li ng-if="!machines[true].length">there are no active machines</li>
-						</ul>
-					</div>
-
-					<h2>Inactive Machines</h2>
-					<div class="listview edit-machine-list">
-						<img ng-if="!machines[false].length" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
-						<ul ng-if="machines[false].length">
-							<li ng-repeat="machine in machines[false]">
-								<a ng-href="#/admin/machines/{{machine.abbv}}">
-									<h3>{{ machine.name }}</h3>
-									<p ng-if="machine.active">active</p>
-								</a>
-							</li>
-							<li ng-if="!machines[false].length">there are no inactive machines</li>
+							<li ng-if="!group.length">no {{ !key ? 'active' : 'inactive' }} machines?</li>
 						</ul>
 					</div>
 				</section>
