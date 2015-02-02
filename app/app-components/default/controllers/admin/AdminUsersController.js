@@ -12,7 +12,7 @@ define(['js/app'], function(app){
 		$scope.user = null;
 
 		var players_promise = Players.getAllPlayers();
-		players_promise.then(function(players){
+		players_promise.then(function(){
 			$scope.users = Players.all;
 		});
 

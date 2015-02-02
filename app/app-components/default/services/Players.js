@@ -163,13 +163,28 @@ define(['js/app'], function(app){
 			return d.promise;
 		};
 
-
 		this.playerData = function playerData(name_key){
 			return _.find(this.players, {'name_key': name_key});
-		}
+		};
 		
 
-		// add socket callbacks for adding/removing machines
+		/*
+		 *	Socket Events
+		*/
+		function userUpdated(data){
+			var self = this;
+			_.each(['players', 'active', 'all'], function(type){
+				if(self[type].length){
+					var idx = _.indexOf(_.pluck(self[type], 'player_id'), data.player_id);
+					if(idx == -1){
+						self[type].push(data);
+					} else {
+						self[type].splice(idx, 1, data);
+					}
+				}
+			});
+		}
+		socket.on('user_updated', angular.bind(this, userUpdated));
 	}
 	
 	app.service('Players', ['$q', 'api', 'socket', Players]);

@@ -97,31 +97,19 @@
 						</a>
 					</div>
 
-					<h2>Active Users</h2>
-					<div class="listview edit-user-list">
-						<img ng-if="!users" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
-						<ul ng-if="users[true].length">
-							<li ng-repeat="user in users[true]">
+					<h2 ng-repeat-start="(key, group) in users | groupBy:'active' | toArray:true | orderBy:'active'">
+						{{ !key ? 'Active' : 'Inactive'}} Users
+					</h2>
+					<div class="listview edit-user-list" ng-repeat-end>
+						<img ng-if="!group.length" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
+						<ul ng-if="group.length">
+							<li ng-repeat="user in group | orderBy:'first_name' track by user.name_key">
 								<a ng-href="#/admin/users/{{user.name_key}}">
 									<h3>{{ user.full_name }}</h3>
 									<p ng-if="auth.authorize('admin', user.role)">admin</p>
 								</a>
 							</li>
-							<li ng-if="!users[true].length">no active users?</li>
-						</ul>
-					</div>
-
-					<h2>Inactive Users</h2>
-					<div class="listview edit-user-list">
-						<img ng-if="!users" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
-						<ul ng-if="users[false].length">
-							<li ng-repeat="user in users[false]">
-								<a ng-href="#/admin/users/{{user.name_key}}">
-									<h3>{{ user.full_name }}</h3>
-									<p ng-if="auth.authorize('admin', user.role)">admin</p>
-								</a>
-							</li>
-							<li ng-if="!users[false].length">no inactive users</li>
+							<li ng-if="!group.length">no {{ !key ? 'active' : 'inactive' }} users?</li>
 						</ul>
 					</div>
 				</section>

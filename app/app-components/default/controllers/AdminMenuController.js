@@ -74,8 +74,8 @@ require(['js/app'], function(app){
 		});
 
 		Players.getAllPlayers()
-		.then(function(players){
-			$scope.users = _.groupBy(players, 'active');
+		.then(function(){
+			$scope.users =Players.all;
 		});
 
 		Seasons.loading
