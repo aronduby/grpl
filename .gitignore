@@ -2,3 +2,8 @@
 *bower_components*
 *.DS_Store
 *npm-debug.log
+**/layout_imgs/machines/**
+
+*.mwb
+*.bak
+*.beforefix
