@@ -1611,7 +1611,7 @@ li.subsection fieldset{
 	position:fixed;
 	bottom: 10px;
 	right:10px;
-	z-index: 2000;
+	z-index: 999999;
 }
 	#flare-holder .alert{
 		border:0;
