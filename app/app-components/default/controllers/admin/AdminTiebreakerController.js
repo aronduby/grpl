@@ -1,8 +1,8 @@
 define(['js/app'], function(app){
 
-	var injectParams = ['$scope', '$q', '$state', '$stateParams', 'loadingOverlayApi', 'navApi', 'api', 'dialog', 'LeagueNights', 'Players'];
+	var injectParams = ['$scope', '$q', '$state', '$stateParams', 'loadingOverlayApi', 'navApi', 'adminMenu', 'api', 'dialog', 'LeagueNights', 'Players'];
 
-	var AdminTiebreakerController = function($scope, $q, $state, $stateParams, loadingOverlayApi, navApi, api, dialog, LeagueNights, Players){
+	var AdminTiebreakerController = function($scope, $q, $state, $stateParams, loadingOverlayApi, navApi, adminMenu, api, dialog, LeagueNights, Players){
 		loadingOverlayApi.show();
 		navApi.defaultTitle();
 
@@ -33,6 +33,10 @@ define(['js/app'], function(app){
 				if($scope.ties != undefined){
 					for(var i=1; i<=$scope.ties.length; i++)
 						$scope.places.push(i);	
+				} else {
+					// basic content message will show
+					// open the admin menu as well to pick another tie
+					adminMenu.open();
 				}
 				
 			})
