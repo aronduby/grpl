@@ -1,8 +1,8 @@
 define(['js/app', 'app-components/controllers/RandomizerController'], function(app, RandomizerController){
 
-	var injectParams = ['$stateParams', '$scope', 'Auth', 'navApi', 'api', 'promiseTracker', 'loadingOverlayApi', 'flare', 'LeagueNights', '$filter', '$modal', 'Machines', 'Scoring', 'socket'];
+	var injectParams = ['$stateParams', '$scope', 'Auth', 'navApi', 'api', 'promiseTracker', 'dialog', 'loadingOverlayApi', 'flare', 'LeagueNights', '$filter', '$modal', 'Machines', 'Scoring', 'socket'];
 
-	var NightsController = function($stateParams, $scope, Auth, navApi, api, promiseTracker, loadingOverlayApi, flare, LeagueNights, $filter, $modal, Machines, Scoring, socket){
+	var NightsController = function($stateParams, $scope, Auth, navApi, api, promiseTracker, dialog, loadingOverlayApi, flare, LeagueNights, $filter, $modal, Machines, Scoring, socket){
 		loadingOverlayApi.show();
 		navApi.defaultTitle();
 		navApi.setCenterPanelKey('nights-panel');		
@@ -17,55 +17,66 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 		var all_nights_promise, this_nights_promise;
 
 		LeagueNights.loading
-			.then(function(nights){
-				$scope.nights = LeagueNights.nights;
+		.then(function(nights){
+			$scope.nights = LeagueNights.nights;
 
-				if($stateParams.starts === ''){
-					$scope.night = LeagueNights.getNextNight(true);
-				} else {
-					$scope.night = LeagueNights.getNight($stateParams.starts);
+			if($stateParams.starts === ''){
+				$scope.night = LeagueNights.getNextNight(true);
+			} else {
+				$scope.night = LeagueNights.getNight($stateParams.starts);
+			}
+
+			if($scope.night === undefined)
+				$scope.night = LeagueNights.getTotals();
+
+			navApi.setTitle($scope.night.title, $scope.night.description);
+		})
+		.finally(function(){
+
+			loadNight($scope.night.starts);
+			
+		});
+
+
+		function loadNight(starts){
+			LeagueNights.getFullNight(starts)
+			.then(function(night){
+				$scope.night = night;
+
+				$scope.live = Scoring.started && $scope.night.starts == Scoring.night.starts;
+				if($scope.live){
+					$scope.night = Scoring.night;
 				}
 
-				if($scope.night === undefined)
-					$scope.night = LeagueNights.getTotals();
+				// underscore chaining FTW!
+				var players = _.chain(night.divisions)
+					.map(function(obj){ return obj.player_list.players })
+					.flatten()
+					.value();
 
-				navApi.setTitle($scope.night.title, $scope.night.description);
+				var ties = _.chain(players)
+					.groupBy('scoring_string')
+					.filter(function(arr){ return arr.length > 1; })
+					.value();
+
+				if(ties.length > 0 && (ties.length != 1 && ties[0].length != players.length)){
+					_.each(ties, function(group, tie_index){
+						_.each(group, function(player){
+							player.tied = true;
+							player.tied_index = tie_index;
+						})
+					});
+				}
+			})
+			.catch(function(err){
+				dialog(err);
 			})
 			.finally(function(){
-				
-				LeagueNights.getFullNight($scope.night.starts)
-					.then(function(night){
-						$scope.night = night;
-
-						$scope.live = Scoring.started && $scope.night.starts == Scoring.night.starts;
-						if($scope.live){
-							$scope.night = Scoring.night;
-						}
-
-						// underscore chaining FTW!
-						var players = _.chain(night.divisions)
-							.map(function(obj){ return obj.player_list.players })
-							.flatten()
-							.value();
-
-						var ties = _.chain(players)
-							.groupBy('scoring_string')
-							.filter(function(arr){ return arr.length > 1; })
-							.value();
-
-						if(ties.length > 0 && (ties.length != 1 && ties[0].length != players.length)){
-							_.each(ties, function(group, tie_index){
-								_.each(group, function(player){
-									player.tied = true;
-									player.tied_index = tie_index;
-								})
-							});
-						}
-					})
-					.finally(function(){
-						loadingOverlayApi.hide();
-					});
+				loadingOverlayApi.hide();
 			});
+		}
+
+
 
 
 		// not 100% sure why this works, but its from https://github.com/a8m/angular-filter/issues/57
@@ -143,12 +154,20 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 			}
 		};
 
+		function leaguenightOrderUpdated(data){
+			if($scope.night.night_id == data.night_id){
+				loadNight(data.starts);
+				flare.warn('<h1>Order Changed</h1><p>The order for the night has changed, so we\'re grabbing you the proper information.</p>', 5000);
+			}
+		}
+
 
 		socket.addScope($scope.$id)
 			.on('tiesbroken', tiesBroken)
 			.on('scoring_started', scoringStarted)
 			.on('scoring_stopped', scoringStopped)
-			.on('leaguenight_updated', leaguenightUpdated);
+			.on('leaguenight_updated', leaguenightUpdated)
+			.on('leaguenight_order_updated', leaguenightOrderUpdated);
 
 		$scope.$on("$destroy", function() {
 			socket.getScope($scope.$id).clear();
