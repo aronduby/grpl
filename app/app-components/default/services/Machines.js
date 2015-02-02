@@ -20,7 +20,7 @@ define(['js/app'], function(app){
 					});
 
 					self.all = machines;
-					self.active = _.filter(machines, 'active');
+					self.active = _.filter(self.all, 'active');
 
 					d.resolve(self.active);
 				})
@@ -37,7 +37,20 @@ define(['js/app'], function(app){
 			return _.find( this.all, {'abbv': abbv});
 		}
 
-		// add socket callbacks for adding/removing machines
+		/*
+		 *	Socket Events
+		*/
+		function machineUpdated(data){
+			var idx = _.indexOf(_.pluck(this.all, 'machine_id'), data.machine_id);
+			if(idx >= 0){
+				this.all.splice(idx, 1, data);
+			} else {
+				this.all.push(data);
+			}
+			this.active = _.filter(this.all, 'active');
+		};
+		socket.on('machine_updated', angular.bind(this, machineUpdated));
+
 	}
 	
 	app.service('Machines', ['$q', 'api', 'socket', Machines]);
