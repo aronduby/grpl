@@ -6,7 +6,7 @@ html,body{
 
 body{
   background:url(/layout_imgs/ps-floor-pattern-grey.png);  
-  font-family:'Roboto Condensed';
+  font-family:'Roboto Condensed', sans-serif;
   font-size:14px;
   color:#515151;
   position:relative;
