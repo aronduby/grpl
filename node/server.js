@@ -170,10 +170,10 @@ if (cluster.isMaster) {
 
 		// registering a user to login with email/password
 		socket.on('user.register', function(data, cb){
-			grpl.player.register(data)
-			.then(function(bool){
-				cb(null, bool);
-				io.sockets.emit('user_updated', data);
+			grpl.player.register(data, season_id) // always the current season
+			.then(function(player){
+				cb(null, player);
+				io.sockets.emit('user_updated', player);
 			})
 			.fail(function(err){
 				cb(handleError(err));
