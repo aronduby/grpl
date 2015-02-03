@@ -34,27 +34,6 @@ define([], function () {
 
         this.route = function (routeConfig) {
 
-            /*
-            var resolve = function (baseName, path, controllerAs, secure) {
-                if (!path) path = '';
-
-                var routeDef = {};
-                var baseFileName = baseName;// baseName.charAt(0).toLowerCase() + baseName.substr(1);
-                routeDef.templateUrl = routeConfig.getViewsDirectory() + path + baseFileName + '.html';
-                routeDef.controller = baseName + 'Controller';
-                if (controllerAs) routeDef.controllerAs = controllerAs;
-                routeDef.secure = (secure) ? secure : false;
-                routeDef.resolve = {
-                    load: ['$q', '$rootScope', function ($q, $rootScope) {
-                        var dependencies = [routeConfig.getControllersDirectory() + path + baseFileName + 'Controller.js'];
-                        return resolveDependencies($q, $rootScope, dependencies);
-                    }]
-                };
-
-                return routeDef;
-            },
-            */
-
             var resolve = function (def) {
                 if(!def.path)
                     def.path = '';
