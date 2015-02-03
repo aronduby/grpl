@@ -3,6 +3,24 @@ header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 
+// figure out any overloads
+if(isset($_COOKIE['season_id'])){
+	header("X-Season-Id: ".$_COOKIE['season_id']);
+	switch($_COOKIE['season_id']){
+		case 6:
+			$overload = 'pick-machines';
+			break;
+		default:
+			$overload = 'default';
+			break;
+	}
+} else {
+	header("X-Season-Id: Not Set");
+	$overload = 'pick-machines'; // set it to whatever the default season is
+}
+
+
+
 $cwd = dirname($_SERVER['PHP_SELF']);
 $requested = str_replace($cwd, '', $_SERVER['REQUEST_URI']);
 
@@ -31,9 +49,9 @@ function outputContentType($requested){
 	header("Content-type: ".$type);
 }
 
-if(file_exists('overload'.$requested)){
+if(file_exists($overload.$requested)){
 	outputContentType($requested);
-	include 'overload'.$requested;
+	include $overload.$requested;
 
 } elseif(file_exists('default'.$requested)){
 	outputContentType($requested);
