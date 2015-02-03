@@ -1,0 +1,36 @@
+<div id="login-panel" class="panel">
+	<header>
+		<h1>Login</h1>
+		<a class="close" ng-click="cancel()">Close</a>
+	</header>
+	<article class="content">
+		<h2>If you're in the Facebook Group...</h2>
+		<p>... your login with Facebook has already been setup. Otherwise talk to an Admin to setup an email/password login.</p>
+		<form class="login-form">
+			<section class="listview">
+				<ul>
+					<li>
+						<button class="blue login fb_login" ng-click="loginWithFB()"><span class="title">Login with Facebook</span></button>
+						<h2>OR</h2>
+					</li>
+					<li>
+						<label>Email</label>
+						<fieldset>
+							<input type="email" ng-model="email" />
+						</fieldset>
+					</li>
+					<li>
+						<label>Password</label>
+						<fieldset>
+							<input type="password" ng-model="password" />
+						</fieldset>
+					</li>
+				</ul>
+			</section>
+		</form>
+		<div class="button-holder right">
+			<a class="close" ng-click="cancel()">Cancel</a>
+			<button class="usr-btn" ng-click="loginWithForm()"><span class="title">Login</span></button>
+		</div>
+	</article>
+</div>

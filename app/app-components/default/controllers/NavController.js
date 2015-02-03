@@ -1,6 +1,9 @@
 define(['js/app'], function(app){
 
-	app.controller('NavController', ['$scope', '$state', 'loadingOverlayApi', 'adminMenu', 'navApi', 'inlineModalApi', 'Scoring', 'socket', 'dialog', function($scope, $state, loadingOverlayApi, adminMenu, navApi, inlineModalApi, Scoring, socket, dialog) {
+	app.controller('NavController', [
+	'$scope', '$state', '$modal', 'Auth', 'loadingOverlayApi', 'adminMenu', 'navApi', 'inlineModalApi', 'Scoring', 'socket', 'dialog', 
+	function($scope, $state, $modal, Auth, loadingOverlayApi, adminMenu, navApi, inlineModalApi, Scoring, socket, dialog) {
+
 		$scope.api = navApi;
 		$scope.scoring_started = false;
 
@@ -11,6 +14,24 @@ define(['js/app'], function(app){
 		$scope.toggleCenterPanel = function(){
 			if(navApi.center_panel_key)
 				inlineModalApi.open( navApi.center_panel_key );
+		};
+
+		$scope.login =function(){
+			// open login modal
+			loadingOverlayApi.show();
+			require(['app-components/controllers/LoginController'], function(LoginController) {
+				// $rootScope.$apply();
+				loadingOverlayApi.hide();
+				$modal.open({
+					templateUrl: 'app-components/partials/login.html',
+					controller: LoginController,
+					resolve: {
+						Auth: function(){ return Auth; },
+						loadingOverlayApi: function(){ return loadingOverlayApi; },
+						dialog: function(){ return dialog }
+					}
+				});
+			});
 		};
 
 		$scope.scoringLogin = function(){
