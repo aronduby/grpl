@@ -320,7 +320,12 @@ abbv{
 /*
  *  Home Page
 */
-#home .content .machine-list{}
+#home .content .machine-list{
+    line-height: 1.2em;
+}
+#home .content .machine-list li{
+	margin-bottom:.75em;
+}
 	@media(min-width:500px){
 			#home .content .machine-list{    
 				-moz-column-count: 4;
