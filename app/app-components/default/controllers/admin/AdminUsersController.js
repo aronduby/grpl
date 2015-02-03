@@ -76,7 +76,7 @@ define(['js/app'], function(app){
 				});
 			})
 			.catch(function(err){
-				dialog(error);
+				dialog(err);
 			})
 			.finally(function(){
 				loadingOverlayApi.hide();
