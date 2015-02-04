@@ -848,6 +848,8 @@ form .listview fieldset.multiple select{
 .btn-group{
   position:relative;  
 }
+  .btn-group.disabled{ opacity:.5; }
+  
 .btn-group label{
   position:relative;
   cursor:pointer;

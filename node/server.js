@@ -269,9 +269,15 @@ if (cluster.isMaster) {
 						msg: '<p>Only Admins can stop scoring. If you think you should be an admin talk to the people in charge.</p>'
 					});
 				} else {				
-					grpl.scoring.stop();
-					io.sockets.emit('scoring_stopped');
-					cb(null, true);
+					grpl.scoring.stop()
+					.then(function(){
+						io.sockets.emit('scoring_stopped');
+						cb(null, true);	
+					})
+					.fail(function(err){
+						cb(handleError(err));
+					})
+					.done();
 				}
 			});
 		});

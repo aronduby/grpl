@@ -1,0 +1,132 @@
+<div class="page" id="index">
+	<article>
+
+		<section class="randomizer-holder">
+			<button id="randomizer" class="green block" ng-click="randomizer()">Randomizer</button>
+		</section>
+
+
+		<section 
+			ng-repeat="division in night.divisions track by division.division_id"
+			ng-class="{
+				'single': night.divisions.length <= 1
+			}"
+			ng-init=""
+			collapsible="{{'index.division.'+division.division_id}}"
+			class="division" 			
+		>
+			<header>
+				<h1>{{ division.title }}</h1>
+			</header>			
+			<div class="content">
+
+				<section class="machine-holder" collapsible="index.division.{{division.division_id}}.machines">
+					<header>
+						<h1>Machines</h1>
+					</header>
+					<div class="content">
+						<div class="listview">
+							<h2 ng-if="division.machines_note">{{ division.machines_note }}</h2>
+							<ul ng-if="division.machines.length">
+								<li ng-repeat="machine in division.machines">
+									<img ng-src="{{machine.image}}" />
+									<h3>{{ machine.name }}</h3>
+									<p>{{ machine.abbv }}</p>
+								</li>
+							</ul>
+							<p ng-if="!division.machines.length && !division.machines_note">no machines selected for this week</p>
+						</div>
+					</div>
+				</section>
+				
+				<section class="player-holder" ng-class="{'live': live }" collapsible="index.division.{{division.division_id}}.players">
+					<header>
+						<h1>{{ live ? 'Live Results' : 'Scores' }}</h1>
+					</header>
+					<div class="content">
+						
+						<div class="listview">
+							<ul 
+								ng-repeat="(group, players) in division.player_list.players | groupBy: 'grouping' | toArray:true | orderBy:properGroupOrder"
+								data-group="{{ $index + 1 }}"
+							>
+								<li 
+									ng-repeat="player in players | orderBy:'start_order' track by player.name_key" 
+									ng-class="{
+										'user starred': (user.logged_in && user.name_key == player.name_key),
+										'dnp': player.dnp,
+										'tied': player.tied,
+										'even': player.tied && player.tied_index %2==1
+									}"
+									data-name-key="{{ player.name_key }}"
+									data-pre-total="{{ }}"
+									data-scoring-string="{{ player.scoring_string }}"
+									ng-init = "rank_movement = (player.previous_rank != null ? player.previous_rank - player.rank : 0)"
+								>
+									<a ng-href="#/players/{{ player.name_key }}" title="view player info">
+										<h3>
+											<span class="rank">{{ player.rank }}
+												<span 
+													class="movement"
+													ng-class="{
+														'positive': rank_movement > 0,
+														'same': rank_movement == 0,
+														'negative': rank_movement < 0
+													}"
+												>{{ rank_movement | mathAbs | notZero }}</span
+											></span>
+											{{ player.first_name }} {{ player.last_name }}
+											<span ng-if="night.subs[player.name_key]" class="sub" title="sub">{{ night.subs[player.name_key].sub }}</span>
+										</h3>
+										<p ng-if="player.machines" class="player-points">
+											<span ng-repeat="machine in player.machines" class="player-machine" data-abbv="{{ machine.abbv }}">
+												<span class="abbv">{{ machine.abbv }}</span>
+												<span class="machine-points">{{ machine.points }}</span>
+											</span>
+										</p>
+										<span class="score right" ng-class="{double: !night.future && !night.totals}">
+											<span ng-if="night.future">{{ player.score }}</span>
+											<span ng-if="!night.future">{{ player.night_score }}</span>
+											<span ng-if="!night.future">{{ player.score  + player.night_score }}</span>
+										</span>
+									</a>
+								</li>								
+							</ul>
+						</div>
+
+					</div>
+				</section>
+			</div>
+		</section>
+
+		<div class="notes">
+			<p ng-bind-html="night.note"></p>
+			<ul>
+				<li ng-repeat="sub in night.subs">{{sub.sub}} played on behalf of {{sub.player}}</li>
+			</ul>
+		</div>
+
+	</article>
+
+
+	<div id="nights-panel" class="panel" inline-modal>
+		<header>
+			<h1>Choose a Night</h1>
+			<a class="close" ng-click="close()">Close</a>
+		</header>
+		<article class="listview"><ul>
+			<li 
+				ng-repeat="night in nights | orderBy:'starts':true track by night.night_id" 
+				ng-class="{
+					'live': scoring.started && scoring.night.starts == night.starts
+				}"
+			>
+				<a ng-href="#/index/{{ night.starts }}">
+					<h2>{{ night.title }}</h2>
+					<p>{{ night.description }}</p>
+				</a>
+			</li>
+		</ul></article>
+	</div>
+
+</div>

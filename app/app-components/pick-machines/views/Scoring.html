@@ -1,0 +1,89 @@
+<div class="page" id="scoring">
+	<article>
+
+		<form class="scoring-form" autocomplete="off">
+			<section>
+				<header>
+					<h1>{{ machine.name }}</h1>
+				</header>
+
+				<div class="content">
+					<div class="picker">
+						<fieldset>
+							<label for="picker">Player</label>
+							<select id="picker" ng-model="picker" ng-options="player.data.full_name for player in group.players"></select>
+						</fieldset>
+						<fieldset>
+							<label for="picked">Picked</label>
+							<select id="picked" ng-model="machine" ng-options="machine.abbv + ': ' + machine.name for machine in active_machines | orderBy:'abbv'"></select>
+						</fieldset>
+					</div>
+					<p class="machine-notes" ng-show="machine.notes">{{ machine.notes }}</p>
+					<div class="players listview">
+						<ul>
+							<li ng-repeat="player in group.players" ng-class="{'dnp': player.dnp }">
+								<span class="number">{{ $index + 1}}</span>
+								<h2>{{ player.data.full_name }}</h2>
+								<fieldset>
+									<div class="btn-group" ng-class="{'disabled': machine.abbv == ''}">
+										<label 
+											ng-repeat="(place, points) in places"
+											ng-model="player.place" 
+											btn-radio="points"
+										>{{ place }}</label>
+									</div>
+								</fieldset>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</section>
+
+			<section>
+				<label class="content confirmed" ng-click="confirmed = !confirmed">
+					<span 
+						class="status-indicator" 
+						ng-class="{
+							'on': confirmed,
+							'off': !confirmed
+						}"
+					></span>
+					Confirmed
+				</label>
+			</section>
+
+			<div class="button-holder right">
+				<span ng-show="!confirmed" class="notes">you must confirm the scores before saving</span>
+				<button type="submit" class="inline" ng-disabled="!confirmed" ng-click="save()">{{ continue_scoring ? 'Next Machine' : 'Save and Exit' }}</button>
+			</div>
+
+		</form>
+
+	</article>
+
+	
+	<div id="scoring-machine-panel" class="panel" inline-modal>
+		<header>
+			<h1>Machine Order</h1>
+			<a class="close" ng-click="close()">Close</a>
+		</header>
+		<article class="listview">
+			<ul>
+				<li ng-repeat="machine in machines" ng-class="{'nope': machine.abbv==''}">
+					<a ui-sref="{{createState($index)}}">
+						<h2>{{ machine.name }}</h2>
+						<p>{{ machine.abbv }}</p>
+						<span 
+							class="status-indicator" 
+							ng-class="{
+								'on': group.players[0].machines[machine.abbv] != null,
+								'off': group.players[0].machines[machine.abbv] == null
+							}"
+						></span>
+					</a>
+				</li>
+			</ul>
+		</article>
+	</div>
+
+</div>

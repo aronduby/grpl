@@ -899,6 +899,48 @@ body.loading > footer{
 	border-bottom:1px solid #dadada;
 }
 
+#scoring .picker{
+	margin:-10px -15px 0 -15px;
+	padding:15px;
+	font-weight:bold;
+	text-transform:uppercase;
+	font-size:1.25em;
+	color:#666;
+	border-color: #d0d0d0;
+	background: #e3e3e3;
+	border-style: solid;
+	border-width: 1px 0;
+}
+	#scoring .picker fieldset + fieldset{
+		margin-top:1em;
+	}
+		#scoring .picker label{
+			display:block;
+			margin-bottom:.25em;
+		}
+			#scoring .picker label::after{ content:':'; }
+
+		#scoring .picker select{
+			font-size:1em;
+			padding:5px;
+			border-radius:5px;
+			display:block;
+			width:100%;
+		}
+
+	#scoring .picker + .machine-notes + .players{ margin-top:0; }
+
+	@media(min-width:700px){
+		#scoring .picker label,
+		#scoring .picker select,
+		#scoring .picker fieldset{
+			display:inline-block;
+			width:auto;
+			margin-right:5px;
+		}
+			#scoring .picker fieldset + fieldset{ margin-top:0; }
+	}
+
 #scoring .scoring-form,
 #tiebreaker .tiebreaker-form{
 	margin-bottom:40px;
@@ -958,6 +1000,16 @@ label.confirmed{
 	margin-right:5px;
 }
 
+/* machine not choosen yet */
+#scoring-machine-panel li.nope{}
+	#scoring-machine-panel li.nope h2{
+		font-size:1em;	
+		line-height: 2em;
+	}
+	
+	#scoring-machine-panel li.nope p{
+		display:none;
+	}
 
 /*
  *    PLAYERS PAGE

@@ -7,3 +7,4 @@
 *.mwb
 *.bak
 *.beforefix
+.node-inspectorrc

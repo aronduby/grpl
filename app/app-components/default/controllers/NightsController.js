@@ -45,6 +45,8 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 
 				$scope.live = Scoring.started && $scope.night.starts == Scoring.night.starts;
 				if($scope.live){
+					Scoring.night.note = $scope.night.note;
+					Scoring.night.subs = $scope.night.subs;
 					$scope.night = Scoring.night;
 				}
 
@@ -127,6 +129,8 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 		function scoringStarted(data){
 			$scope.live = $scope.night.starts == Scoring.night.starts;
 			if($scope.live){
+				Scoring.night.note = $scope.night.note;
+				Scoring.night.subs = $scope.night.subs;
 				$scope.night = Scoring.night;
 			}
 		};
