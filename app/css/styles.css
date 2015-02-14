@@ -44,15 +44,21 @@
 		#index .division{
 			width:98%;
 		}
-		#index .machine-holder,
-		#players .nights-holder{
+		#index .machine-holder{
 			width:36%;
 			margin-right:2%;
 		}
-		#index .player-holder,
-		#players .machine-holder{
+		#index .player-holder{
 			width:61%;
 		}
+		
+	#players .nights-holder{
+		width: 50%;
+		margin-right:2%;
+	}
+	#players .machine-holder{
+		width: 48%;
+	}
 
 	body > footer,
 	.page article .notes{
@@ -167,12 +173,12 @@
 	}
 	
 	#players .nights-holder{
-		width:25%; 
+		width: 37.5%; 
 		margin:0 1% 0 22%;
 	}
 	
 	#players .machine-holder{
-		width:50%; 
+		width: 37.5%; 
 	}
 	
 	#players .head-to-head-holder{
@@ -1107,6 +1113,55 @@ label.confirmed{
 	border-top:1px solid #dadada;
 	margin-top:5px;
 }
+
+@media(min-width:768px){
+	#players .nights-holder{
+		float:left;
+		margin-bottom:15px;
+	}
+		#players .head-to-head-holder{
+			clear:left;
+		}
+}
+
+
+/*--- Machine Picks ---*/
+.machine-picks .machine{
+	display:inline-block;
+	text-align:center;
+	margin-bottom:5px;
+	margin-right:10px;
+	width:80px;
+	overflow:hidden;
+}
+	.machine-picks .machine .thumb{ 
+		position:relative; 
+		display:inline-block;
+		line-height:0;
+		font-weight:bold;
+	}
+		.machine-picks .machine .thumb span{
+			position:absolute;
+			bottom:0;
+			color:#fff;
+			line-height:1em;
+			text-shadow:1px 1px 1px rgba(0,0,0,.5);
+		}
+			.machine-picks .machine .thumb .abbv{
+				left:2px;
+				padding:0;
+				text-align:left;		
+			}
+			.machine-picks .machine .thumb .count{
+				right:2px;
+				font-size:1.8em;
+			}
+
+	.machine-picks .machine h1{
+		white-space:nowrap;
+		overflow:hidden;
+		text-overflow:ellipsis;
+	}
 
 
 /*--- Machines Chart ---*/

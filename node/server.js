@@ -905,11 +905,12 @@ if (cluster.isMaster) {
 					data.place = player.place;
 					data.total_points = player.score;
 
-					Q.all([ player.getNightTotals(socket_season_id), player.getMachinePoints(socket_season_id), player.getNightPlace(socket_season_id) ])
-					.spread(function(nights, machines, places){
+					Q.all([ player.getNightTotals(socket_season_id), player.getMachinePoints(socket_season_id), player.getNightPlace(socket_season_id), player.getMachinePicks(socket_season_id) ])
+					.spread(function(nights, machines, places, machine_picks){
 						data.nights = nights;
 						data.machines = machines;
 						data.places = places;
+						data.machine_picks = machine_picks;
 
 						cb(null, data);
 
