@@ -36,7 +36,11 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 			navApi.setTitle($scope.night.title, $scope.night.description);
 
 			// get the previous night's machines
-			var prev_night = LeagueNights.getPreviousNight($scope.night.starts);
+			if($scope.night.starts == 'totals'){
+				var prev_night = LeagueNights.getMostRecentNight();
+			} else {
+				var prev_night = LeagueNights.getPreviousNight($scope.night.starts);	
+			}			
 			if(prev_night !== undefined){
 				var prev_mac_promise = LeagueNights.getFullNight(prev_night.starts);
 				$scope.previous_machines_tracker.addPromise(prev_mac_promise);
@@ -57,8 +61,6 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 							};
 						})
 						.value();
-
-					console.log($scope.previous_machines);
 				});
 			} else {
 				$scope.previous_machines = false;
