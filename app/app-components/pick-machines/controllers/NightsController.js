@@ -1,8 +1,8 @@
 define(['js/app', 'app-components/controllers/RandomizerController'], function(app, RandomizerController){
 
-	var injectParams = ['$stateParams', '$scope', 'Auth', 'navApi', 'api', 'promiseTracker', 'dialog', 'loadingOverlayApi', 'flare', 'LeagueNights', '$filter', '$modal', 'Machines', 'Scoring', 'socket'];
+	var injectParams = ['$stateParams', '$scope', 'Auth', 'navApi', 'api', 'promiseTracker', 'dialog', 'loadingOverlayApi', 'flare', 'LeagueNights', '$filter', '$modal', 'Machines', 'Scoring', 'Players', 'socket'];
 
-	var NightsController = function($stateParams, $scope, Auth, navApi, api, promiseTracker, dialog, loadingOverlayApi, flare, LeagueNights, $filter, $modal, Machines, Scoring, socket){
+	var NightsController = function($stateParams, $scope, Auth, navApi, api, promiseTracker, dialog, loadingOverlayApi, flare, LeagueNights, $filter, $modal, Machines, Scoring, Players, socket){
 		loadingOverlayApi.show();
 		navApi.defaultTitle();
 		navApi.setCenterPanelKey('nights-panel');
@@ -13,6 +13,10 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 		$scope.night = {};
 		$scope.live = false;
 		$scope.scoring = Scoring;
+
+		$scope.players = Players.players;
+		$scope.previous_machines;
+		$scope.previous_machines_tracker = promiseTracker();
 
 		var all_nights_promise, this_nights_promise;
 
@@ -30,6 +34,36 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 				$scope.night = LeagueNights.getTotals();
 
 			navApi.setTitle($scope.night.title, $scope.night.description);
+
+			// get the previous night's machines
+			var prev_night = LeagueNights.getPreviousNight($scope.night.starts);
+			if(prev_night !== undefined){
+				var prev_mac_promise = LeagueNights.getFullNight(prev_night.starts);
+				$scope.previous_machines_tracker.addPromise(prev_mac_promise);
+				prev_mac_promise.then(function(prev){
+					var players = _.chain(prev.divisions)
+						.map(function(obj){ return obj.player_list.players })
+						.flatten()
+						.value();
+
+					$scope.previous_machines = _.chain(prev.divisions)
+						.map(function(obj){ return obj.machines })
+						.flatten()
+						.groupBy('picked_by')
+						.each(function(val, key, obj){ 
+							obj[key] = {
+								full_name: _.find(players, {'name_key': key}).full_name,
+								picks: val
+							};
+						})
+						.value();
+
+					console.log($scope.previous_machines);
+				});
+			} else {
+				$scope.previous_machines = false;
+			}
+
 		})
 		.finally(function(){
 
@@ -69,6 +103,15 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 						})
 					});
 				}
+
+				// create an obj of name_key => [abbv, abbv] for night's machine picks
+				$scope.machines_by_picked = _.chain(night.divisions)
+					.map(function(obj){ return obj.machines })
+					.flatten()
+					.groupBy('picked_by')
+					.each(function(val, key, obj){ obj[key] = _.pluck(val, 'abbv') })
+					.value();
+
 			})
 			.catch(function(err){
 				dialog(err);

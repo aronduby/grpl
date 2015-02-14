@@ -543,6 +543,26 @@ body.loading > footer{
 /*
  * --- INDEX : PLAYER HOLDER ---
 */
+.prev-machine-picks{}
+	.prev-machine-picks li{
+		color:#808080;
+		display:flex;
+		width:100%;
+		box-sizing:border-box;
+		padding-right:15px;
+	}
+		.prev-machine-picks li h4{ 
+			flex:1; 
+			line-height:inherit;
+		}
+		.prev-machine-picks li abbr{ 
+			color:#999; 
+			width:40px;
+			text-align:right;
+		}
+		.prev-machine-picks li abbr + abbr{ margin-left:15px; }
+
+
 .player-holder .listview ul:before{
 	box-sizing:border-box;
 	content:'group #'attr(data-group);
@@ -595,6 +615,10 @@ body.loading > footer{
 	}
 	.player-holder li p.player-points .machine-points:empty::after{
 		content:'-';
+	}
+
+	.player-holder li p.player-points .picked span{
+		color: darkseagreen;
 	}
 
 /* user logged in highlight in player list */

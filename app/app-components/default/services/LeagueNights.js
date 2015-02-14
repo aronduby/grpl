@@ -54,7 +54,7 @@ define(['js/app'], function(app){
 				if(night.starts === 'totals')
 					return false;
 				return night.moment.isBefore(today);
-			})
+			});
 		};
 
 		this.getNextOrMostRecentNight = function getNextOrMostRecentNight(include_today){
@@ -68,6 +68,17 @@ define(['js/app'], function(app){
 		this.getTotals = function getTotals(){
 			return this.getNight('totals');
 		};
+
+		this.getPreviousNight = function(starts){
+			var before = moment(starts);
+
+			return _.find(this.nights, function(night){
+				if(night.starts === 'totals')
+					return false;
+				return night.moment.isBefore(before);
+			});
+
+		}
 
 		/*
 		 *	This does the full query for all the data for a single night

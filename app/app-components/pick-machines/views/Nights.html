@@ -22,19 +22,20 @@
 
 				<section class="machine-holder" collapsible="index.division.{{division.division_id}}.machines">
 					<header>
-						<h1>Machines</h1>
+						<h1>Last Night's Picks</h1>
 					</header>
 					<div class="content">
-						<div class="listview">
-							<h2 ng-if="division.machines_note">{{ division.machines_note }}</h2>
-							<ul ng-if="division.machines.length">
-								<li ng-repeat="machine in division.machines">
-									<img ng-src="{{machine.image}}" />
-									<h3>{{ machine.name }}</h3>
-									<p>{{ machine.abbv }}</p>
+						<img src="layout_imgs/grey-block-loading-light.gif" alt="loading" ng-if="previous_machines_tracker.active()" />
+
+						<div class="listview prev-machine-picks" ng-if="!previous_machines_tracker.active()">
+							<ul ng-if="previous_machines !== false">
+								<li ng-repeat="(name_key, player) in previous_machines">
+									<h4>{{ player.full_name }}</h4>
+									<abbr ng-repeat="machine in player.picks" title="{{machine.name}}">{{ machine.abbv }}</abbr>
 								</li>
 							</ul>
-							<p ng-if="!division.machines.length && !division.machines_note">no machines selected for this week</p>
+
+							<p ng-if="previous_machines === false">no previous night</p>
 						</div>
 					</div>
 				</section>
@@ -61,7 +62,8 @@
 									data-name-key="{{ player.name_key }}"
 									data-pre-total="{{ }}"
 									data-scoring-string="{{ player.scoring_string }}"
-									ng-init = "rank_movement = (player.previous_rank != null ? player.previous_rank - player.rank : 0)"
+									ng-init = "rank_movement = (player.previous_rank != null ? player.previous_rank - player.rank : 0); 
+												picked = machines_by_picked[player.name_key]"
 								>
 									<a ng-href="#/players/{{ player.name_key }}" title="view player info">
 										<h3>
@@ -79,7 +81,7 @@
 											<span ng-if="night.subs[player.name_key]" class="sub" title="sub">{{ night.subs[player.name_key].sub }}</span>
 										</h3>
 										<p ng-if="player.machines" class="player-points">
-											<span ng-repeat="machine in player.machines" class="player-machine" data-abbv="{{ machine.abbv }}">
+											<span ng-repeat="machine in player.machines" class="player-machine" data-abbv="{{ machine.abbv }}" ng-class="{'picked': picked.indexOf(machine.abbv) >= 0}">
 												<span class="abbv">{{ machine.abbv }}</span>
 												<span class="machine-points">{{ machine.points }}</span>
 											</span>
