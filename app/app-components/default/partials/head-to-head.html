@@ -15,7 +15,7 @@
 			<div class="content">
 				<table>
 					<tr 
-						ng-repeat="game in opponent.games | orderBy:'starts_ts'" 
+						ng-repeat="game in opponent.games | orderBy:'abbv'" 
 						ng-class="{
 							'won': game.won,
 							'lost': !game.won

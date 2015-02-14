@@ -22,6 +22,8 @@ define(['js/app'], function(app){
 		$scope.chart_show_places = true;
 		$scope.chart_control = {};
 
+		$scope.machine_bar_multiplier = 1;
+
 		$scope.compare_to = null;
 		$scope.compare_machines = null;
 
@@ -34,47 +36,53 @@ define(['js/app'], function(app){
 
 
 		all_loaded = Players.loading
-			.then(function(players){
-				$scope.players = Players.players;
-			});
+		.then(function(players){
+			$scope.players = Players.players;
+		});
 
 		player_loaded = Players.getFullForSeason($scope.name_key)
-			.then(function(player_data){
-				$scope.player_data = player_data;
-				$scope.player = player_data.player;
-				$scope.machine_picks = _.groupBy(player_data.machine_picks, 'abbv');
-				navApi.setTitle($scope.player.first_name+' '+$scope.player.last_name);
+		.then(function(player_data){
+			$scope.player_data = player_data;
+			$scope.player = player_data.player;
+			$scope.machine_bar_multiplier = calcMachineBarMultiplier(player_data.machines);
+			$scope.machine_picks = _.groupBy(player_data.machine_picks, 'abbv');
 
-				// create our chart data
-				var chart_data = {
-						points: [],
-						sub: [],
-						places: []
-					},
-					j = 1;
+			navApi.setTitle($scope.player.first_name+' '+$scope.player.last_name, 'View a Different Player');
 
-				player_data.nights.reverse();
+			// create our chart data
+			var chart_data = {
+					points: [],
+					sub: [],
+					places: []
+				},
+				j = 1;
 
-				_.each(player_data.nights, function(night, i){
-					chart_data.points.push([j, night.points]);
-					
-					// figure out the place we ended up in at the end of the night
-					var end_place = 0;
-					if(player_data.nights[j] === undefined){
-						end_place = player_data.places.totals;
-					} else {
-						end_place = player_data.places[player_data.nights[j].starts];
-					}
-					chart_data.places.push([j, end_place]);
+			player_data.nights.reverse();
+
+			_.each(player_data.nights, function(night, i){
+				chart_data.points.push([j, night.points]);
+				
+				// figure out the place we ended up in at the end of the night
+				var end_place = 0;
+				if(player_data.nights[j] === undefined){
+					end_place = player_data.places.totals;
+				} else {
+					end_place = player_data.places[player_data.nights[j].starts];
+				}
+				chart_data.places.push([j, end_place]);
 
 
-					// if there's a sub for this week treat it as a part of the second series
-					if(night.sub != null)
-						chart_data.sub.push([j, night.points]);
-					j++;
-				});
-				$scope.chart_data = [chart_data.places, chart_data.points, chart_data.sub];
+				// if there's a sub for this week treat it as a part of the second series
+				if(night.sub != null)
+					chart_data.sub.push([j, night.points]);
+				j++;
 			});
+			$scope.chart_data = [chart_data.places, chart_data.points, chart_data.sub];
+		});
+
+		function calcMachineBarMultiplier(machines){
+			return _.chain(machines).groupBy('abbv').max(function(m){ return m.length; }).value().length;
+		};
 
 
 		// machines compare to
@@ -83,14 +91,26 @@ define(['js/app'], function(app){
 				loadingOverlayApi.show();
 				Players.getFullForSeason(player.name_key)
 					.then(function(data){
-						$scope.compare_machines = $filter('groupBy')(data.machines, 'abbv');
-						console.log($scope.compare_machines);
+
+						// filter out machines which the scoped player hasn't played
+						var compare_abbvs = _.pluck($scope.player_data.machines, 'abbv');
+						$scope.compare_machines = _.chain(data.machines)
+							.filter(function(machine){
+								return _.contains(compare_abbvs, machine.abbv);
+							})
+							.tap(function(macs){
+								$scope.machine_bar_multiplier = Math.max(calcMachineBarMultiplier(macs), calcMachineBarMultiplier($scope.player_data.machines));		
+							})
+							.groupBy('abbv')
+							.value();
+
 					})
 					.finally(function(){
 						loadingOverlayApi.hide();
 					})
 			} else {
 				$scope.compare_machines = null;
+				$scope.machine_bar_multiplier = calcMachineBarMultiplier($scope.player_data.machines);
 			}
 		});
 
@@ -108,7 +128,7 @@ define(['js/app'], function(app){
 			if(closed === false){
 				// $scope.chart_control.redraw();
 			}			
-		}
+		};
 		
 
 

@@ -1234,9 +1234,18 @@ label.confirmed{
 			padding:4px 0 2px 0;
 		}
 		#players-machines-chart.comparison tbody td div.bar{
+			position:relative;
 			padding:5px 0;
 			margin:0 0 2px 0;
 		}
+			#players-machines-chart.comparison tbody td div.bar + .bar::before{
+				content:'';
+				position:absolute;
+				top:0; left:0;
+				height:100%;
+				border-left:1px solid rgba(0,0,0,.08);
+			}
+
 		#players-machines-chart tbody td div.bar:nth-child(2),
 		.head-to-head-holder table td.scores div.bar:nth-child(2){
 			background:#8db27b;
@@ -1256,7 +1265,9 @@ label.confirmed{
 	}
 	#players-machines-chart.comparison td div.comparison div.bar{
 		background:#8db27b;
-	}
+	
+		/* border-right: 1px solid #7c9b6c; */
+}
 
 /* sub played game */
 #players-machines-chart tbody td div.bar.sub{
