@@ -11,6 +11,14 @@ define(['js/app'], function(app){
 		$scope.divisions = [];
 		$scope.season = null;
 
+		$scope.players = [
+			{idx:0, title:'Player 1'},
+			{idx:1, title:'Player 2'},
+			{idx:2, title:'Player 3'},
+			{idx:3, title:'Player 4'}
+		];
+		$scope.scoring_order = [[],[],[],[],[]];
+
 		if($stateParams.season_id === 'new'){
 			// setup a new user
 			$scope.season = {
@@ -30,6 +38,9 @@ define(['js/app'], function(app){
 			var id = parseInt($stateParams.season_id, 10);
 			$scope.season = Seasons.getBySeasonId(id);
 			$scope.season.current = ($scope.season.season_id == Seasons.current_id);
+			if($scope.season.scoring_order){
+				$scope.scoring_order = $scope.season.scoring_order;
+			}
 
 			api.get('division.getForSeasonNoPlayers', id)
 			.then(function(data){
@@ -72,6 +83,7 @@ define(['js/app'], function(app){
 				});
 
 				data.divisions = $scope.divisions;
+				data.scoring_order = $scope.scoring_order;
 
 				api.post('season.update', data)
 				.then(function(d){

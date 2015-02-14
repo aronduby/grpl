@@ -1,8 +1,8 @@
 define(['js/app'], function(app){
 
-	var injectParams = ['$scope', '$filter', '$state', '$stateParams', 'loadingOverlayApi', 'dialog', 'navApi', 'Auth', 'Scoring', 'LeagueNights', 'Players'];
+	var injectParams = ['$scope', '$filter', '$state', '$stateParams', '$localStorage' 'loadingOverlayApi', 'dialog', 'navApi', 'Auth', 'Seasons', 'Scoring', 'LeagueNights', 'Players'];
 
-	var ScoringController = function($scope, $filter, $state, $stateParams, loadingOverlayApi, dialog, navApi, Auth, Scoring, LeagueNights, Players){
+	var ScoringController = function($scope, $filter, $state, $stateParams, $localStorage loadingOverlayApi, dialog, navApi, Auth, Seasons, Scoring, LeagueNights, Players){
 		loadingOverlayApi.show();
 		navApi.defaultTitle();
 		navApi.setCenterPanelKey('scoring-machine-panel');		
@@ -41,7 +41,8 @@ define(['js/app'], function(app){
 				next_state = {
 					state: '',
 					params: {}
-				};
+				},
+				season = Seasons.getBySeasonId(Seasons.current_id);
 
 			// default places
 			$scope.places = {
@@ -54,6 +55,10 @@ define(['js/app'], function(app){
 
 			$scope.group = null;
 			$scope.machine = null;
+
+			$scope.storage = $localStorage.$default({
+				scoring_player_order: 'scoring_order'
+			});
 
 			// figure out what user we're using
 			if($stateParams.name_key !== undefined && Auth.authorize('admin')){
@@ -109,20 +114,15 @@ define(['js/app'], function(app){
 				}
 
 				// set the place obj on the player
-				_.each($scope.group.players, function(player){
+				_.each($scope.group.players, function(player, i){
 					player.place = _.find($scope.places, {'points': player.score});
+					player.group_order = i;
 				});
 
 				// set the proper order of the players
-				var tmp = group.players.slice(0).reverse(),
-					slice_index = offset > tmp.length ? offset - tmp.length : offset;
-				$scope.group.players = tmp.slice(slice_index).concat(tmp.slice(0,slice_index));
-
-				// figure out the next machine
-				var macs = group.machines.slice(0),
-					slice_index = offset > macs.length ? offset - macs.length : offset;
-				macs = macs.slice(slice_index).concat(macs.slice(0,slice_index));
-				macs.shift();
+				_.each(season.scoring_order[offset], function(pidx, i){
+					$scope.group.players[pidx].scoring_order = i;
+				});
 
 				$scope.next_machine = _.find(macs, function(mac){
 					return group.players[0].machines[mac.abbv] == undefined;

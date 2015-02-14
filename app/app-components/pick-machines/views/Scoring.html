@@ -4,6 +4,10 @@
 		<form class="scoring-form" autocomplete="off">
 			<section>
 				<header>
+					<div class="btn-group">
+						<label ng-model="storage.scoring_player_order" btn-radio="'scoring_order'">Play Order</label>
+						<label ng-model="storage.scoring_player_order" btn-radio="'group_order'">Ranking</label>
+					</div>
 					<h1>{{ machine.name }}</h1>
 				</header>
 
@@ -21,8 +25,8 @@
 					<p class="machine-notes" ng-show="machine.notes">{{ machine.notes }}</p>
 					<div class="players listview">
 						<ul>
-							<li ng-repeat="player in group.players" ng-class="{'dnp': player.dnp }">
-								<span class="number">{{ $index + 1}}</span>
+							<li ng-repeat="player in group.players | orderBy:storage.scoring_player_order" ng-class="{'dnp': player.dnp }">
+								<span class="number">{{ player.scoring_order + 1 }}</span>
 								<h2>{{ player.data.full_name }}</h2>
 								<fieldset>
 									<div class="btn-group" ng-class="{'disabled': machine.abbv == ''}">

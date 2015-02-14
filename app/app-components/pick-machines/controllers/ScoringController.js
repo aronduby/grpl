@@ -1,8 +1,8 @@
 define(['js/app'], function(app){
 
-	var injectParams = ['$scope', '$filter', '$state', '$stateParams', 'loadingOverlayApi', 'dialog', 'navApi', 'Auth', 'Scoring', 'LeagueNights', 'Players', 'Machines'];
+	var injectParams = ['$scope', '$filter', '$state', '$stateParams', '$localStorage', 'loadingOverlayApi', 'dialog', 'navApi', 'Auth', 'Seasons', 'Scoring', 'LeagueNights', 'Players', 'Machines'];
 
-	var ScoringController = function($scope, $filter, $state, $stateParams, loadingOverlayApi, dialog, navApi, Auth, Scoring, LeagueNights, Players, Machines){
+	var ScoringController = function($scope, $filter, $state, $stateParams, $localStorage, loadingOverlayApi, dialog, navApi, Auth, Seasons, Scoring, LeagueNights, Players, Machines){
 		loadingOverlayApi.show();
 		navApi.defaultTitle();
 		navApi.setCenterPanelKey('scoring-machine-panel');		
@@ -41,7 +41,8 @@ define(['js/app'], function(app){
 				next_state = {
 					state: '',
 					params: {}
-				};
+				},
+				season = Seasons.getBySeasonId(Seasons.current_id);
 
 			// default places
 			$scope.places = {
@@ -55,7 +56,11 @@ define(['js/app'], function(app){
 			$scope.picker = null;
 			$scope.group = null;
 			$scope.machine = null;
-			$scope.active_machines = Machines.active;			
+			$scope.active_machines = Machines.active;
+
+			$scope.storage = $localStorage.$default({
+				scoring_player_order: 'scoring_order'
+			});
 
 			// figure out what user we're using
 			if($stateParams.name_key !== undefined && Auth.authorize('admin')){
@@ -135,14 +140,15 @@ define(['js/app'], function(app){
 				}
 
 				// set the place obj on the player
-				_.each($scope.group.players, function(player){
+				_.each($scope.group.players, function(player, i){
 					player.place = _.find($scope.places, {'points': player.score});
+					player.group_order = i;
 				});
 
 				// set the proper order of the players
-				var tmp = group.players.slice(0).reverse(),
-					slice_index = offset > tmp.length ? offset - tmp.length : offset;
-				$scope.group.players = tmp.slice(slice_index).concat(tmp.slice(0,slice_index));
+				_.each(season.scoring_order[offset], function(pidx, i){
+					$scope.group.players[pidx].scoring_order = i;
+				});
 
 			})
 			.catch(function(err){

@@ -44,6 +44,30 @@
 							</div>
 							<button class="blue add-division" ng-click="addDivision()">add division</button>
 						</li>
+						<li class="player-order-holder subsection">
+							<h2>Player Order</h2><p>Setup the order people play</p>
+							<table id="season-player-order" class="subsection">
+								<thead>
+									<tr><th>Machine</th><th>Order</th></tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="machine_offset in [0,1,2,3,4]">
+										<th>{{machine_offset + 1}}.</th>
+										<td>
+											<div class="fieldset">
+												<div ng-repeat="player_offset in [0,1,2,3]">
+													<select 
+														ng-options="p.idx as p.title for p in players" 
+														ng-model="scoring_order[machine_offset][player_offset]" 
+														required
+													><option value=""></option></select>
+												</div>
+											</div class="fieldset">
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</li>
 					</ul></div>
 				</div>
 			</section>

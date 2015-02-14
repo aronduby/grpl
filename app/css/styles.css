@@ -930,6 +930,27 @@ body.loading > footer{
 /* hide link arrows in machine panel to make room for indicator */
 #scoring-machine-panel .listview a:after{ display:none; }
 
+#scoring header .btn-group{
+	float:right;
+    margin:-5px -10px 0 0;
+    background:linear-gradient(to top, #8A8A8A 0%, #4F4F4F 100%) repeat scroll 0 0 rgba(0, 0, 0, 0);
+    border-radius:5px;
+	display: inline-flex;
+}
+	#scoring header .btn-group label{
+		flex: 0 1 auto;
+		padding:10px;
+		font-size:16px;
+		font-weight:bold;
+		text-shadow:none;
+		white-space:nowrap;
+    	border-color:#616161;
+		background:none;
+	}
+	#scoring header .btn-group label.active{
+		background:linear-gradient(to bottom, #8A8A8A 0%, #4F4F4F 100%) repeat scroll 0 0 rgba(0, 0, 0, 0);
+	}
+
 #scoring p.machine-notes{
 	font-size:14px;
 	color:#6f6f6f;
@@ -1498,7 +1519,9 @@ li.subsection fieldset{
 	#sublist fieldset input,
 	#divisionlist fieldset input,
 	li.subsection fieldset input,
-	li.subsection fieldset select{
+	li.subsection .fieldset input,
+	li.subsection fieldset select,
+	li.subsection .fieldset select{
 		box-shadow:0 0 2px rgba(0,0,0,.6);
 	}
 
@@ -1523,13 +1546,7 @@ li.subsection fieldset{
 .page li.subsection header{
 	padding:8px 12px;
 	border-bottom:1px solid #b8b8b8;
-	background: -moz-linear-gradient(top,  rgba(163,163,163,0.3) 0%, rgba(104,104,104,0.3) 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(163,163,163,0.3)), color-stop(100%,rgba(104,104,104,0.3))); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top,  rgba(163,163,163,0.3) 0%,rgba(104,104,104,0.3) 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top,  rgba(163,163,163,0.3) 0%,rgba(104,104,104,0.3) 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  rgba(163,163,163,0.3) 0%,rgba(104,104,104,0.3) 100%); /* IE10+ */
 	background: linear-gradient(to bottom,  rgba(163,163,163,0.3) 0%,rgba(104,104,104,0.3) 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4da3a3a3', endColorstr='#4d686868',GradientType=0 ); /* IE6-9 */
 }
 	#divisionlist header h3,
 	li.subsection header h3{
@@ -1603,7 +1620,36 @@ li.subsection fieldset{
 		width:auto;
 		vertical-align:middle;
 	}
-		
+
+
+/*
+ *	Season Admin
+*/
+#season-player-order{}
+
+	#season-player-order thead th:first-child,
+	#season-player-order tbody th{
+		width:70px;
+		text-align:center;
+	}
+		#season-player-order tbody th{
+			font-size:1.5em;
+			color:#808080;
+		}
+
+	#season-player-order .fieldset{ margin:0; }
+	#season-player-order .fieldset select{ margin:0 0 5px 0; }
+
+	@media(min-width:768px){
+		#season-player-order .fieldset{
+			display:flex;
+		}
+		#season-player-order .fieldset div{ flex:1; }
+		#season-player-order .fieldset div + div{ margin-left:10px; }
+	}
+
+
+
 
 /*
  *  Radomizer
