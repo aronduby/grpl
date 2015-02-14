@@ -61,7 +61,7 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 					.filter(function(arr){ return arr.length > 1; })
 					.value();
 
-				if(ties.length > 0 && (ties.length != 1 && ties[0].length != players.length)){
+				if(ties.length > 0 && !(ties.length == 1 && ties[0].length == players.length)){
 					_.each(ties, function(group, tie_index){
 						_.each(group, function(player){
 							player.tied = true;
