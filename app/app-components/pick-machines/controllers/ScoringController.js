@@ -74,10 +74,11 @@ define(['js/app'], function(app){
 				$scope.machines = group.machines;
 				$scope.continue_scoring = group.players[0].machines == null || group.players[0].machines.length < 4; // one less since it won't have the current machine
 
-				// group will just include the abbv, set it to the full thing
-				_.each($scope.machines, function(abbv, idx){
-					$scope.machines[idx] = Machines.getMachine(abbv);
-				});			
+				// group will just include the abbv and picked by, set it to the full thing
+				_.each($scope.machines, function(mac, idx){
+					$scope.machines[idx] = Machines.getMachine(mac.abbv);
+					$scope.machines[idx].picked_by = mac.picked_by;
+				});
 
 				while($scope.machines.length < 5){
 					$scope.machines.push({
@@ -89,8 +90,12 @@ define(['js/app'], function(app){
 				$scope.machine = $scope.machines[offset];
 
 				// figure out who should be picking
-				var picker_idx = offset % $scope.group.players.length;
-				$scope.picker = $scope.group.players[picker_idx];
+				if($scope.machine.picked_by){
+					$scope.picker = _.find($scope.group.players, {'name_key': $scope.machine.picked_by});
+				} else {
+					var picker_idx = offset % $scope.group.players.length;
+					$scope.picker = $scope.group.players[picker_idx];	
+				}
 
 				navApi.setTitle($scope.machine.name, $scope.machine.abbv);
 
