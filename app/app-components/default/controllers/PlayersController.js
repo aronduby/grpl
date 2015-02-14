@@ -103,7 +103,7 @@ define(['js/app'], function(app){
 
 		$scope.nightsCollapsed = function(closed){
 			if(closed === false){
-				$scope.chart_control.redraw();
+				// $scope.chart_control.redraw();
 			}			
 		}
 		
@@ -143,7 +143,8 @@ define(['js/app'], function(app){
 							'starts': starts_str,
 							'player': player.machines[abbv][starts],
 							'opponent': score,
-							'won': player.machines[abbv][starts] > score
+							'won': player.machines[abbv][starts] > score,
+							'starts_ts': new Date(starts).getTime()
 						}
 						o.games.push(game);
 					});
