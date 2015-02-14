@@ -1128,8 +1128,9 @@ label.confirmed{
 /*--- Machine Picks ---*/
 .machine-picks .machine{
 	display:inline-block;
+	vertical-align:top;
 	text-align:center;
-	margin-bottom:5px;
+	margin-bottom:10px;
 	margin-right:10px;
 	width:80px;
 	overflow:hidden;
@@ -1163,6 +1164,14 @@ label.confirmed{
 		text-overflow:ellipsis;
 	}
 
+
+	.machine-picks .machine time{
+		color: #B0B6B8;
+		font-size: .95em;
+		letter-spacing: -.04em;
+		line-height: 1em;
+		display:block;
+	}
 
 /*--- Machines Chart ---*/
 #players-machines-chart,

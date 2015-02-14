@@ -49,6 +49,7 @@
 						<span class="count" ng-if="mac.length > 1">x{{mac.length}}</span>
 					</div>
 					<h1>{{mac[0].name}}</h1>
+					<time ng-repeat="m in mac">{{ m.picked_on.format('M/D') }}</time>
 				</div>
 			</div>
 		</section>

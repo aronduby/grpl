@@ -45,7 +45,7 @@ define(['js/app'], function(app){
 			$scope.player_data = player_data;
 			$scope.player = player_data.player;
 			$scope.machine_bar_multiplier = calcMachineBarMultiplier(player_data.machines);
-			$scope.machine_picks = _.groupBy(player_data.machine_picks, 'abbv');
+			$scope.machine_picks = _.chain(player_data.machine_picks).each(function(obj){ obj.picked_on = moment(obj.picked_on) }).groupBy('abbv').value();
 
 			navApi.setTitle($scope.player.first_name+' '+$scope.player.last_name, 'View a Different Player');
 
