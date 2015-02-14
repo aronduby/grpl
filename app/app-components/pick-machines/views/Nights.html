@@ -31,7 +31,7 @@
 							<ul ng-if="previous_machines !== false">
 								<li ng-repeat="(name_key, player) in previous_machines">
 									<h4>{{ player.full_name }}</h4>
-									<abbr ng-repeat="machine in player.picks" title="{{machine.name}}">{{ machine.abbv }}</abbr>
+									<abbr ng-repeat="machine in player.picks" title="{{machine.name}}" style="background-image: url({{machine.image}});">{{ machine.abbv }}</abbr>
 								</li>
 							</ul>
 
