@@ -126,7 +126,7 @@ define(['js/app'], function(app){
 
 			navApi.setTitle($scope.player.first_name+' '+$scope.player.last_name, 'View a Different Player');
 
-			player_data.nights.reverse();			
+			player_data.nights.reverse();
 		});
 
 
