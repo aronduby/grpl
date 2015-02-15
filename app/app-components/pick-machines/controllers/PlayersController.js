@@ -1,8 +1,8 @@
 define(['js/app'], function(app){
 
-	var injectParams = ['$stateParams', '$scope', '$q', 'Auth', 'navApi', 'api', 'promiseTracker', 'loadingOverlayApi', 'flare', 'LeagueNights', '$filter', 'Machines', 'Players'];
+	var injectParams = ['$stateParams', '$scope', '$q', 'Auth', 'navApi', 'api', 'promiseTracker', 'loadingOverlayApi', 'flare', 'LeagueNights', '$filter', 'Machines', 'Players', 'googleChartApiPromise'];
 
-	var PlayersController = function($stateParams, $scope, $q, Auth, navApi, api, promiseTracker, loadingOverlayApi, flare, LeagueNights, $filter, Machines, Players){
+	var PlayersController = function($stateParams, $scope, $q, Auth, navApi, api, promiseTracker, loadingOverlayApi, flare, LeagueNights, $filter, Machines, Players, googleChartApiPromise){
 		loadingOverlayApi.show();
 		navApi.defaultTitle();
 		navApi.setCenterPanelKey('players-panel');
@@ -16,11 +16,88 @@ define(['js/app'], function(app){
 		$scope.player = {};
 		$scope.player_data = {};
 		
-		$scope.chart_data = {};
-		$scope.chart_options = {};
-		$scope.chart_show_points = true;
-		$scope.chart_show_places = true;
-		$scope.chart_control = {};
+		$scope.chart = {
+			type: 'LineChart',
+			options: {
+				title: 'Points/Place per League Night',
+				titleTextStyle: {
+					fontName: 'Roboto Condensed',
+					fontSize: 16,
+					color: '#8b8b8b',
+					bold: true
+				},
+				height: 300,
+				titlePosition: 'none',
+				fontName: 'Roboto Condensed',
+				chartArea: {
+					top: '5%',
+					left: '5%',
+					width: '90%',
+					height: '90%'
+				},
+				axisTitlesPosition: 'none',
+				annotations: {
+					textStyle: {
+						color: '#8b8b8b'   
+					}
+				},
+				backgroundColor: 'transparent',
+				lineWidth: 4,
+				pointSize: 8,
+				legend: {
+					position: 'none'  
+				},
+				// Gives each series an axis that matches the vAxes number below.
+				series: {
+					0: { 
+						targetAxisIndex: 0,
+						color: '#699db1'
+					},
+					1: { 
+						targetAxisIndex: 1,
+						color: '#d3c9a9'
+					},
+					2: { 
+						targetAxisIndex: 0,
+						color: '#8db27b'
+					}
+				},
+				vAxes: {
+					// Adds titles to each axis
+					0: {
+						title: 'Points',
+						viewWindow: {
+							min: -1,
+							max: 36
+						},
+						ticks: [5, 15, 25, 35]
+					},
+					1: {
+						title: 'Place', 
+						direction: -1,
+						viewWindow: {
+							min: 0,
+							max: 53
+						},
+						gridlines: {
+							color: 'transparent'  
+						},
+						ticks: [1, 15, 30, 45]
+					}
+				},
+				hAxis: {
+					gridlines: {
+						color: 'transparent'
+					},
+					viewWindowMode: 'pretty',
+					baselineColor: 'transparent',
+					textPosition: 'none'
+				},
+				vAxis: {
+					baselineColor: 'transparent'
+				}
+			}
+		};
 
 		$scope.machine_bar_multiplier = 1;
 
@@ -49,36 +126,39 @@ define(['js/app'], function(app){
 
 			navApi.setTitle($scope.player.first_name+' '+$scope.player.last_name, 'View a Different Player');
 
-			// create our chart data
-			var chart_data = {
-					points: [],
-					sub: [],
-					places: []
-				},
-				j = 1;
+			player_data.nights.reverse();			
+		});
 
-			player_data.nights.reverse();
 
-			_.each(player_data.nights, function(night, i){
-				chart_data.points.push([j, night.points]);
-				
+		// google loaded set everything up
+		$q.all([googleChartApiPromise, player_loaded])
+		.then(function(){
+			$scope.chart.data = new google.visualization.DataTable();
+			$scope.chart.data.addColumn('date', 'Night');
+			$scope.chart.data.addColumn('number', "Points");
+			$scope.chart.data.addColumn({type:'string', role:'annotation'});
+			$scope.chart.data.addColumn('number', "Place");
+			$scope.chart.data.addColumn({type:'string', role:'annotation'});
+			$scope.chart.data.addColumn('number', 'Sub Points');
+
+			_.each($scope.player_data.nights, function(night, i){
 				// figure out the place we ended up in at the end of the night
 				var end_place = 0;
-				if(player_data.nights[j] === undefined){
-					end_place = player_data.places.totals;
+				if($scope.player_data.nights[i + 1] === undefined){
+					end_place = $scope.player_data.places.totals;
 				} else {
-					end_place = player_data.places[player_data.nights[j].starts];
+					end_place = $scope.player_data.places[$scope.player_data.nights[i + 1].starts];
 				}
-				chart_data.places.push([j, end_place]);
 
+				var sub = null;
+				if(night.sub != null){
+					sub = night.points;
+				}
 
-				// if there's a sub for this week treat it as a part of the second series
-				if(night.sub != null)
-					chart_data.sub.push([j, night.points]);
-				j++;
+				$scope.chart.data.addRow([new Date(night.starts), night.points, ''+night.points, end_place, ''+end_place, sub]);
 			});
-			$scope.chart_data = [chart_data.places, chart_data.points, chart_data.sub];
 		});
+
 
 		function calcMachineBarMultiplier(machines){
 			return _.chain(machines).groupBy('abbv').max(function(m){ return m.length; }).value().length;
@@ -112,16 +192,6 @@ define(['js/app'], function(app){
 				$scope.compare_machines = null;
 				$scope.machine_bar_multiplier = calcMachineBarMultiplier($scope.player_data.machines);
 			}
-		});
-
-
-		$scope.$watch('chart_show_places', function(val){
-			$scope.chart_options.series[0].show = val;
-		});
-
-		$scope.$watch('chart_show_points', function(val){
-			$scope.chart_options.series[1].show = $scope.chart_options.series[2].show = val;
-			$scope.chart_options.axes.y2axis.tickOptions.showGridline = !val;
 		});
 
 		$scope.nightsCollapsed = function(closed){
@@ -193,98 +263,10 @@ define(['js/app'], function(app){
 				$scope.head_to_head_all_time = reformatHeadToHeadData(data);
 			});
 		$scope.head_to_head_all_time_tracker.addPromise(head_to_head_all_time_loaded);
-
-
-
-		$scope.chart_options = {
-			title: {
-				text: 'POINTS/PLACE PER LEAGUE NIGHT',
-				fontFamily: 'Roboto Condensed',
-				fontWeight: 'bold',
-				textColor: '#515151'
-			},
-			seriesDefaults: {
-				pointLabels: { 
-					show: true 
-				}
-			},
-			series:[
-				// series 1 is the place at the end of that night
-				{
-					yaxis: 'y2axis',
-					color: '#D3C9A9',
-					lineWidth: 4,
-					shadow: false,
-					markerOptions: {
-						show: true,
-						size: 8,
-						shadow: false
-					},
-					pointLabels: {
-						location: 's',
-						formatString: '%s (%%)',
-						formatter: $.jqplot.ordinal
-					}
-				},
-				// series 2 - points for that night
-				{
-					color: '#699DB1'
-				},
-				// series 3 is sub points so style it different
-				{
-					pointLabels: {
-						show: false
-					},
-					showLine: false,
-					markerOptions:{
-						color:'#8DB27B'
-					}
-				}
-			],
-			axes:{
-				xaxis: {
-					tickOptions: {
-						showGridline: false
-					},
-					showTicks: false
-				},
-				yaxis: {
-					min: 0,
-					max: 35,
-					tickOptions: {
-						formatString: '%d',
-					}
-				},
-				y2axis: {
-					min: Players.players.length,
-					max: 1,
-					showTicks: true,
-					tickOptions: {
-						formatString: '%d',
-						formatter: $.jqplot.ordinal,
-						showGridline: false
-					}
-				}
-			},
-			grid: {
-				shadow:false,
-				background: 'transparent'
-			}
-		};
 		
 	};
 
 	PlayersController.$inject = injectParams;
 	app.register.controller('PlayersController', PlayersController);
 
-
-	(function($){
-		$.jqplot.ordinal = function(format, val){
-			// from http://ecommerce.shopify.com/c/ecommerce-design/t/ordinal-number-in-javascript-1st-2nd-3rd-4th-29259
-			val = Math.round(val);
-			var s=["th","st","nd","rd"],
-				v=val%100;
-			return val+(s[(v-20)%10]||s[v]||s[0]);
-		};
-	})(jQuery);
 });

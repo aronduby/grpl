@@ -23,9 +23,9 @@ function(routingConfig){
 			'LoadingOverlay',
 			'ordinal',
 			'ngStorage',
-			'ui.chart',
 			'slip',
-			'ngOptionsDisabled'
+			'ngOptionsDisabled',
+			'googlechart'
 		]);
 
 	app.config([
