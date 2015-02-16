@@ -1,0 +1,89 @@
+<div class="page" id="machine_admin">
+
+	<article>
+		<form class="machine-form" autocomplete="off">
+			<section ng-if="machine">
+				<header>
+					<h1>Edit This Machine</h1>
+				</header>
+
+				<div class="content">
+					<div class="fields listview"><ul>
+						<li>
+							<label for="name">Name</label>
+							<fieldset>
+								<input type="text" id="name" placeholder="ie. Adams Family, The" ng-model="machine.name" required />
+							</fieldset>
+						</li>
+						<li>
+							<label for="abbv">Abbv</label>
+							<fieldset>
+								<input type="text" id="abbv" placeholder="ie. TAF" ng-model="machine.abbv" required />
+							</fieldset>
+						</li>
+						<li>
+							<label for="image">Image</label>
+							<fieldset class="image">
+								<img class="thumb" ng-src="{{new_image.url.length ? new_image.url : machine.image }}" />
+								<input type="text" id="new_url" placeholder="url for new image" ng-model="new_image.url" />
+							</fieldset>
+							<p>Use the search listing image from Pinside</p>
+						</li>
+						<li>
+							<label for="note">Note</label>
+							<fieldset>
+								<input type="text" id="note" placeholder="special instructions" ng-model="machine.note" />
+							</fieldset>
+						</li>
+						<li>
+							<label for="active">Active</label>
+							<fieldset>
+								<div class="btn-group">
+									<label class="" ng-model="machine.active" btn-radio="true">Yes</label>	
+									<label class="" ng-model="machine.active" btn-radio="false">No</label>	
+								</div>
+							</fieldset>
+						</li>
+					</ul></div>
+				</div>
+
+			</section>
+			<div class="button-holder right" ng-if="machine">
+				<button type="submit" class="inline" ng-click="save()">Save</button>
+			</div>
+
+			<section ng-if="!machine">
+				<header>
+					<h1>Edit a Machine</h1>
+				</header>
+				<div class="content">
+					<h2>Pick a Machine</h2>
+					<p>Pick a machine to edit using the machine listing, which is either to the left or in the drop-down in the nav</p>
+				</div>
+			</section>
+		</form>
+	</article>
+
+
+	<div id="admin-machines-panel" class="panel" inline-modal>
+		<header>
+			<h1>Edit a Machine</h1>
+			<a class="close" ng-click="close()">Close</a>
+		</header>
+		<article class="listview">
+			<ul>
+				<li><a ng-href="#/admin/machines/new">
+					<h2>New Machine</h2>
+					<p>create a new machine</p>
+				</a></li>
+				<li ng-repeat="machine in machines | orderBy:'name' track by machine.abbv">
+					<a ng-href="#/admin/machines/{{ machine.abbv }}">
+						<h2>{{ machine.name }}</h2>
+						<p>{{ machine.active ? 'Active' : '' }}</p>
+					</a>
+				</li>
+			</ul>
+		</article>
+	</div>
+
+</div>

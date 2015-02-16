@@ -1,0 +1,3 @@
+<header id="season-notifier" ng-show="season.current_id != season.active_id" ng-controller="FooterController">
+	<p>Viewing archived season <span class="active">{{ season.active_id }}</span>, the current season is <span class="current">{{ season.current_id }}</span>. <button ng-click="changeSeason({'season_id': season.current_id})">View Current Season</button></p>
+</header>

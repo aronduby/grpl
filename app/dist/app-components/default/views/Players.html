@@ -1,0 +1,138 @@
+<div class="page" id="players">
+
+	<article>
+		
+		<section class="nights-holder" collapsible="players.nights" collapse-callback="nightsCollapsed(closed)">
+			<header>
+				<h1>League Nights</h1>
+			</header>
+			<div class="content">
+				<h1>Points/Place Per Night</h1>
+				<div id="players-nights-chart" google-chart chart="chart"></div>
+
+				<fieldset class="points">
+					<legend>Points</legend>
+					<span>{{ player_data.total_points }}</span>
+				</fieldset>
+				<fieldset class="place">
+					<legend>Place</legend>
+					<span>{{ player.rank }}</span>
+				</fieldset>
+				<p class="note">click boxes above to toggle plot visibility</p>
+				<div class="listview">
+					<ul>
+						<li ng-repeat="night in player_data.nights">
+							<a ng-href="#/index/{{ night.starts }}" title="view week">
+								<h2>{{ night.title }} <span ng-if="night.sub" class="sub" title="sub">{{ night.sub }}</span></h2>
+								<p>{{ night.description }}</p>
+								<span class="score right double">
+									<span>{{ night.points }}</span>
+									<span ng-if="!player_data.nights[ $index + 1]">{{ player_data.places.totals | ordinal }}</span>
+									<span ng-if="player_data.nights[ $index + 1]">{{ player_data.places[ player_data.nights[$index + 1].starts ] | ordinal }}</span>
+								</span>
+							</a>
+						</li>
+						<li ng-if="!player_data.nights.length"><p>no nights played yet</p></li>
+					</ul>
+				</div>
+			</div>
+		</section>
+
+		<section class="machine-holder" collapsible="players.machines">
+			<header>
+				<h1>Machines</h1>
+			</header>
+			<div class="content">
+				<table id="players-machines-chart" class="chart" ng-class="{'comparison': compare_to}">
+					<thead>
+						<tr>
+							<th colspan="2">
+								<label for="machines-compare-to">Compare To:</label
+								><select 
+									id="machines-compare-to" 
+									ng-model="compare_to" 
+									ng-options="compare_player.full_name for compare_player in players"
+								><option value="">&nbsp;</option></select>
+								<div class="legend" ng-show="compare_to">
+									<p class="player">{{ player.first_name }}</p>
+									<p class="compared-to">{{ compare_to.first_name }}</p>
+								</div>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-if="!player_data.machines.length">
+							<td class="empty"><p>no machines played yet</p></td>
+						</tr>
+						<tr ng-repeat="(abbv, machines) in player_data.machines | groupBy:'abbv'">
+							<th><abbv title="{{ machines[0].name }}">{{ abbv }}</abbv></th>
+							<td>
+								<div 
+									ng-repeat="machine in machines" 
+									ng-class="{'sub': machine.sub}"
+									class="bar"
+									style="width: {{ 50 * (machine.points/7) }}%;"
+								>{{ machine.points }}</div>
+								<div class="comparison" ng-show="compare_to">
+									<div 
+										ng-repeat="compared in compare_machines[abbv]" 
+										ng-class="{'sub': compared.sub}"
+										class="bar"
+										style="width: {{ 50 * (compared.points/7) }}%;"
+									>{{ compared.points }}</div>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+					<tfoot></tfoot>
+				</table>
+			</div>
+		</section>
+
+		<section class="head-to-head-holder" collapsible="players.head-to-head">
+			<header>
+				<h1>Head to Head (This Season)</h1>
+			</header>
+			<div class="content">
+				<img src="layout_imgs/grey-block-loading-light.gif" class="loading" ng-if="head_to_head_tracker.active()" />
+				<head-to-head data="head_to_head"></head-to-head>
+			</div>
+		</section>
+
+		<section class="head-to-head-holder" collapsible="players.head-to-head-all-time">
+			<header>
+				<h1>Head to Head (All Time)</h1>
+			</header>
+			<div class="content">
+				<img src="layout_imgs/grey-block-loading-light.gif" class="loading" ng-if="head_to_head_all_time_tracker.active()" />
+				<head-to-head data="head_to_head_all_time"></head-to-head>
+			</div>
+		</section>
+
+		<div class="notes"></div>
+
+	</article>
+
+	<div id="players-panel" class="panel" inline-modal>
+		<header>
+			<h1>Choose a Player</h1>
+			<a class="close" ng-click="close()">Close</a>
+		</header>
+		<article class="listview">
+			<ul>
+				<li 
+					ng-repeat="player in players" 
+					ng-class="{
+						'user starred': (user.logged_in && user.name_key == player.name_key)
+					}"
+					data-name-key="{{ player.name_key }}" 					
+				>
+					<a ng-href="#/players/{{ player.name_key }}">
+						<h3>{{ player.full_name }}</h3>
+					</a>
+				</li>
+			</ul>
+		</article>
+	</div>
+
+</div>

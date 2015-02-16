@@ -26,11 +26,13 @@
 
 
 	<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:300italic,400italic,700italic,400,300,700' rel='stylesheet' type='text/css'>
+	
+	<!-- build:css css/combined.css -->
 	<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
-
 	<link rel="stylesheet" type="text/css" href="css/reset.css">	
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<link rel="stylesheet" type="text/css" href="css/styles.css">
+	<!-- endbuild -->
 
 
 
@@ -39,10 +41,9 @@
 		document.write('<script src="http://'+window.location.host+':834/socket.io/socket.io.js"><\/script>');
 	</script>
 	
-
+	<!-- build:js js/combined.js -->
 	<script src="bower_components/underscore/underscore-min.js"></script>
 	<script src="bower_components/moment/min/moment.min.js"></script>
-
 	<script src="bower_components/angular/angular.min.js"></script>
 	<script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
 	<script src="bower_components/angular-filter/dist/angular-filter.js"></script>
@@ -56,7 +57,7 @@
 	<script src="bower_components/angularjs-ordinal-filter/ordinal.js"></script>
 	<script src="bower_components/angular-options-disabled/src/angular-options-disabled.min.js"></script>
 	<script src="bower_components/angular-google-chart/ng-google-chart.js"></script>
-
+	<!-- endbuild -->
 
 	<script src="bower_components/requirejs/require.js" data-main="js/main"></script>
 

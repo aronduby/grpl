@@ -1,0 +1,99 @@
+<div class="page" id="user_admin">
+
+	<article>
+		<form class="user-form" autocomplete="off">
+			<section ng-if="user">
+				<header>
+					<h1>Edit This User</h1>
+				</header>
+				<div class="content">
+					<div class="fields listview">
+					<ul>
+						<li>
+							<label for="first_name">First Name</label>
+							<fieldset>
+								<input type="text" id="first_name" placeholder="first name" ng-model="user.first_name" />
+							</fieldset>
+						</li>
+						<li>
+							<label for="last_name">Last Name</label>
+							<fieldset>
+								<input type="text" id="last_name" placeholder="last name" ng-model="user.last_name" />
+							</fieldset>
+						</li>
+						<li>
+							<label for="facebook_id">Facebook ID</label>
+							<fieldset>
+								<input type="text" id="facebook_id" placeholder="facebook id" ng-model="user.facebook_id" />
+							</fieldset>
+							<p>This will allow the user to login with Facebook</p>
+						</li>
+						<li>
+							<label for="email">Email</label>
+							<fieldset>
+								<input type="email" id="email" placeholder="email address" ng-model="user.email" />
+							</fieldset>
+						</li>
+						<li>
+							<label for="password">Password</label>
+							<fieldset>
+								<input type="password" id="password" placeholder="nothing important" ng-model="user.password" />
+							</fieldset>
+							<p>DO NOT use the same password as anything important</p>
+						</li>
+						<li>
+							<label>Active Seasons</label>
+							<fieldset>
+								<div class="btn-group">
+									<label 
+										ng-repeat="season in seasons" 
+										class="" 
+										ng-model="user.seasons[season.season_id]" 
+										btn-checkbox
+									>{{ season.title }}</label>								
+								</div>
+							</fieldset>
+						</li>
+					</ul>
+					</div>
+				</div>
+			</section>
+			<div class="button-holder right" ng-if="user">
+				<button type="submit" class="inline" ng-click="save()">Save</button>
+			</div>
+
+			<section ng-if="!user">
+				<header>
+					<h1>Edit a User</h1>
+				</header>
+				<div class="content">
+					<h2>Pick a User</h2>
+					<p>Pick a user to edit using the user listing, which is either to the left or in the drop-down in the nav</p>
+				</div>
+			</section>
+		</form>
+	</article>
+
+
+	<div id="admin-users-panel" class="panel" inline-modal>
+		<header>
+			<h1>Edit a User</h1>
+			<a class="close" ng-click="close()">Close</a>
+		</header>
+		<article class="listview">
+			<ul>
+				<li><a ng-href="#/admin/users/new">
+					<h2>New User</h2>
+					<p>create a new user</p>
+				</a></li>
+				<li ng-repeat="user in users | orderBy:'first_name' track by user.name_key">
+					<a ng-href="#/admin/users/{{ user.name_key }}">
+						<h2>{{ user.full_name }}</h2>
+						<p>{{ user.active ? 'Active' : '' }}</p>
+					</a>
+				</li>
+			</ul>
+		</article>
+	</div>
+
+</div>

@@ -1,0 +1,112 @@
+<div class="page" id="user_admin">
+
+	<article>
+		<form class="user-form" autocomplete="off">
+			<section ng-if="season">
+				<header>
+					<h1>Edit This Season</h1>
+				</header>
+				<div class="content">
+					<div class="fields listview"><ul>
+						<li>
+							<label for="title">Title</label>
+							<fieldset>
+								<input type="text"id="title" placeholder="ie. Season 5" ng-model="season.title" />
+							</fieldset>
+						</li>
+						<li>
+							<label for="current">Current</label>
+							<fieldset>
+								<div class="btn-group">
+									<label class="" ng-model="season.current" btn-radio="true">Yes</label>	
+									<label class="" ng-model="season.current" btn-radio="false">No</label>	
+								</div>
+							</fieldset>
+						</li>
+						<li class="divisionlist-holder subsection">
+							<h2>Divisions</h2><p>Setup Divisions for this season</p>
+							<div class="listview" id="divisionlist">
+								<header>
+									<h3 class="title">Title</h3><h3 class="cap">Group Cap</h3>
+								</header>
+								<ul>
+									<li ng-repeat="division in divisions | orderBy:'display_order'" ng-if="divisions.length">
+										<button class="remove red" ng-click="removeDivision($index)">-</button>
+										<fieldset>
+											<h3 class="title">Title</h3>
+											<input type="text" name="title" placeholder="division title" ng-model="division.title" />
+											<h3 class="cap">Group Cap</h3>
+											<input type="number" name="cap" placeholder="# cap" ng-model="division.cap" />
+										</fieldset>
+									</li>
+									<li ng-if="!divisions.length">add at least one division</li>
+								</ul>
+							</div>
+							<button class="blue add-division" ng-click="addDivision()">add division</button>
+						</li>
+						<li class="player-order-holder subsection">
+							<h2>Player Order</h2><p>Setup the order people play</p>
+							<table id="season-player-order" class="subsection">
+								<thead>
+									<tr><th>Machine</th><th>Order</th></tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="machine_offset in [0,1,2,3,4]">
+										<th>{{machine_offset + 1}}.</th>
+										<td>
+											<div class="fieldset">
+												<div ng-repeat="player_offset in [0,1,2,3]">
+													<select 
+														ng-options="p.idx as p.title for p in players" 
+														ng-model="scoring_order[machine_offset][player_offset]" 
+														required
+													><option value=""></option></select>
+												</div>
+											</div class="fieldset">
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</li>
+					</ul></div>
+				</div>
+			</section>
+			<div class="button-holder right" ng-if="season">
+				<button type="submit" class="inline" ng-click="save()">Save</button>
+			</div>
+
+			<section ng-if="!season">
+				<header>
+					<h1>Edit a Season</h1>
+				</header>
+				<div class="content">
+					<h2>Pick a Season</h2>
+					<p>Pick a season to edit using the season listing, which is either to the left or in the drop-down in the nav</p>
+				</div>
+			</section>
+		</form>
+	</article>
+
+
+	<div id="admin-seasons-panel" class="panel" inline-modal>
+		<header>
+			<h1>Edit a Season</h1>
+			<a class="close" ng-click="close()">Close</a>
+		</header>
+		<article class="listview">
+			<ul>
+				<li><a ng-href="#/admin/seasons/new">
+					<h2>New Season</h2>
+					<p>create a new season</p>
+				</a></li>
+				<li ng-repeat="season in seasons.all | reverse track by season.season_id">
+					<a ng-href="#/admin/seasons/{{ season.season_id }}">
+						<h2>{{ season.title }}</h2>
+						<p>{{ season.season_id == seasons.current_id ? 'Current Season' : '' }}</p>
+					</a>
+				</li>
+			</ul>
+		</article>
+	</div>
+
+</div>

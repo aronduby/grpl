@@ -1,0 +1,60 @@
+<div class="page" id="night-order-admin">
+
+	<article>
+		<form class="order-form" autocomplete="off">
+			<section>
+				<header>
+					<a class="button gear edit-night" ui-sref="admin.nights.edit({starts:night.starts})"> Edit Night</a>
+					<h1>Edit the Order for the Night</h1>
+				</header>
+				<div class="content">
+					<div class="fields listview">
+						<ul id="player-order" class="slip-list" slip slip-controller="slipController"><!-- player-order directive -->
+
+						<li 
+							ng-repeat-start="player in order | orderBy:'start_order'" 
+							ng-class="{
+								'dnp': player.dnp,
+								'error': player.error
+							}" 
+							data-name-key="{{player.name_key}}" 
+							data-grouping="{{player.grouping}}" 
+							data-start-order="{{player.start_order}}"
+						>
+							<span class="rank">{{ player.rank }}</span>
+							<h3>{{ player.full_name }}</h3>
+							<button class="x dnp yellow" ng-click="setDNP(player)"></button>
+						</li>
+						<li ng-repeat-end ng-if="$index < order.length - 1 && player.grouping != order[$index + 1].grouping" class="divider disabled" data-grouping="{{player.grouping}}" data-start-order="{{player.start_order + 1}}" data-name-key="{{player.name_key}}" data-after></li>
+					</ul></div>
+				</div>
+			</section>
+			<div class="button-holder right">
+				<span ng-show="has_errors" class="notes">groups have errors, can't save</span>
+				<button class="inline" ng-click="save()" ng-disabled="has_errors">Save</button>
+			</div>
+		</form>
+	</article>
+
+	<div id="order-admin-nights-panel" class="panel" inline-modal>
+		<header>
+			<h1>Edit a Night</h1>
+			<a class="close" ng-click="close()">Close</a>
+		</header>
+		<article class="listview">
+			<ul>
+				<li><a ng-href="#/admin/nights/new">
+					<h2>New League Night</h2>
+					<p>create a new night</p>
+				</a></li>
+				<li ng-repeat="night in nights track by night.night_id" ng-if="night.starts != 'totals'">
+					<a ng-href="#/admin/nights/{{ night.starts }}">
+						<h2>{{ night.title }}</h2>
+						<p>{{ night.description }}</p>
+					</a>
+				</li>
+			</ul>
+		</article>
+	</div>
+
+</div>

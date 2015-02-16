@@ -1,0 +1,29 @@
+<div class="left">
+	<button class="admin" title="Open Admin Panel" access-level="admin" ng-click="toggleAdminMenu()">
+		<span class="title">Admin</span>
+	</button>
+	
+	<h1 class="hdr-logo" access-level="notAdmin"><a href="#/index" title="home">GRPL</a></h1>
+</div>
+
+<div class="right">
+	<section class="user-area">
+		<button class="login" title="Login" access-level="anon" ng-click="login()">
+			<span class="title">Login</span>
+		</button>
+		<button class="scoring" title="Start Scoring" access-level="user" ng-show="scoring_started" ng-click="scoringLogin()">
+			<span class="title">Start Scoring</span>
+		</button>
+	</section>
+</div>
+
+<div class="center">
+	<section>
+		<div class="select-trigger" ng-click="toggleCenterPanel()">
+			<div><!-- hook for the dropdown icon -->
+				<h2>{{ title }}</h2>
+				<p>{{ subtitle }}</p>
+			</div>
+		</div>
+	</section>
+</div>
