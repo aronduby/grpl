@@ -116,10 +116,10 @@ define(['js/app', 'app-components/directives/Slip'], function(app){
 
 				var move = _.find($scope.order, {'name_key': e.target.dataset.nameKey}),
 					move_from = _.indexOf($scope.order, move),
-					after = e.originalEvent.detail.insertBefore.dataset.after,
-					before = _.find($scope.order, {'name_key': e.originalEvent.detail.insertBefore.dataset.nameKey}),
-					grouping = e.originalEvent.detail.insertBefore.dataset.grouping,
-					start_order = e.originalEvent.detail.insertBefore.dataset.startOrder;
+					after = e.detail.insertBefore.dataset.after,
+					before = _.find($scope.order, {'name_key': e.detail.insertBefore.dataset.nameKey}),
+					grouping = e.detail.insertBefore.dataset.grouping,
+					start_order = e.detail.insertBefore.dataset.startOrder;
 
 				$scope.$apply(function(){
 
