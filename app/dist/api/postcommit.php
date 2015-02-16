@@ -1,10 +1,20 @@
 <?php
+/* Connect to an ODBC database using driver invocation */
+$dsn = 'mysql:dbname=grpl;host=localhost';
+$user = 'grpl';
+$password = 'phyle7mothy';
+
+try {
+    $dbh = new PDO($dsn, $user, $password);
+} catch (PDOException $e) {
+    echo 'Connection failed: ' . $e->getMessage();
+}
+
 
 $data_string = $_POST['payload'];
 $data = json_decode($data_string);
 
 // save to the changelog
-$dbh = PDODB::getInstance();
 $sql = "INSERT INTO changelog SET 
 	commit_id=:id,
 	author_name=:author_name,
