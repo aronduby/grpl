@@ -5,6 +5,7 @@ var gulp = require('gulp');
 var 
 	jshint       = require('gulp-jshint'),
 	uglify       = require('gulp-uglify'),
+	sourcemaps   = require('gulp-sourcemaps'),
 	postcss      = require('gulp-postcss'),
 	autoprefixer = require('autoprefixer-core'),
 	cssmin       = require('gulp-cssmin'),
@@ -14,7 +15,8 @@ var
 	changed      = require('gulp-changed'),
 	gutil        = require('gulp-util'),
 	plumber      = require('gulp-plumber'),
-	notify       = require('gulp-notify');
+	notify       = require('gulp-notify'),
+	lazypipe     = require('lazypipe');
 
 
 var onError = notify.onError({
@@ -47,11 +49,22 @@ gulp.task('html', function() {
 
 	var assets = useref.assets();
 
+	var csspipe = lazypipe()
+		.pipe(sourcemaps.init)
+        .pipe(function(){
+        	return postcss([ autoprefixer({ browsers: ['last 2 versions'] }) ])
+        })
+        .pipe(function(){
+        	return sourcemaps.write('.');
+        })
+        .pipe(cssmin);
+
+
 	gulp.src('index.html')
 		.pipe(plumber({ errorHandler: onError }))
 		.pipe(assets)
 		.pipe(gulpif('*.js', uglify()))
-		.pipe(gulpif('*.css', cssmin()))
+		.pipe(gulpif('*.css', csspipe()))
 		.pipe(assets.restore())
 		.pipe(useref())
 		.pipe(gulp.dest('dist'));

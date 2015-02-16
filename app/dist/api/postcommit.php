@@ -10,7 +10,6 @@ try {
     echo 'Connection failed: ' . $e->getMessage();
 }
 
-
 $data_string = $_POST['payload'];
 $data = json_decode($data_string);
 
