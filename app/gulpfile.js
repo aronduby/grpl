@@ -81,6 +81,11 @@ gulp.task('html', function() {
 		.pipe(plumber({ errorHandler: onError }))
 		.pipe(gulp.dest('dist/'));
 
+	gulp.src('api/**/*.*')
+		.pipe(plumber({ errorHandler: onError }))
+		.pipe(changed('dist/api'))
+		.pipe(gulp.dest('dist/api'));
+
 });
 
 gulp.task('images', function() {
@@ -90,6 +95,12 @@ gulp.task('images', function() {
 		.pipe(gulp.dest('dist/layout_imgs'));
 });
 
+gulp.task('api', function() {
+	gulp.src('api/**/*.*')
+		.pipe(plumber({ errorHandler: onError }))
+		.pipe(changed('dist/api'))
+		.pipe(gulp.dest('dist/api'));
+});
 
 // Watch files for changes
 gulp.task('watch', function() {
