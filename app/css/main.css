@@ -630,7 +630,10 @@ body.loading{
   @keyframes loading-7 { 100% { opacity: 0.3; } } 
 
 
-
+img.loading{
+  display:block;
+  margin:10px auto;
+}
 
 
 

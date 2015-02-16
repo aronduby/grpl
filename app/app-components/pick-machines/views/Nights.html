@@ -25,17 +25,18 @@
 						<h1>Previous Night's Picks</h1>
 					</header>
 					<div class="content">
-						<img src="layout_imgs/grey-block-loading-light.gif" alt="loading" ng-if="previous_machines_tracker.active()" />
+						<img src="layout_imgs/grey-block-loading-light.gif" class="loading" alt="loading" ng-if="previous_machines_tracker.active()" />
 
 						<div class="listview prev-machine-picks" ng-if="!previous_machines_tracker.active()">
-							<ul ng-if="previous_machines !== false">
+							<ul ng-if="previous_machines">
 								<li ng-repeat="(name_key, player) in previous_machines">
 									<h4>{{ player.full_name }}</h4>
 									<abbr ng-repeat="machine in player.picks" title="{{machine.name}}" style="background-image: url({{machine.image}});">{{ machine.abbv }}</abbr>
 								</li>
 							</ul>
 
-							<p ng-if="previous_machines === false">no previous night</p>
+							<p ng-if="previous_machines == null">previous night has no machines choosen</p>
+							<p ng-if="previous_machines === false">there is no previous night</p>
 						</div>
 					</div>
 				</section>

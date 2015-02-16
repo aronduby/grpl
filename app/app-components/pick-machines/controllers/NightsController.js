@@ -61,6 +61,10 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 							};
 						})
 						.value();
+
+					if(angular.equals({}, $scope.previous_machines)){
+						$scope.previous_machines = null;
+					}
 				});
 			} else {
 				$scope.previous_machines = false;
