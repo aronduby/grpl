@@ -4,6 +4,7 @@ require.config({
 
 require(
 	[
+		'js/socketConnector',
 		'js/routingConfig',
 		'js/app',
 		'app-components/services/routeResolver',
@@ -33,8 +34,15 @@ require(
 		'app-components/BodyClasses',
 		'app-components/LoadingOverlay'
 	],
-	function () {
-		// defer bootstrap till called by our socket connection
-		window.name = 'NG_DEFER_BOOTSTRAP!';
-		angular.bootstrap(document, ['grpl']);
+	function (socket_connection) {
+		var bootstrapped = false;
+
+		socket_connection.then(function(socket){
+			if(bootstrapped === false){
+				console.log('boostrapping');
+				angular.bootstrap(document, ['grpl']);
+				bootstrapped = true;	
+			}
+		});
+		
 	});

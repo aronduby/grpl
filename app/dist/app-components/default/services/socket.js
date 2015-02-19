@@ -1,4 +1,4 @@
-define(['js/socketConnector'], function(socket){
+define(['js/socketConnector'], function(socket_connection){
 
 	/*
 	 *	Usage example, from within controller
@@ -16,6 +16,10 @@ define(['js/socketConnector'], function(socket){
 			socket.getScope($scope.$id).clear();
 		});	
 	*/
+	var socket = null;
+	socket_connection.then(function(s){
+		socket = s;
+	});
 
 	function Socket($rootScope, address, options){
 		var scopes = {};
