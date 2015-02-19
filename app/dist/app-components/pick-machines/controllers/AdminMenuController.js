@@ -176,10 +176,22 @@ require(['js/app'], function(app){
 		}
 
 
+		function leaguenightUpdated(data){
+			var m = moment(data.starts),
+				today = moment().startOf('day');
+
+			if(m.isSame(today)){
+				$scope.show_scoring = true;
+				$scope.scoring_night_starts = data.starts;
+			}
+		};
+
+
 		socket
 			.on('tiesbroken', tiesbroken)
 			.on('scoring_started', scoringStarted)
-			.on('scoring_update', scoringUpdated);
+			.on('scoring_update', scoringUpdated)
+			.on('leaguenight_updated', leaguenightUpdated);
 
 
 	};
