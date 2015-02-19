@@ -31,7 +31,7 @@ define(['js/app'], function(app){
 				night_id: null,
 				season_id: Seasons.current_id,
 				title: 'League Night #2',
-				moment: moment('2015-01-21').toString(),
+				moment: moment().toString(),
 				subs: []
 			};
 			navApi.setTitle('New League Night', 'Create a New Night');
