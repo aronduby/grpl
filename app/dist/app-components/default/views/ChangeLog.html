@@ -22,7 +22,7 @@
 				</time>
 				<section class="commit" ng-repeat="commit in commits">
 					<div class="commit_id">{{ commit.commit_id }}</div>
-					<div class="msg" ng-bind-html="commit.msg | bugifyLink"></div>
+					<div class="msg" ng-bind-html="commit.msg | bugifyLink | curses:curses:'curse'"></div>
 					<time class="committed" datetime="{{ commit.committed }}">commited {{ commit.committed | date:'medium' }}</time>
 				</section>
 			</section>
