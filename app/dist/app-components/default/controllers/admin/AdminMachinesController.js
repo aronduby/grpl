@@ -20,7 +20,7 @@ define(['js/app'], function(app){
 				abbv: null,
 				image: 'layout_imgs/machines/PH.png',
 				note: null,
-				active: false
+				status: 'active'
 			};
 
 			navApi.setTitle('New Machine', 'Choose a Different Machine');

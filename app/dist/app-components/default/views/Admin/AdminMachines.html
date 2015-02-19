@@ -36,11 +36,12 @@
 							</fieldset>
 						</li>
 						<li>
-							<label for="active">Active</label>
+							<label for="active">Status</label>
 							<fieldset>
 								<div class="btn-group">
-									<label class="" ng-model="machine.active" btn-radio="true">Yes</label>	
-									<label class="" ng-model="machine.active" btn-radio="false">No</label>	
+									<label class="" ng-model="machine.status" btn-radio="'active'">Active</label>
+									<label class="" ng-model="machine.status" btn-radio="'inactive'">Inactive</label>
+									<label class="" ng-model="machine.status" btn-radio="'helper'">Helper</label>
 								</div>
 							</fieldset>
 						</li>
@@ -79,7 +80,7 @@
 				<li ng-repeat="machine in machines | orderBy:'name' track by machine.abbv">
 					<a ng-href="#/admin/machines/{{ machine.abbv }}">
 						<h2>{{ machine.name }}</h2>
-						<p>{{ machine.active ? 'Active' : '' }}</p>
+						<p>{{ machine.status }}</p>
 					</a>
 				</li>
 			</ul>

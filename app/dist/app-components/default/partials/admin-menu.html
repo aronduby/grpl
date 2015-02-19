@@ -152,8 +152,8 @@
 						</a>
 					</div>
 
-					<h2 ng-repeat-start="(key, group) in machines | groupBy:'active' | toArray:true | orderBy:'active'">
-						{{ !key ? 'Active' : 'Inactive' }} Machines
+					<h2 ng-repeat-start="group in machines | groupBy:'status' | toArray:true | orderBy:'status'">
+						{{ group[0].status }} Machines
 					</h2>
 					<div class="listview edit-machine-list" ng-repeat-end>
 						<img ng-if="!group.length" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
@@ -164,7 +164,7 @@
 									<p>{{ machine.abbv }}</p>
 								</a>
 							</li>
-							<li ng-if="!group.length">no {{ !key ? 'active' : 'inactive' }} machines?</li>
+							<li ng-if="!group.length">no {{ group[0].status }} machines?</li>
 						</ul>
 					</div>
 				</section>

@@ -5,6 +5,7 @@ define(['js/app'], function(app){
 		this.loading = undefined;
 		this.all = [];
 		this.active = [];
+		this.helper = [];
 
 		this.loadMachines = function loadMachines(){
 			var self = this,
@@ -15,12 +16,10 @@ define(['js/app'], function(app){
 			api.get('machine.all')
 				.then(function(machines){
 
-					_.each(machines, function(machine){
-						machine.active = !!machine.active;
-					});
-
+					
 					self.all = machines;
-					self.active = _.filter(self.all, 'active');
+					self.active = _.filter(self.all, {status: 'active'});
+					self.helper = _.filter(self.all, {status: 'helper'});
 
 					d.resolve(self.active);
 				})
@@ -47,7 +46,8 @@ define(['js/app'], function(app){
 			} else {
 				this.all.push(data);
 			}
-			this.active = _.filter(this.all, 'active');
+			this.active = _.filter(this.all, {status: 'active'});
+			this.helper = _.filter(this.all, {status: 'helper'});
 		};
 		socket.on('machine_updated', angular.bind(this, machineUpdated));
 
