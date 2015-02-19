@@ -415,6 +415,11 @@ abbv{
 				text-transform:uppercase;
 		}
 
+	#changelog .curse{
+		color:transparent;
+		text-shadow:0 0 6px #808080;
+	}
+
 @media(min-width:960px){
 	#changelog .push{
 		position:relative;

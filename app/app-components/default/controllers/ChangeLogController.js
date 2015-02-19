@@ -1,10 +1,33 @@
-define(['js/app', 'app-components/filters/bugifyLink'], function(app){
+define(['js/app', 'app-components/filters/bugifyLink', 'app-components/filters/curses'], function(app){
 
 	var injectParams = ['$scope', '$filter', 'navApi', 'api', 'loadingOverlayApi'];
 
 	var ChangeLogController = function($scope, $filter, navApi, api, loadingOverlayApi){
 		loadingOverlayApi.show();
 		navApi.setTitle('Change Log', 'Why?');
+
+		$scope.curses = [
+			"fuck", 
+			"bitch",
+			" tits", 
+			"asshole", 
+			"cocksucker", 
+			"cunt", 
+			" hell ", 
+			"douche", 
+			"testicle", 
+			"twat", 
+			"bastard", 
+			"sperm", 
+			"shit", 
+			"dildo", 
+			"wanker", 
+			"prick", 
+			"penis", 
+			"vagina", 
+			"whore",
+			"damn"
+		];
 
 		api.get('changelog')
 		.then(function(log){
