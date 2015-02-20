@@ -67,11 +67,17 @@ define(['js/app'], function(app){
 				name_key = $stateParams.name_key;
 				next_state.state = 'admin.scoring',
 				next_state.params.name_key = $stateParams.name_key;
+				// add the helper machines
+				$scope.active_machines = Machines.helper.concat(Machines.active);
 			} else {
 				name_key = Auth.user.name_key;
 				next_state.state = 'user.scoring';
 			}
 			next_state.params.offset = offset + 1;
+
+			if($scope.admin){
+				
+			}
 
 			Scoring.getGroupForUser(name_key)
 			.then(function(group){

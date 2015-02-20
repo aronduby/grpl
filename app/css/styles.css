@@ -632,6 +632,9 @@ body.loading > footer{
 	.player-holder li p.player-points .picked span{
 		color: darkseagreen;
 	}
+	.player-holder li p.player-points .abbv[data-abbv="DNS"]{
+		color: chocolate;
+	}
 
 /* user logged in highlight in player list */
 .player-holder li.user h3:before,

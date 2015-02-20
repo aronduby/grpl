@@ -83,7 +83,7 @@
 										</h3>
 										<p ng-if="player.machines" class="player-points">
 											<span ng-repeat="machine in player.machines" class="player-machine" data-abbv="{{ machine.abbv }}" ng-class="{'picked': picked.indexOf(machine.abbv) >= 0}">
-												<span class="abbv">{{ machine.abbv }}</span>
+												<span class="abbv" data-abbv="{{machine.abbv}}">{{ machine.abbv }}</span>
 												<span class="machine-points">{{ machine.points }}</span>
 											</span>
 										</p>

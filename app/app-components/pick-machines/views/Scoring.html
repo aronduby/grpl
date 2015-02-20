@@ -19,7 +19,7 @@
 						</fieldset>
 						<fieldset>
 							<label for="picked">Picked</label>
-							<select id="picked" ng-model="machine" ng-options="machine.abbv + ': ' + machine.name for machine in active_machines | orderBy:'abbv'"></select>
+							<select id="picked" ng-model="machine" ng-options="machine.abbv + ': ' + machine.name group by machine.status for machine in active_machines | orderBy:'abbv'"></select>
 						</fieldset>
 					</div>
 					<p class="machine-notes" ng-show="machine.notes">{{ machine.notes }}</p>
@@ -73,7 +73,7 @@
 		</header>
 		<article class="listview">
 			<ul>
-				<li ng-repeat="machine in machines" ng-class="{'nope': machine.abbv==''}">
+				<li ng-repeat="machine in machines track by $index" ng-class="{'nope': machine.abbv==''}">
 					<a ui-sref="{{createState($index)}}">
 						<h2>{{ machine.name }}</h2>
 						<p>{{ machine.abbv }}</p>

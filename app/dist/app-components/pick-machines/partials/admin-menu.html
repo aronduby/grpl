@@ -49,7 +49,7 @@
 								<a ui-sref="admin.scoring({name_key: group.name_key, offset: group.machines.length % 5})">
 									<h3>#{{group.order + 1}} {{ group.initials.join(' ') }}</h3>
 									<p class="machines">
-										<span class="abbv done" ng-repeat="abbv in group.machines">{{ abbv }}</span>
+										<span class="abbv done" ng-repeat="abbv in group.machines track by $index">{{ abbv }}</span>
 									</p>
 									<span class="status-indicator {{group.status}}"></span> 
 								</a>
