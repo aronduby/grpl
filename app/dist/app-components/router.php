@@ -51,10 +51,12 @@ function outputContentType($requested){
 
 if(file_exists($overload.$requested)){
 	outputContentType($requested);
+	header('X-Real-Path: '. $overload.$requested);
 	include $overload.$requested;
 
 } elseif(file_exists('default'.$requested)){
 	outputContentType($requested);
+	header('X-Real-Path: '. 'default'.$requested);
 	include 'default'.$requested;
 
 } else {	
