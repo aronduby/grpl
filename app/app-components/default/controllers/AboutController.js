@@ -1,8 +1,18 @@
-define(['js/app'], function(app){
+define(function(require){
+	var 
+		app          = require('js/app'),
+		Markdown     = require('app-components/directives/Markdown');
+		
+
 
 	var injectParams = ['$scope', '$q', 'api', 'ipCookie', 'loadingOverlayApi', 'navApi', 'Machines', 'Seasons', 'Players'];
 
 	var AboutController = function($scope, $q, API, ipCookie, loadingOverlayApi, navApi, Machines, Seasons, Players){
+
+		$scope.tpls = {
+			machinelist: 'app-components/partials/about-machine-list.html'
+		};
+
 		navApi.defaultTitle();
 		loadingOverlayApi.show();
 		
@@ -28,8 +38,8 @@ define(['js/app'], function(app){
 			loadingOverlayApi.hide();
 		}));
 
-
 		ipCookie('skipabout', '1', {expires: 120});
+
 	};
 
 	AboutController.$inject = injectParams;

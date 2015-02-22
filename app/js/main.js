@@ -1,5 +1,8 @@
-﻿require.config({
-    baseUrl: ''
+﻿requirejs.config({
+    baseUrl: '',
+    paths: {
+    	showdown: 'bower_components/showdown/src/showdown'
+    }
 });
 
 require(

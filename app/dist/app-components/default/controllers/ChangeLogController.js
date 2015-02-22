@@ -1,10 +1,19 @@
-define(['js/app', 'app-components/filters/bugifyLink', 'app-components/filters/curses'], function(app){
+define(function(require){
+	var	
+		app        = require('js/app'),
+		bugifylink = require('app-components/filters/bugifylink'),
+		curses     = require('app-components/filters/curses'),
+		Markdown   = require('app-components/directives/Markdown');
 
 	var injectParams = ['$scope', '$filter', 'navApi', 'api', 'loadingOverlayApi'];
 
 	var ChangeLogController = function($scope, $filter, navApi, api, loadingOverlayApi){
 		loadingOverlayApi.show();
 		navApi.setTitle('Change Log', 'Why?');
+
+		$scope.tpls = {
+			changelog: 'app-components/partials/changelog.html'
+		};
 
 		$scope.curses = [
 			"fuck", 
@@ -51,4 +60,5 @@ define(['js/app', 'app-components/filters/bugifyLink', 'app-components/filters/c
 
 	ChangeLogController.$inject = injectParams;
 	app.register.controller('ChangeLogController', ChangeLogController);
+	
 });

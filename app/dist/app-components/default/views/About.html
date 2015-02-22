@@ -9,33 +9,30 @@
 			</div>		
 		</header>
 
-		<div class="content">
+		<div class="content" markdown strip="true" extensions="include, classedlinks">
+			# About the Grand Rapids Pinball League
 
-			<h1>About the Grand Rapids Pinball League</h1>
+			The Grand Rapids Pinball League was started in November 2012 by Rodney Minch to provide an opportunity for individuals to play competitive pinball in a fun and friendly environment. The league is open to anyone who has an interest in playing pinball and all skill levels are welcome.
 
-			<p>The Grand Rapids Pinball League was started in November 2012 by Rodney Minch to provide an opportunity for individuals to play competitive pinball in a fun and friendly environment. The league is open to anyone who has an interest in playing pinball and all skill levels are welcome.</p>
+			We are currently in our {{seasons.length | ordinal}} season with {{players.length}} players. A season has 8 league nights for 4 consecutive months. League nights are the 1st and 3rd Wednesday of each month at 7pm. League nights take place at Pyramid Scheme which is located at 68 Commerce Ave SW. Players are welcome and encouraged to come early and/or stay late to practice and socialize.
 
-			<p>We are currently in our {{seasons.length | ordinal}} season with {{players.length}} players. A season has 8 league nights for 4 consecutive months. League nights are the 1st and 3rd Wednesday of each month at 7pm. League nights take place at Pyramid Scheme which is located at 68 Commerce Ave SW. Players are welcome and encouraged to come early and/or stay late to practice and socialize.</p>
+			## The Venue
 
-			<h2>The Venue</h2>
-			<p><a href="http://pyramidschemebar.com/" title="Pyramid Scheme">Pyramid Scheme</a> has {{ machines.length }} pinball machines available for play 7 days a week from 4pm - 2am. All machines are set to $.50/play (except Wizard of Oz at $.75/play) and includes the following titles:</p>
+			[Pyramid Scheme](http://pyramidschemebar.com/ "Pyramid Scheme") has {{ machines.length }} pinball machines available for play 7 days a week from 4pm - 2am. All machines are set to $.50/play (except Wizard of Oz at $.75/play) and includes the following titles:
 
-			<ul class="machine-list">
-				<li ng-repeat="machine in machines | orderBy:'name'">
-					{{machine.name}}
-				</li>
-			</ul>
+			^machinelist^
 
-			<h2>Join</h2>
-			<p>If you are interested in joining the pinball league or have any questions, please check out the <a href="https://www.facebook.com/groups/GrandRapidsPinballLeague/" target="_blank">Grand Rapids Pinball League group on Facebook</a> or contact Rodney Minch at <a href="mailto:grpinball@gmail.com">grpinball@gmail.com</a>.</p>
+			## Join
 
-			<h1>Monthly Tournaments</h1>
+			If you are interested in joining the pinball league or have any questions, please check out the [Grand Rapids Pinball League group on Facebook](https://www.facebook.com/groups/GrandRapidsPinballLeague/) or contact Rodney Minch at [grpinball@gmail.com](mailto:grpinball@gmail.com).
 
-			<p>The 2nd Sunday of each month is our 4 Strikes Knockout tournament.  Player matches and machines are randomly picked by the software application Brackelope. There is a $5 entry fee and all entry fees are paid out to the top 4 players.</p>
+			# Monthly Tournaments
 
-			<p>All pinball tournaments at the Pyramid Scheme are endorsed by the Interational Flipper Pinball Assocation (IFPA).</p>
+			The 2nd Sunday of each month is our 4 Strikes Knockout tournament.  Player matches and machines are randomly picked by the software application Brackelope. There is a $5 entry fee and all entry fees are paid out to the top 4 players.
 
-			<a class="view-rankings button green" href="#/index">View current rankings</a>
+			All pinball tournaments at the Pyramid Scheme are endorsed by the Interational Flipper Pinball Assocation (IFPA).
+
+			[View Current Rankings](#/index){view-rankings button green}
 		</div>
 
 	</article>

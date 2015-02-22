@@ -90,7 +90,13 @@ gulp.task('html', function() {
 		.pipe(changed('dist/layout_imgs'))
 		.pipe(gulp.dest('dist/layout_imgs'));
 
-	gulp.src(['js/**/*.*', 'bower_components/angular/**/*.*', 'bower_components/requirejs/**/*.*', 'bower_components/slip/**/*.*'], {base: './'})
+	gulp.src([
+			'js/**/*.*', 
+			'bower_components/angular/**/*.*', 
+			'bower_components/requirejs/**/*.*', 
+			'bower_components/slip/**/*.*',
+			'bower_components/showdown/**/*.*'
+		], {base: './'})
 		.pipe(plumber({ errorHandler: onError }))
 		.pipe(gulp.dest('dist/'));
 

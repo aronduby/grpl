@@ -302,6 +302,10 @@ abbv{
 	line-height:1.45em;
 	margin-bottom:.8em;
 }
+	/* I know it's shitty markup, but its auto-generated */
+	.content-page .content p ul{
+		font-size:1em;
+	}
 
 .content-page .content ul{
 	list-style:disc;
@@ -310,12 +314,13 @@ abbv{
 
 .content-page .content h1,
 .content-page .content h2{
-	font-size:1.4285em;
+	font-size: 1.5714em;
 	color:#707070;
 	margin-bottom:.25em;
 }
 .content-page .content h2{
-	font-size:1.2857em;
+	font-size: 1.4285em;
+	color: #8C8C8C;
 }
 .content-page .content a,
 .listview li a.inline{
