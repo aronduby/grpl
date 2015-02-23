@@ -9,7 +9,10 @@
 			</div>		
 		</header>
 
-		<div class="content" markdown strip="true" extensions="include, classedlinks" ng-model="page.content"></div>
+		<div class="content">
+			<page-editor access-level="admin" page="page" help="help"></page-editor>
+			<markdown strip="true" extensions="include, classedlinks" ng-model="page.content"></markdown>
+		</div>
 
 	</article>
 

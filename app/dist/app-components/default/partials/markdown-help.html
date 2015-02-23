@@ -1,0 +1,115 @@
+<div class="panel content-page" id="markdown-help">
+	<header>
+		<h1>Markdown Help</h1>
+		<a class="close" ng-click="close()">Close</a>
+	</header>
+	<article class="content">
+
+		<div class="container-fluid clearfix">
+			<div class="row">
+				<div class="basic col-md-4">
+					<h1>Basic Markdown</h1>
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Result</th>
+								<th>Markdown</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><strong>Bold</strong></td>
+								<td>**text**</td>
+							</tr>
+							<tr>
+								<td><em>Emphasize</em></td>
+								<td>*text*</td>
+							</tr>
+							<tr>
+								<td><a href="#">Link</a></td>
+								<td>[title](http://)</td>
+							</tr>
+							<tr>
+								<td>Image</td>
+								<td>![alt](http://)</td>
+							</tr>
+							<tr>
+								<td>List</td>
+								<td>* item</td>
+							</tr>
+							<tr>
+								<td>Blockquote</td>
+								<td>&gt; quote</td>
+							</tr>
+							<tr>
+								<td>H1</td>
+								<td># Heading</td>
+							</tr>
+							<tr>
+								<td>H2</td>
+								<td>## Heading</td>
+							</tr>
+							<tr>
+								<td>H3</td>
+								<td>### Heading</td>
+							</tr>
+							<tr>
+								<td><code>Inline Code</code></td>
+								<td>`code`</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="enhanced col-md-8">
+					<h1>Enhanced Markdown</h1>
+
+					<h2>Page Variables</h2>
+					<p>Each page has some predefined variables that you can use by wrapping their name in <code ng-non-bindable>{{&nbsp;&nbsp;}}</code>. Below is a list of variables available for this page.</p>
+
+					<table class="table variables" ng-if="variables.length">
+						<thead><tr><th>Name</th><th>Description</th></tr></thead>
+						<tbody>
+							<tr ng-repeat="variable in variables">
+								<th>{{ variable.name }}</th>
+								<td ng-bind-html="variable.description"></td>
+							</tr>
+						</tbody>
+					</table>
+					<p ng-if="!variables.length" class="empty"><em>No variables available for this page</em></p>
+
+					<h2>Page Templates</h2>
+					<p>In additional to variables, pages can have templates which can be used by wrapping their name in <code ng-non-bindable>^&nbsp;&nbsp;^</code>. Below is a list of templates available for this page.</p>
+
+					<table class="table templates" ng-if="templates.length">
+						<thead><tr><th>Name</th><th>Description</th></tr></thead>
+						<tbody>
+							<tr ng-repeat="template in templates">
+								<th>{{ template.name }}</th>
+								<td ng-bind-html="template.description"></td>
+							</tr>
+						</tbody>
+					</table>
+					<p ng-if="!templates.length" class="empty"><em>No templates available for this page</em></p>
+
+					
+					<h2>Misc</h2>
+					<table class="table">
+						<thead><tr><th>Result</th><th>Markdown</th><th>Description</th></tr></thead>
+						<tbody>
+							<tr>
+								<td>Styled Links</td>
+								<td class="nowrap">[title](http://){classes}</td>
+								<td>Only used in specific cases to do buttons like <code>[View Current Rankings](#/index){view-rankings button green}</code> in the about page</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+		<p class="">For further Markdown syntax reference: <a href="http://daringfireball.net/projects/markdown/syntax" target="_blank">Markdown Documentation</a></p>		
+	</article>
+	<footer class="button-holder right"> 
+		<button class="usr-btn" ng-click="close()">Ok</button>
+	</footer>
+</div>

@@ -1,5 +1,5 @@
 <div id="log">
-	<section class="push" ng-repeat="commits in log | groupBy:'pushed' | toArray:true | orderBy:pushedToSeconds:true" ng-init="pushed = commits[0].pushed">
+	<section class="push" ng-repeat="commits in ::log | groupBy:'pushed' | toArray:true | orderBy:pushedToSeconds:true" ng-init="pushed = commits[0].pushed">
 		<time datetime="{{pushed}}" pubdate>
 			<span class="month">{{ pushed | date:'MMM' }}</span>
 			<span class="day">{{ pushed | date:'d' }}</span>

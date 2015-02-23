@@ -24,7 +24,7 @@ define(function(require){
 							if(scope.tpls[val] !== undefined){
 								return '<ng-include src="\''+scope.tpls[val]+'\'"></ng-include>';
 							} else {
-								return '<pre class="no-tpl">no tpl named '+val+'</pre>';
+								return '<pre class="no-tpl">no template named '+val+'</pre>';
 							}
 						}}
 					];

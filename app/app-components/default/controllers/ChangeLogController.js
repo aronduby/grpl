@@ -3,11 +3,12 @@ define(function(require){
 		app        = require('js/app'),
 		bugifylink = require('app-components/filters/bugifylink'),
 		curses     = require('app-components/filters/curses'),
-		Markdown   = require('app-components/directives/Markdown');
+		Markdown   = require('app-components/directives/Markdown'),
+		pageEditor = require('app-components/directives/PageEditor');
 
-	var injectParams = ['$scope', '$q', '$filter', 'navApi', 'api', 'loadingOverlayApi'];
+	var injectParams = ['$scope', '$q', '$filter', 'navApi', 'api', 'loadingOverlayApi', '$modal'];
 
-	var ChangeLogController = function($scope, $q, $filter, navApi, api, loadingOverlayApi){
+	var ChangeLogController = function($scope, $q, $filter, navApi, api, loadingOverlayApi, $modal){
 		loadingOverlayApi.show();
 		navApi.setTitle('Change Log', 'Why?');
 
@@ -16,7 +17,8 @@ define(function(require){
 		};
 
 		$scope.page = {
-			content: '# loading, please wait'
+			content: '# loading, please wait',
+			ignore: true
 		};
 
 		var promises = {
@@ -66,6 +68,16 @@ define(function(require){
 			return moment(obj.$key).unix();
 		}
 
+
+		// pageeditor/markdown help for admin editing
+		$scope.help = {
+			variables: [
+				{name: 'log', description: 'An array of all of the changes. To get the count of the changes use <code>{{ log.length }}</code>.'}
+			],
+			templates: [
+				{name: 'changelog', description: 'The formatted listing of all the changes that have been made.'}
+			]
+		};
 		
 	};
 

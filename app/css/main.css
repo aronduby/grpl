@@ -31,6 +31,17 @@ textarea{
 .json,
 .hidden{ display:none; }
 
+.nowrap{
+  white-space:nowrap;
+}
+
+code{
+  background:#eee;
+  white-space:nowrap;
+  padding:3px;
+  /* font-family: monospace; */
+}
+
 .page{
   position:relative;
   width:100%;  
@@ -131,6 +142,10 @@ h1, h2, h3, h4, h5{
   text-transform:uppercase;
   font-weight:bold;
   line-height:1.3888em;
+}
+
+a[ng-click]{
+  cursor: pointer;
 }
 
 p.deprecated{
@@ -240,7 +255,7 @@ p.deprecated{
     .listview li h2,
     .listview li h3,
     .listview li > label{
-      font-size:18px;
+      font-size: 1.2857142em;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
@@ -250,7 +265,7 @@ p.deprecated{
     .listview li p{
       color:#696969;
       font-weight:100;
-      font-size:12px;
+      font-size: .857142em;
       text-transform:uppercase;
     }
     .listview li .right{
@@ -407,9 +422,12 @@ a.button{
     background-image:linear-gradient(to bottom, #8A8A8A 0%, #4F4F4F 100%) repeat scroll 0 0 rgba(0, 0, 0, 0);
   }
 
-  header > button:first-child,
-  header > a.button:first-child{
+  header > button:first-child, 
+  header > a.button:first-child, 
+  a.button.grey,
+  .content-page header a.button.grey{
     float:right;
+    color: #fff;
     font-size:16px;
     margin:-10px -10px 0 0;
     border-color:#616161;
@@ -752,8 +770,8 @@ form .listview .fieldset textarea{
   width: 100%;
   border:none;
   font-family:'Roboto Condensed';
-  font-size:1.2857em;
-  padding: 10px;
+  font-size: 1.28571428em;
+  padding: .5em;
   color:#666;
 }
   form .listview fieldset select,

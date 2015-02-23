@@ -1,0 +1,36 @@
+<div id="page-editor">
+	<header>
+		<a class="button gear grey" ng-click="show=!show"> {{ show ? 'Hide' : 'Edit'}}</a>
+	</header>
+	<form name="editor" class="container" ng-show="show">
+		<h2>Header</h2>
+		<p>Content Related to the Header Above</p>	
+		<div class="listview">
+			<ul>
+				<li>
+					<label for="url">Background Image Url</label>
+					<fieldset><input type="url" id="url" placeholder="url to image" ng-model="page.background_image" /></fieldset>
+				</li>
+				<li>
+					<label for="button_text">Button Text</label>
+					<fieldset><input type="button_text" id="button_text" placeholder="button text" ng-model="page.button_text" /></fieldset>
+				</li>
+			</ul>
+		</div>
+
+		<h2>Content</h2>
+		<p>Uses an enhanced <a ng-click="showHelp()">Markdown Syntax</a>.</p>
+		<div class="listview">
+			<ul>
+				<li>
+					<fieldset class="full"><textarea id="content" ng-model="page.content" ng-model-options="{ debounce: 200 }"></textarea></fieldset>
+				</li>
+			</ul>
+		</div>
+
+		<div class="button-holder right"> 
+			<a class="cancel" ng-click="cancel()">Cancel</a> 
+			<button ng-click="save()">Save</button>
+		</div>
+	</form>
+</div>
