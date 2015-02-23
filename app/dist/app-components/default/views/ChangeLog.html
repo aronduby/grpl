@@ -1,21 +1,15 @@
 <div class="page content-page" data-route="changelog" data-title="Changelog | " id="changelog">
 	<article>
 
-	<header>
-		<div class="bg"></div>
-		<div class="logo">
-			<h1>Grand Rapids Pinball League<img src="layout_imgs/banner.png" alt="Grand Rapids Pinball League" /></h1>
-			<p><a href="#/index" class="button">Get Back In the Game</a></p>
-		</div>		
-	</header>
+		<header>
+			<div class="bg" style="background-image:url({{ page.background_image }})"></div>
+			<div class="logo">
+				<h1>Grand Rapids Pinball League<img src="layout_imgs/banner.png" alt="Grand Rapids Pinball League" /></h1>
+				<p><a href="#/index" class="button">{{ page.button_text }}</a></p>
+			</div>		
+		</header>
 
-	<div class="content" markdown strip="true" extensions="include, classedlinks">
-		# The Change Log
-
-		Why are you reading this? Also, I constantly forget that there is a change-log, and as such my messages may not always be safe for children.
-
-		^changelog^
-	</div>
+		<div class="content" markdown strip="true" extensions="include, classedlinks" ng-model="page.content"></div>
 
 	</article>
 

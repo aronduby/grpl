@@ -990,6 +990,51 @@ if (cluster.isMaster) {
 			.done();
 		});
 
+
+		socket.on('pages.getAll', function(cb){
+			grpl.page.getAll()
+			.then(function(pages){
+				cb(null, pages);
+			})
+			.fail(function(err){ 
+				cb(handleError(err));
+			})
+			.done();
+		});
+
+		socket.on('page.url', function(url, cb){
+			grpl.page.getByUrl(url)
+			.then(function(page){
+				cb(null, page);
+			})
+			.fail(function(err){ 
+				cb(handleError(err));
+			})
+			.done();
+		});
+
+		socket.on('page.update', function(data, cb){
+			socket.get('user.admin', function(err, admin){
+				if(admin != true && admin != 'true'){
+					cb({
+						title:'Error',
+						headline: 'Nope...',
+						msg: '<p>Only Admins can edit pages. If you think you should be an admin talk to the people in charge.</p>'
+					});
+				} else {
+					var p = new grpl.page.Page(data);
+
+					p.save().then(function(p){
+						cb(null, p);
+						io.sockets.emit('page_updated', p);
+					})
+					.fail(function(err){ 
+						cb(handleError(err));
+					}).done();
+				}
+			});
+		});
+
 		
 		/*
 		 *	Random Utility Functions

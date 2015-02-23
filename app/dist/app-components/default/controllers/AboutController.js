@@ -8,13 +8,17 @@ define(function(require){
 	var injectParams = ['$scope', '$q', 'api', 'ipCookie', 'loadingOverlayApi', 'navApi', 'Machines', 'Seasons', 'Players'];
 
 	var AboutController = function($scope, $q, API, ipCookie, loadingOverlayApi, navApi, Machines, Seasons, Players){
+		navApi.defaultTitle();
+		loadingOverlayApi.show();
 
+		// used with markdown directive
 		$scope.tpls = {
 			machinelist: 'app-components/partials/about-machine-list.html'
 		};
 
-		navApi.defaultTitle();
-		loadingOverlayApi.show();
+		$scope.page = {
+			content: '# loading, please wait'
+		};
 		
 		$scope.machines = [];
 		$scope.seasons = [];
@@ -26,14 +30,18 @@ define(function(require){
 
 		var machine_promise = Machines.loading,
 			seasons_promise = Seasons.loading,
-			players_promise = Players.loading;
+			players_promise = Players.loading,
+			page_promise = API.get('page.url', 'about');
 
 		machine_promise.then(function(){ $scope.machines = Machines.active; });
 		seasons_promise.then(function(){ $scope.seasons = Seasons.all; });
 		players_promise.then(function(){ $scope.players = Players.players; });
+		page_promise.then(function(page){
+			$scope.page = page;
+		});
 
 
-		$q.all([machine_promise, seasons_promise, players_promise])
+		$q.all([machine_promise, seasons_promise, players_promise, page_promise])
 		.then((function(){
 			loadingOverlayApi.hide();
 		}));

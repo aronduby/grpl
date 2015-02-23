@@ -241,7 +241,6 @@ abbv{
 	box-shadow:0 0 4px rgba(0,0,0,.6);
 }
 	.content-page article header .bg{
-		background-image: url(https://fbcdn-sphotos-d-a.akamaihd.net/hphotos-ak-xpa1/t31.0-8/10631246_10154949075805596_6871321870975590000_o.jpg);
 		background-position:50%;
 		background-size:cover;
 		background-repeat:no-repeat;
@@ -365,10 +364,6 @@ abbv{
 /*
  *  Change Log
 */
-#changelog article header .bg{
-	background-image: url(https://fbcdn-sphotos-f-a.akamaihd.net/hphotos-ak-xfa1/v/t1.0-9/421284_10151358815360004_1537843339_n.jpg?oh=302162838bfa66df88931a1c1ee0ab14&oe=55354FB4&__gda__=1429094331_a2d68dd97d35cd88de39cd71d4ed35fe);
-}
-
 #changelog section{
 	border-radius:0;
 	box-shadow: none;
