@@ -66,6 +66,21 @@ require(['js/app'], function(app){
 				$scope.show_scoring = true;
 				$scope.scoring_night_starts = scoring_night.starts;
 			}
+
+			api.get('leaguenight.ties', LeagueNights.getNextOrMostRecentNight(true).starts)
+			.then(function(ties){
+				_.each(ties, function(group){
+					var data = {
+						name_key: group[0].name_key,
+						names: []
+					};
+
+					data.names = _.map(group, function(player){
+						return player.first_name+' '+player.last_name[0]+'.';
+					});
+					$scope.ties.push(data);
+				});
+			});
 		});
 
 		Machines.loading
@@ -81,21 +96,6 @@ require(['js/app'], function(app){
 		Seasons.loading
 		.then(function(){
 			$scope.seasons = Seasons.all;
-		});
-
-		api.get('leaguenight.ties', LeagueNights.getNextOrMostRecentNight(true).starts)
-		.then(function(ties){
-			_.each(ties, function(group){
-				var data = {
-					name_key: group[0].name_key,
-					names: []
-				};
-
-				data.names = _.map(group, function(player){
-					return player.first_name+' '+player.last_name[0]+'.';
-				});
-				$scope.ties.push(data);
-			});
 		});
 
 		/*
