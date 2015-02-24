@@ -1,4 +1,4 @@
-define(['app-components/services/api', 'js/routingConfig'], function(servicesApp, routingConfig){
+define(['js/routingConfig'], function(routingConfig){
 
 	// Load the SDK Asynchronously
 	(function(d){
@@ -251,7 +251,7 @@ define(['app-components/services/api', 'js/routingConfig'], function(servicesApp
 
 	
 
-	servicesApp.service('Auth', ['$q', 'ipCookie', 'api', 'flare', Auth]);
+	return angular.module('authService', ['socketServices']).service('Auth', ['$q', 'ipCookie', 'api', 'flare', Auth]);
 
-	return servicesApp;	
+	// return app;	
 });

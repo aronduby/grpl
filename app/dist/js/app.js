@@ -17,6 +17,7 @@ function(routingConfig){
 			'ipCookie',
 			'routeResolverServices',
 			'socketServices',
+			'authService',
 			'ajoslin.promise-tracker',
 			'angular-flare',
 			'BodyClasses',
@@ -29,8 +30,8 @@ function(routingConfig){
 		]);
 
 	app.config([
-		'$stateProvider', '$urlRouterProvider', '$locationProvider', 'socketProvider', 'navApiProvider', 'routeResolverProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', 
-		function($stateProvider, $urlRouterProvider, $locationProvider, socketProvider, navApiProvider, routeResolverProvider, $controllerProvider, $compileProvider, $filterProvider, $provide){
+		'$stateProvider', '$urlRouterProvider', '$locationProvider', 'navApiProvider', 'routeResolverProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', 
+		function($stateProvider, $urlRouterProvider, $locationProvider, navApiProvider, routeResolverProvider, $controllerProvider, $compileProvider, $filterProvider, $provide){
 
 			navApiProvider.setDefaults('GRPL', 'Grand Rapids Pinball League');
 			
@@ -194,7 +195,6 @@ function(routingConfig){
 			    "</div>\n" +
 			"");
 
-			api.setSocket(socket); // I don't think this is necessary any more?
 			LeagueNights.loadNights();
 			Machines.loadMachines();
 			Players.loadPlayers();

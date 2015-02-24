@@ -7,13 +7,11 @@ requirejs.config({
 
 require(
 	[
-		'js/socketConnector',
+		'app-components/services/socket',
 		'js/routingConfig',
 		'js/app',
 		'app-components/services/routeResolver',
-		'app-components/services/socket',
 		'app-components/services/NavApi',
-		'app-components/services/api',
 		'app-components/services/LeagueNights',
 		'app-components/services/Machines',
 		'app-components/services/Players',

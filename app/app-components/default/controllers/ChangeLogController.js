@@ -54,7 +54,8 @@ define(function(require){
 			"penis", 
 			"vagina", 
 			"whore",
-			"damn"
+			"damn",
+			" ass "
 		];
 
 

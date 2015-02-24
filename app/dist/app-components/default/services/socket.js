@@ -1,6 +1,76 @@
-define(['js/socketConnector'], function(socket_connection){
+define([], function(){
 
 	/*
+	 *	The actual connection to the socket server
+	 *	Using a defered style here to be able to trigger the angular bootstrap
+	*/
+	var address = 'http://'+window.location.host+':834',
+		options = {
+			'sync disconnect on unload': true,
+			'max reconnection attempts': 5
+		}
+
+	var socket = io.connect(address, options);
+
+	// quick slap together a defer
+	var promise = {
+		okCallbacks: [],
+		koCallbacks: [],
+		status: null,
+		data: null,
+		then: function(okCallback){
+			if(this.status == 'resolved'){
+				okCallback(this.data);
+			} else {
+				this.okCallbacks.push(okCallback);
+			}
+		},
+		fail: function(koCallback){
+			if(this.status == 'rejected'){
+				koCallback(this.data);
+			} else {
+				this.koCallbacks.push(koCallback);
+			}
+		}
+	};
+
+	var defer = {
+		promise: promise,
+		resolve: function(data){
+			this.promise.status = 'resolved';
+			this.promise.data = data;
+			this.promise.okCallbacks.forEach(function(callback){
+				window.setTimeout(function(){
+					callback(data);
+				}, 0)
+			});
+		},
+		reject: function(err){
+			this.promise.status = 'rejected';
+			this.promise.data = data;
+			this.promise.koCallbacks.forEach(function(callback){
+				window.setTimeout(function(){
+					callback(err);
+				}, 0);
+			});
+		}
+	};
+
+	socket.on('connect', function(){
+		defer.resolve(socket);
+	});
+
+
+	/*
+	 *	Used to house our services/providers defined below
+	*/
+	var servicesApp = angular.module('socketServices', []);
+
+
+	/*
+	 *	Socket Provider
+	 * 	Direct-ish access to our socket above
+	 *
 	 *	Usage example, from within controller
 
 		socket.addScope($scope.$id)
@@ -16,12 +86,7 @@ define(['js/socketConnector'], function(socket_connection){
 			socket.getScope($scope.$id).clear();
 		});	
 	*/
-	var socket = null;
-	socket_connection.then(function(s){
-		socket = s;
-	});
-
-	function Socket($rootScope, address, options){
+	function Socket($rootScope){
 		var scopes = {};
 
 		this.emit = function() {
@@ -122,27 +187,60 @@ define(['js/socketConnector'], function(socket_connection){
 		}
 	}
 
+	servicesApp.service('socket', ['$rootScope', Socket]);
 
-	var servicesApp = angular.module('socketServices', []);
 
-	//Must be a provider since it will be injected into module.config()    
-	servicesApp.provider('socket', function socketProvider(){
-		var address = '',
-			options = {};
+	/*
+	 *	The socket backed Api
+	*/
+	function Api($q, Socket){
 
-		this.setAddress = function(addr){
-			address = addr;
+		this.default_opts = {
+			success: function(){  },
+			error: function(){  },
+			complete: function(){ return true; }
 		};
 
-		this.setOptions = function(opts){
-			options = opts;
-		}
+		this.get = function(method, argument, opts){
+			var d = $q.defer();
+			
+			opts = angular.extend({}, this.default_opts, opts);
+			opts.method = method;
 
-		this.$get = ['$rootScope', function socketFactory($rootScope){
-			return new Socket($rootScope, address, options);
-		}];
-	});
+			var cb = function(err, data){
+				console.groupCollapsed('Api.get', method, argument);
+				console.log(err, data);
+				console.groupEnd();
+				
+				if(err){
+					opts.error(err);
+					d.reject(err);
+				} else {
+					opts.success(data);
+					d.resolve(data);
+				}
+				opts.complete();
+			}
 
-	return servicesApp;
+			if(argument != null){
+				Socket.emit(method, argument, cb);
+			} else {
+				Socket.emit(method, cb);
+			}
+
+			return d.promise;
+		};
+
+		this.post = function(method, argument, opts){
+			return this.get(method, argument, opts);
+		};
+	};
+
+	servicesApp.service('api', ['$q', 'socket', Api]);
+
+
+	
+	// finally return our promise from above so we can trigger things to happen once we are connected
+	return defer.promise;
 
 });
