@@ -1,7 +1,7 @@
 define(function(require){
 	var	
 		app        = require('js/app'),
-		bugifylink = require('app-components/filters/bugifylink'),
+		bugifylink = require('app-components/filters/bugifyLink'),
 		curses     = require('app-components/filters/curses'),
 		Markdown   = require('app-components/directives/Markdown'),
 		pageEditor = require('app-components/directives/PageEditor');
