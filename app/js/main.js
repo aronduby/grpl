@@ -32,6 +32,7 @@ require(
 		'app-components/directives/InlineModal',
 		'app-components/directives/HeadToHead',
 		'app-components/directives/Slip',
+		'app-components/directives/Abbr',
 		'app-components/BodyClasses',
 		'app-components/LoadingOverlay'
 	],

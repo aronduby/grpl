@@ -65,7 +65,7 @@
 							<td class="empty"><p>no machines played yet</p></td>
 						</tr>
 						<tr ng-repeat="(abbv, machines) in player_data.machines | groupBy:'abbv'">
-							<th><abbv title="{{ machines[0].name }}">{{ abbv }}</abbv></th>
+							<th><abbr title="{{ machines[0].name }}">{{ abbv }}</abbr></th>
 							<td>
 								<div 
 									ng-repeat="machine in machines" 

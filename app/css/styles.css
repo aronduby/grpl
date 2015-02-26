@@ -206,9 +206,10 @@ em{
 	font-style: italic;
 }
 
-abbv{
+abbr{
 	cursor:help;
-	border-bottom:1px dotted #aaa;
+	border: 1px dotted #aaa;
+	border-width: 0 0 1px 0;
 }
 
 /* player subs */
@@ -641,11 +642,10 @@ body.loading > footer{
 			font-weight:bold;
 			text-shadow:1px 1px 1px rgba(0,0,0,.5);
 			background-size:100%;
-			background-repeat:no-repeat;
-		
+			background-repeat:no-repeat;		
 			display: inline-block;
-}
-		.prev-machine-picks li abbr + abbr{ margin-left:5px; }
+		}
+		.prev-machine-picks li abbr + abbr{ margin-left:5px;}
 
 
 .player-holder .listview ul:before{
@@ -1978,8 +1978,20 @@ li.subsection fieldset{
 
 
 
-
-
+/*
+ *	Machine Abbv Modal
+*/
+.machine-abbv-modal li{
+	padding: 0;
+}
+.machine-abbv-modal li img{
+	margin:0 5px 0 0;	
+}
+.machine-abbv-modal li h3{
+    white-space: normal;	
+    line-height: 1.1em;
+    margin-bottom: .05em;
+}
 
 
 
