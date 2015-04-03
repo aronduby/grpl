@@ -805,7 +805,7 @@ if (cluster.isMaster) {
 						var u = 'layout_imgs/machines/'+data.abbv+'.jpg';
 						download(
 							data.new_image, 
-							'../app/'+u, 
+							'../app/dist/'+u, 
 							function(){ 
 								d.resolve(u); 
 							}, 
