@@ -170,6 +170,26 @@
 				</section>
 			</section>
 
+			<section class="scores" collapsible closed collapse-callback="sectionCollapsed(closed, 'scores')">
+				<header>
+					<h1>Edit Scores</h1>
+				</header>
+				<section class="collapsible-content">
+					<div class="listview league-nights">
+						<img ng-if="!nights" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
+						<ul ng-if="nights">
+							<li ng-repeat="night in nights | orderBy:'starts':true" ng-if="night.scored" data-starts="{{night.starts}}">
+								<a ng-href="#/admin/editscores/{{night.starts}}">
+									<h3>{{ night.title }}</h3>
+									<p>{{ night.description }}</p>
+								</a>
+							</li>
+							<li ng-if="!nights.length">no scored nights</li>
+						</ul>
+					</div>
+				</section>
+			</section>
+
 		</article>
 	</div>
 </div>

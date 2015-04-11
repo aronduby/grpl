@@ -146,6 +146,11 @@ function(routingConfig){
 				.state('admin.scoring', route.resolve({
 					url: '/admin/scoring/:name_key/:offset',
 					baseName: 'Scoring'
+				}))
+				.state('admin.editscores', route.resolve({
+					url: '/admin/editscores/:starts',
+					path: 'admin/',
+					baseName: 'AdminEditScores'
 				}));
 
 			$urlRouterProvider.otherwise('/index');

@@ -190,7 +190,8 @@
 	#night_admin .night-form,	
 	#night-order-admin .order-form,
 	#season_admin .season-form,
-	#machine_admin .machine-form{
+	#machine_admin .machine-form,
+	#score-admin .score-editor-holder{
 		margin:auto 2% auto 23%;
 	}
 	
@@ -379,9 +380,9 @@ abbr{
 			}
 
 		#page-editor form fieldset.full{
-    		float: none;
+				float: none;
 			width: 100%;		
-    		line-height: 0;
+				line-height: 0;
 		}
 
 		#page-editor form textarea#content{
@@ -405,7 +406,7 @@ abbr{
  *  Home Page
 */
 #home .content .machine-list{
-    line-height: 1.2em;
+		line-height: 1.2em;
 }
 #home .content .machine-list li{
 	margin-bottom:.75em;
@@ -561,14 +562,14 @@ abbr{
 	background-image: linear-gradient(to bottom, #ff3019 0%,#cf0404 100%);
 }
 .dialog .content div{
-  line-height:1.3em; 
+	line-height:1.3em; 
 }
-  .dialog .content blockquote{
-    font-family:monospace;
-    font-size:.9em;
-    border-left:4px solid rgba(0,0,0,.15);
-    padding:8px;
-  }
+	.dialog .content blockquote{
+		font-family:monospace;
+		font-size:.9em;
+		border-left:4px solid rgba(0,0,0,.15);
+		padding:8px;
+	}
 
 /*
  *  footer and links
@@ -1005,10 +1006,10 @@ body.loading > footer{
 
 #scoring header .btn-group{
 	float:right;
-    margin:-5px -10px 0 0;
-    background-color: #4f4f4f;
-    background-image:linear-gradient(to top, #8A8A8A 0%, #4F4F4F 100%) repeat scroll 0 0 rgba(0, 0, 0, 0);
-    border-radius:5px;
+		margin:-5px -10px 0 0;
+		background-color: #4f4f4f;
+		background-image:linear-gradient(to top, #8A8A8A 0%, #4F4F4F 100%) repeat scroll 0 0 rgba(0, 0, 0, 0);
+		border-radius:5px;
 	display: inline-flex;
 }
 	#scoring header .btn-group label{
@@ -1018,7 +1019,7 @@ body.loading > footer{
 		font-weight:bold;
 		text-shadow:none;
 		white-space:nowrap;
-    	border-color:#616161;
+			border-color:#616161;
 		background:none;
 	}
 	#scoring header .btn-group label.active{
@@ -1102,9 +1103,9 @@ body.loading > footer{
 }
 
 .scoring_error ul{
-    list-style: disc inside;	
-    padding-left: 10px;
-    line-height: 1.4em;
+		list-style: disc inside;	
+		padding-left: 10px;
+		line-height: 1.4em;
 }
 	.scoring_error ul li{
 		margin-bottom:.1em;
@@ -1988,11 +1989,167 @@ li.subsection fieldset{
 	margin:0 5px 0 0;	
 }
 .machine-abbv-modal li h3{
-    white-space: normal;	
-    line-height: 1.1em;
-    margin-bottom: .05em;
+		white-space: normal;	
+		line-height: 1.1em;
+		margin-bottom: .05em;
 }
 
+
+/*
+ *	Edit Scores
+*/
+#score-admin header{
+	display:flex;
+	align-items:center;
+}
+	#score-admin header h1{ flex:1; }
+	#score-admin header .button{ font-size:inherit;	}
+	#score-admin header .cancel{ color:#eee; }
+
+#score-admin .content{
+	border-radius:0;
+}
+
+#score-admin footer{
+	padding:.5em;
+	background: #C2C2C2;
+	border-radius: 0 0 5px 5px;
+}
+	#score-admin footer a{ margin:0 10px; }
+	#score-admin footer a:last-child{ margin-right:0; }
+
+
+
+
+
+#score-admin section.viewing{}
+
+	#score-admin section.viewing,
+	#score-admin section.viewing header{
+		border-radius:0;	
+		box-shadow: 1px 1px 3px rgba(0,0,0,.5);
+	}
+
+	#score-admin .viewing header{
+    	padding:0 0 0 15px;	
+    	background-image: none;
+    	background-color: #969696;
+	
+    	border-color: #848484;
+}
+		#score-admin .viewing header h1{
+			font-size:1em;
+		}
+
+		#score-admin .viewing header .button{
+			border-radius:0;
+			border-width:0 0 0 1px;
+		}
+
+
+.score-edit-form input,
+.score-edit-form select,
+.score-edit-form textarea{
+	font-size:1em;
+}
+	.score-edit-form input{
+		text-align:center;
+	}
+
+.score-table{ 
+	width:100%;
+	font-size: 1.2em;
+	line-height:1em;
+	text-align: center;
+}
+	.score-table td,
+	.score-table th{
+		padding:.6em .25em;
+		vertical-align:bottom;
+		border-bottom:1px solid #c4c4c4;
+	}
+
+	.score-table td.empty{
+		background:rgba(125,0,0,.5);
+		color:#fff;
+	}
+
+	.score-table thead{
+		font-weight:bold;
+		border-bottom:2px solid #adadad;
+	}
+		.score-table thead th{
+			text-align:center;
+		}
+
+	.score-table tbody th{
+		text-align:left;
+	}
+
+	.score-table tbody tr:last-child td,
+	.score-table tbody tr:last-child th{
+		border-bottom:none;
+	}
+
+	.score-table .border-right{ 
+		border-right:1px solid #c4c4c4; 
+		padding-right:.5em;
+	}
+		.score-table .border-right + td{
+			padding-left:.5em;
+		}
+	
+
+@media(max-width:500px){
+	.score-table thead{ display:none; }
+
+	.score-table tr{ 
+		display:block;
+		margin-bottom:1em;
+	}
+
+	.score-table td,
+	.score-table th{
+		display:flex;
+		align-items:center;
+		line-height:1.4em;
+		text-align:left !important;
+		margin-left:1em;
+	}
+		.score-table tr :first-child{
+			margin-left:0;
+		}
+
+		.score-table tbody tr:last-child td,
+		.score-table tbody tr:last-child th{
+			border-bottom:1px solid #c4c4c4;
+		}
+
+		.score-table td[data-title]::before,
+		.score-table th[data-title]::before{
+			content:attr(data-title)':';
+			text-transform:capitalize;
+			font-weight:bold;
+			margin-right:5px;
+		}
+
+	.score-table .border-right{ 
+		border-right:none; 
+		padding-right:.25em;
+	}
+		.score-table .border-right + td{
+			padding-left:.25em;
+		}
+
+
+	.score-table input,
+	.score-table select,
+	.score-table textarea{
+		flex:1;
+		border:1px solid #eee;
+	}
+
+}
 
 
 /*

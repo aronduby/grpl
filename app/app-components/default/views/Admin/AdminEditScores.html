@@ -1,0 +1,34 @@
+<div class="page" id="score-admin">
+
+	<article>
+		
+		<div class="score-editor-holder">
+			<score-editor
+				ng-repeat="group in groups"
+				index="$index"
+				group="group"
+				machines="machines"
+				save="save(scores)"
+			></score-editor>
+		</div>
+
+	</article>
+
+	<div id="admin-nights-panel" class="panel" inline-modal>
+		<header>
+			<h1>Edit Scores For</h1>
+			<a class="close" ng-click="close()">Close</a>
+		</header>
+		<article class="listview">
+			<ul>
+				<li ng-repeat="night in nights track by night.night_id" ng-if="night.scored">
+					<a ng-href="#/admin/editscores/{{ night.starts }}">
+						<h2>{{ night.title }}</h2>
+						<p>{{ night.description }}</p>
+					</a>
+				</li>
+			</ul>
+		</article>
+	</div>
+
+</div>
