@@ -480,6 +480,17 @@ a.button.live:before{
   background-position:0 -164px;
 }
 
+/*--- small buttons ---*/
+button.small,
+a.button.small{
+  padding:4px;
+  font-size:16px;
+}
+  button.small::before,
+  a.button.small::before{
+    transform:scale(.8);
+  }
+
 /*--- Buttons in Page Headers ---*/
 #main-navbar button{
   border-radius:0;
@@ -764,7 +775,10 @@ form .listview fieldset select,
 form .listview fieldset textarea,
 form .listview .fieldset input,
 form .listview .fieldset select,
-form .listview .fieldset textarea{
+form .listview .fieldset textarea,
+.score-edit-form input,
+.score-edit-form select,
+.score-edit-form textarea{
   box-sizing: border-box;
   border-radius:5px;
   width: 100%;
@@ -775,7 +789,8 @@ form .listview .fieldset textarea{
   color:#666;
 }
   form .listview fieldset select,
-  form .listview .fieldset select{
+  form .listview .fieldset select,
+  .score-edit-form select{
     width:100%;
   }
 

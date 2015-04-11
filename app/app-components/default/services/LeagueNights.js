@@ -69,7 +69,7 @@ define(['js/app'], function(app){
 			return this.getNight('totals');
 		};
 
-		this.getPreviousNight = function(starts){
+		this.getPreviousNight = function getPreviousNight(starts){
 			var before = moment(starts);
 
 			return _.find(this.nights, function(night){
@@ -77,8 +77,7 @@ define(['js/app'], function(app){
 					return false;
 				return night.moment.isBefore(before);
 			});
-
-		}
+		};
 
 		/*
 		 *	This does the full query for all the data for a single night
@@ -103,6 +102,20 @@ define(['js/app'], function(app){
 				.catch(function(err){
 					d.reject(err);
 				});
+
+			return d.promise;
+		};
+
+		this.getScores = function getScores(starts){
+			var d = $q.defer();
+
+			api.get('leaguenight.scores', starts)
+			.then(function(scores){
+				d.resolve(scores);
+			})
+			.catch(function(err){
+				d.reject(err);
+			});
 
 			return d.promise;
 		};

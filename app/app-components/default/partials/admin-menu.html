@@ -46,10 +46,10 @@
 					<div class="listview scoring-groups" ng-if="scoring_groups">
 						<ul>
 							<li ng-repeat="group in scoring_groups | orderBy:'order'">
-								<a ui-sref="admin.scoring({name_key: group.name_key})">
+								<a ui-sref="admin.scoring({name_key: group.name_key, offset: group.machines.length % 5})">
 									<h3>#{{group.order + 1}} {{ group.initials.join(' ') }}</h3>
 									<p class="machines">
-										<span class="abbv" ng-repeat="(abbv, value) in group.machines" ng-class="{'done':value}">{{ abbv }}</span>
+										<span class="abbv done" ng-repeat="abbv in group.machines track by $index">{{ abbv }}</span>
 									</p>
 									<span class="status-indicator {{group.status}}"></span> 
 								</a>
@@ -165,6 +165,26 @@
 								</a>
 							</li>
 							<li ng-if="!group.length">no {{ group[0].status }} machines?</li>
+						</ul>
+					</div>
+				</section>
+			</section>
+
+			<section class="scores" collapsible closed collapse-callback="sectionCollapsed(closed, 'scores')">
+				<header>
+					<h1>Edit Scores</h1>
+				</header>
+				<section class="collapsible-content">
+					<div class="listview league-nights">
+						<img ng-if="!nights" class="loading" src="layout_imgs/grey-block-loading-light.gif" alt="loading" />
+						<ul ng-if="nights">
+							<li ng-repeat="night in nights | orderBy:'starts':true" ng-if="night.scored" data-starts="{{night.starts}}">
+								<a ng-href="#/admin/editscores/{{night.starts}}">
+									<h3>{{ night.title }}</h3>
+									<p>{{ night.description }}</p>
+								</a>
+							</li>
+							<li ng-if="!nights.length">no scored nights</li>
 						</ul>
 					</div>
 				</section>

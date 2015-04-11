@@ -469,7 +469,6 @@ if (cluster.isMaster) {
 			
 		});
 
-		// get the information for totals
 		socket.on('leaguenight.totals', function(cb){
 			socket.get('season_id', function(err, socket_season_id){
 				if(err || socket_season_id == null)
@@ -489,8 +488,7 @@ if (cluster.isMaster) {
 				.fail(function(err){
 					cb(handleError(err));
 				}).done();
-			});
-			
+			});			
 		});
 
 		// information for a specific league night
@@ -534,9 +532,6 @@ if (cluster.isMaster) {
 				.done();
 			});
 		});
-
-
-
 
 		socket.on('leaguenight.update', function(data, cb){
 			socket.get('user.admin', function(err, admin){
@@ -653,6 +648,69 @@ if (cluster.isMaster) {
 				}
 			});
 		});
+
+		socket.on('leaguenight.scores', function(starts, cb){
+			socket.get('user.admin', function(err, admin){
+				if(admin != true && admin != 'true'){
+					cb({
+						title:'Error',
+						headline: 'Nope...',
+						msg: '<p>Only Admins can edit scores. If you think you should be an admin talk to the people in charge.</p>'
+					});
+				} else {
+					grpl.leaguenight.getByStarts(starts)
+					.then(function(night){
+						night.getScores()
+						.then(function(data){
+							cb(null, data);
+						}).fail(function(err){ cb(err); }).done();
+					}).fail(function(err){ cb(err); }).done();
+				}
+			});
+		});
+
+
+		socket.on('scores.update', function(data, cb){
+			socket.get('user.admin', function(err, admin){
+				if(admin != true && admin != 'true'){
+					cb({
+						title:'Error',
+						headline: 'Nope...',
+						msg: '<p>Only Admins can edit scores. If you think you should be an admin talk to the people in charge.</p>'
+					});
+				} else {
+					if(!data.scores.length && !data.delete.mtln && !data.delete.scores){
+						cb({
+							title: 'Error',
+							headline: 'Missing Required Information',
+							msg: '<p>Nothing was submitted. Please try again.</p>'
+						});
+						return false;
+					}
+
+					// first get the league night for the night_id
+					grpl.leaguenight.getByStarts(data.starts)
+					.then(function(night){
+
+						night.saveScores(data)
+						.then(function(result){
+
+							cb(null, result);
+
+							// send the socket event to update the scores
+							// io.sockets.emit('scoring_edited', d);
+						})
+						.fail(function(err){
+							cb(handleError(err));
+						});
+
+					}).fail(function(err){
+						cb(handleError(err));
+					});
+				}
+			});
+		});
+
 
 
 		socket.on('playerlist.createStartOrderForNight', function(starts, cb){
