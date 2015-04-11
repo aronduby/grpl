@@ -2086,6 +2086,13 @@ li.subsection fieldset{
 		text-align:left;
 	}
 
+	.score-table tbody th em{
+		font-size:.9em;
+		color: rgb(161, 161, 161);
+	
+		margin-left: 5px;
+}
+
 	.score-table tbody tr:last-child td,
 	.score-table tbody tr:last-child th{
 		border-bottom:none;
@@ -2116,7 +2123,7 @@ li.subsection fieldset{
 		text-align:left !important;
 		margin-left:1em;
 	}
-		.score-table tr :first-child{
+		.score-table tr > :first-child{
 			margin-left:0;
 		}
 

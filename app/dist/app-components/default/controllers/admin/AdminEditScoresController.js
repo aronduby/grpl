@@ -80,6 +80,7 @@ define(['js/app', 'app-components/directives/ScoreEditor'], function(app){
 					var obj = {
 						group: group[0].grouping,
 						night_id: $scope.night.night_id,
+						division_id: group[0].division_id,
 						players: {},
 						machines: {}
 					};
@@ -97,10 +98,11 @@ define(['js/app', 'app-components/directives/ScoreEditor'], function(app){
 									played_order: row.played_order,
 									scores: [],
 									picked_by: row.picked_by,
-									mtln_id: row.mtln_id
+									mtln_id: row.mtln_id,
+									division_id: row.division_id
 								};
 							}
-						}					
+						}
 
 						if(row.score_id != null){
 							obj.machines[row.abbv].scores.push(row);

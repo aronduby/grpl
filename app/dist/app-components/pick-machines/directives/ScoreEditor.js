@@ -29,6 +29,15 @@ define(function(require){
 					scores: []
 				};
 
+				// make sure we have a reference to the player for picked_by selects
+				_.each(scope.group.machines, function(machine){
+					if(machine.picked_by != null){
+						machine.picked_by_ref = scope.group.players[machine.picked_by];
+					} else {
+						machine.picked_by_ref = null;
+					}
+				});
+
 				// when a machine changes, update the abbv in the scores
 				// TODO - do the same with the played_order
 				scope.$watch('copy.machines', function(newVal, oldVal){
@@ -51,7 +60,15 @@ define(function(require){
 									_.each(mac.scores, function(score){
 										score.played_order = mac.played_order;
 									});		
-								}								
+								}
+
+								// make sure the picked_by is copied over as well
+								if( mac.picked_by_ref != undefined && mac.picked_by != mac.picked_by_ref.name_key){
+									mac.picked_by = mac.picked_by_ref.name_key;
+									_.each(mac.scores, function(score){
+										score.picked_by = mac.picked_by;
+									});
+								}		
 							}
 						});
 					}					
@@ -64,8 +81,9 @@ define(function(require){
 
 						// selects have to be a reference
 						_.each(scope.copy.machines, function(m){
-							if(m != null)
+							if(m != null){
 								m.machine = _.find(scope.machines, {'abbv': m.machine.abbv});
+							}
 						});
 
 					} else {

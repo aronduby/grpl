@@ -51,8 +51,7 @@ define(function(require){
 									_.each(mac.scores, function(score){
 										score.played_order = mac.played_order;
 									});		
-								}
-								
+								}								
 							}
 						});
 					}					
@@ -68,6 +67,7 @@ define(function(require){
 							if(m != null)
 								m.machine = _.find(scope.machines, {'abbv': m.machine.abbv});
 						});
+
 					} else {
 						scope.copy = null;
 					}
@@ -100,7 +100,8 @@ define(function(require){
 							points: 0,
 							score_id: null,
 							start_order: player.start_order,
-							mtln_id: null
+							mtln_id: null,
+							division_id: scope.copy.division_id
 						});
 					});
 
