@@ -197,6 +197,15 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 			}
 		};
 
+		function scoresEdited(data){
+			loadNight($scope.night.starts);
+			flare.warn('<h1>Scores Edited</h1><p>The scores have been edited, so we\'re grabbing you fresh data.</p>', 5000);
+		}
+
+		function reconnect(){
+			loadNight($scope.night.starts);
+		}
+
 
 		socket.addScope($scope.$id)
 			.on('tiesbroken', tiesBroken)
@@ -205,7 +214,9 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 			.on('leaguenight_updated', leaguenightUpdated)
 			.on('leaguenight_order_updated', leaguenightOrderUpdated)
 			.on('user_updated', userUpdated)
-			.on('machine_updated', machineUpdated);
+			.on('machine_updated', machineUpdated)
+			.on('scores_edited', scoresEdited)
+			.on('reconnect', reconnect);
 
 		$scope.$on("$destroy", function() {
 			socket.getScope($scope.$id).clear();

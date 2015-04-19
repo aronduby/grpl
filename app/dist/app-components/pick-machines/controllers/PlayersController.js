@@ -1,8 +1,8 @@
 define(['js/app'], function(app){
 
-	var injectParams = ['$stateParams', '$scope', '$q', 'Auth', 'navApi', 'api', 'promiseTracker', 'loadingOverlayApi', 'flare', 'LeagueNights', '$filter', 'Machines', 'Players', 'googleChartApiPromise'];
+	var injectParams = ['$stateParams', '$scope', '$q', 'Auth', 'navApi', 'api', 'promiseTracker', 'loadingOverlayApi', 'flare', 'LeagueNights', '$filter', 'Machines', 'Players', 'googleChartApiPromise', 'socket' ];
 
-	var PlayersController = function($stateParams, $scope, $q, Auth, navApi, api, promiseTracker, loadingOverlayApi, flare, LeagueNights, $filter, Machines, Players, googleChartApiPromise){
+	var PlayersController = function($stateParams, $scope, $q, Auth, navApi, api, promiseTracker, loadingOverlayApi, flare, LeagueNights, $filter, Machines, Players, googleChartApiPromise, socket ){
 		loadingOverlayApi.show();
 		navApi.defaultTitle();
 		navApi.setCenterPanelKey('players-panel');
@@ -117,8 +117,8 @@ define(['js/app'], function(app){
 			$scope.players = Players.players;
 		});
 
-		player_loaded = Players.getFullForSeason($scope.name_key)
-		.then(function(player_data){
+
+		function playerFullSeason(player_data){
 			$scope.player_data = player_data;
 			$scope.player = player_data.player;
 			$scope.machine_bar_multiplier = calcMachineBarMultiplier(player_data.machines);
@@ -127,12 +127,12 @@ define(['js/app'], function(app){
 			navApi.setTitle($scope.player.first_name+' '+$scope.player.last_name, 'View a Different Player');
 
 			player_data.nights.reverse();
-		});
+		}
+		player_loaded = Players.getFullForSeason($scope.name_key).then(playerFullSeason);
 
 
 		// google loaded set everything up
-		$q.all([googleChartApiPromise, player_loaded])
-		.then(function(){
+		function drawChart(){
 			$scope.chart.data = new google.visualization.DataTable();
 			$scope.chart.data.addColumn('date', 'Night');
 			$scope.chart.data.addColumn('number', "Points");
@@ -157,7 +157,8 @@ define(['js/app'], function(app){
 
 				$scope.chart.data.addRow([new Date(night.starts), night.points, ''+night.points, end_place, ''+end_place, sub]);
 			});
-		});
+		}
+		$q.all([googleChartApiPromise, player_loaded]).then(drawChart);
 
 
 		function calcMachineBarMultiplier(machines){
@@ -166,9 +167,11 @@ define(['js/app'], function(app){
 
 
 		// machines compare to
-		$scope.$watch('compare_to', function(player){
+		function compareTo(player, surpress_loading){
 			if(player !== null){
-				loadingOverlayApi.show();
+				if(!surpress_loading)
+					loadingOverlayApi.show();
+
 				Players.getFullForSeason(player.name_key)
 					.then(function(data){
 
@@ -186,28 +189,26 @@ define(['js/app'], function(app){
 
 					})
 					.finally(function(){
-						loadingOverlayApi.hide();
+						if(!surpress_loading)
+							loadingOverlayApi.hide();
 					})
 			} else {
 				$scope.compare_machines = null;
 				$scope.machine_bar_multiplier = calcMachineBarMultiplier($scope.player_data.machines);
 			}
+		}
+		$scope.$watch('compare_to', function(player){
+			compareTo(player, false);
 		});
-
-		$scope.nightsCollapsed = function(closed){
-			if(closed === false){
-				// $scope.chart_control.redraw();
-			}			
-		};
 		
 
 
 		// hide the overlay once everyone and the full player is loaded
 		// head to head takes longer and can wait (I think it takes longer, not sure I tested that ever)
 		$q.all([all_loaded, player_loaded])
-			.then(function(){
-				loadingOverlayApi.hide();
-			});
+		.then(function(){
+			loadingOverlayApi.hide();
+		});
 
 
 		function reformatHeadToHeadData(data){
@@ -252,17 +253,55 @@ define(['js/app'], function(app){
 			return new_data;
 		}
 
-		head_to_head_loaded = Players.getHeadToHead($scope.name_key)
+		function loadHeadToHead(){
+			head_to_head_loaded = Players.getHeadToHead($scope.name_key)
 			.then(function(data){
 				$scope.head_to_head = reformatHeadToHeadData(data);
 			});
-		$scope.head_to_head_tracker.addPromise(head_to_head_loaded);
+			$scope.head_to_head_tracker.addPromise(head_to_head_loaded);
 
-		head_to_head_all_time_loaded = Players.getHeadToHeadAllTime($scope.name_key)
+			head_to_head_all_time_loaded = Players.getHeadToHeadAllTime($scope.name_key)
 			.then(function(data){
 				$scope.head_to_head_all_time = reformatHeadToHeadData(data);
 			});
-		$scope.head_to_head_all_time_tracker.addPromise(head_to_head_all_time_loaded);
+			$scope.head_to_head_all_time_tracker.addPromise(head_to_head_all_time_loaded);	
+		}
+		loadHeadToHead();
+
+
+
+		function scoresEdited(data){
+			var edited_players = _.chain(data.scores).pluck('name_key').uniq().value();
+
+			// if this player was edited, then we have to reload everything
+			if(_.indexOf(edited_players, $scope.player.name_key) >= 0){
+				flare.warn('<h1>Scores Edited</h1><p>'+$scope.player.first_name+'\'s scores have been edited, we\'re updating everything for you.</p>', 5000);				
+				loadingOverlayApi.show();
+				var player_loaded = Players.getFullForSeason($scope.name_key).then(playerFullSeason);
+				$q.all([googleChartApiPromise, player_loaded]).then(function(){
+					drawChart();
+					loadHeadToHead();
+					loadingOverlayApi.hide();
+				});		
+
+			// if the player being compared to in points per machine, then reload that
+			} else if($scope.compare_to != null && _.indexOf(edited_players, $scope.compare_to.name_key) >= 0){
+				compareTo($scope.compare_to, true);
+				flare.warn('<h1>Scores Edited</h1><p>'+$scope.compare_to.first_name+'\'s scores have been edited, we\'re updating the points per machine comparison for you.</p>', 5000);
+
+			// otherwise just reload the head to head data	
+			} else {
+				loadHeadToHead();
+				flare.warn('<h1>Scores Edited</h1><p>Scores have been edited, we\'re updating the head to head for you.</p>', 5000);
+			}			
+		};
+
+		socket.addScope($scope.$id)
+			.on('scores_edited', scoresEdited);
+
+		$scope.$on("$destroy", function() {
+			socket.getScope($scope.$id).clear();
+		});	
 		
 	};
 

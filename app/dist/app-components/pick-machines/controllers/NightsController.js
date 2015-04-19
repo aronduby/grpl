@@ -13,6 +13,7 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 		$scope.night = {};
 		$scope.live = false;
 		$scope.scoring = Scoring;
+		$scope.prev_night = undefined;
 
 		$scope.players = Players.players;
 		$scope.previous_machines;
@@ -35,39 +36,11 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 
 			navApi.setTitle($scope.night.title, $scope.night.description);
 
-			// get the previous night's machines
+			// figure out the previous night
 			if($scope.night.starts == 'totals'){
-				var prev_night = LeagueNights.getMostRecentNight();
+				$scope.prev_night = LeagueNights.getMostRecentNight();
 			} else {
-				var prev_night = LeagueNights.getPreviousNight($scope.night.starts);	
-			}			
-			if(prev_night !== undefined){
-				var prev_mac_promise = LeagueNights.getFullNight(prev_night.starts);
-				$scope.previous_machines_tracker.addPromise(prev_mac_promise);
-				prev_mac_promise.then(function(prev){
-					var players = _.chain(prev.divisions)
-						.map(function(obj){ return obj.player_list.players })
-						.flatten()
-						.value();
-
-					$scope.previous_machines = _.chain(prev.divisions)
-						.map(function(obj){ return obj.machines })
-						.flatten()
-						.groupBy('picked_by')
-						.each(function(val, key, obj){ 
-							obj[key] = {
-								full_name: _.find(players, {'name_key': key}).full_name,
-								picks: val
-							};
-						})
-						.value();
-
-					if(angular.equals({}, $scope.previous_machines)){
-						$scope.previous_machines = null;
-					}
-				});
-			} else {
-				$scope.previous_machines = false;
+				$scope.prev_night = LeagueNights.getPreviousNight($scope.night.starts);	
 			}
 
 		})
@@ -79,6 +52,7 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 
 
 		function loadNight(starts){
+			// get the current nights full information
 			LeagueNights.getFullNight(starts)
 			.then(function(night){
 				$scope.night = night;
@@ -117,7 +91,6 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 					.groupBy('picked_by')
 					.each(function(val, key, obj){ obj[key] = _.pluck(val, 'abbv') })
 					.value();
-
 			})
 			.catch(function(err){
 				dialog(err);
@@ -125,6 +98,36 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 			.finally(function(){
 				loadingOverlayApi.hide();
 			});
+
+			// get the previous nights machines
+			if($scope.prev_night !== undefined){
+				var prev_mac_promise = LeagueNights.getFullNight($scope.prev_night.starts);
+				$scope.previous_machines_tracker.addPromise(prev_mac_promise);
+				prev_mac_promise.then(function(prev){
+					var players = _.chain(prev.divisions)
+						.map(function(obj){ return obj.player_list.players })
+						.flatten()
+						.value();
+
+					$scope.previous_machines = _.chain(prev.divisions)
+						.map(function(obj){ return obj.machines })
+						.flatten()
+						.groupBy('picked_by')
+						.each(function(val, key, obj){ 
+							obj[key] = {
+								full_name: _.find(players, {'name_key': key}).full_name,
+								picks: val
+							};
+						})
+						.value();
+
+					if(angular.equals({}, $scope.previous_machines)){
+						$scope.previous_machines = null;
+					}
+				});
+			} else {
+				$scope.previous_machines = false;
+			}
 		}
 
 
@@ -246,6 +249,15 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 			}
 		};
 
+		function scoresEdited(data){
+			loadNight($scope.night.starts);
+			flare.warn('<h1>Scores Edited</h1><p>The scores have been edited, so we\'re grabbing you fresh data.</p>', 5000);
+		}
+
+		function reconnect(){
+			loadNight($scope.night.starts);
+		}
+
 
 		socket.addScope($scope.$id)
 			.on('tiesbroken', tiesBroken)
@@ -254,7 +266,9 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 			.on('leaguenight_updated', leaguenightUpdated)
 			.on('leaguenight_order_updated', leaguenightOrderUpdated)
 			.on('user_updated', userUpdated)
-			.on('machine_updated', machineUpdated);
+			.on('machine_updated', machineUpdated)
+			.on('scores_edited', scoresEdited)
+			.on('reconnect', reconnect);
 
 		$scope.$on("$destroy", function() {
 			socket.getScope($scope.$id).clear();

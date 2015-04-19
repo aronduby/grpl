@@ -698,7 +698,7 @@ if (cluster.isMaster) {
 							cb(null, result);
 
 							// send the socket event to update the scores
-							// io.sockets.emit('scoring_edited', d);
+							io.sockets.emit('scores_edited', data);
 						})
 						.fail(function(err){
 							cb(handleError(err));
