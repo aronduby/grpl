@@ -649,7 +649,8 @@ body.loading > footer{
 		.prev-machine-picks li abbr + abbr{ margin-left:5px;}
 
 
-.player-holder .listview ul:before{
+.player-holder .listview ul:before,
+#player-order .divider{
 	box-sizing:border-box;
 	content:'group #'attr(data-group);
 	display:block;

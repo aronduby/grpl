@@ -25,7 +25,7 @@
 							<h3>{{ player.full_name }}</h3>
 							<button class="x dnp yellow" ng-click="setDNP(player)"></button>
 						</li>
-						<li ng-repeat-end ng-if="$index < order.length - 1 && player.grouping != order[$index + 1].grouping" class="divider disabled" data-grouping="{{player.grouping}}" data-start-order="{{player.start_order + 1}}" data-name-key="{{player.name_key}}" data-after></li>
+						<li ng-repeat-end ng-if="$index < order.length - 1 && player.grouping != order[$index + 1].grouping" class="divider disabled" data-grouping="{{player.grouping}}" data-start-order="{{player.start_order + 1}}" data-name-key="{{player.name_key}}" data-after>group #{{player.grouping + 2}}</li>
 					</ul></div>
 				</div>
 			</section>
