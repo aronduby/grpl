@@ -8,3 +8,4 @@
 *.bak
 *.beforefix
 .node-inspectorrc
+**ssl

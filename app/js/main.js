@@ -19,6 +19,7 @@ require(
 		'app-components/services/Scoring',
 		'app-components/services/dialog',
 		'app-components/services/SocketMessages',
+		'app-components/services/Push',
 		'app-components/filters/pluck',
 		'app-components/filters/joinBy',
 		'app-components/filters/mathAbs',

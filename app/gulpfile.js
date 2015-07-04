@@ -95,7 +95,9 @@ gulp.task('html', function() {
 			'bower_components/angular/**/*.*', 
 			'bower_components/requirejs/**/*.*', 
 			'bower_components/slip/**/*.*',
-			'bower_components/showdown/**/*.*'
+			'bower_components/showdown/**/*.*',
+			'manifest.json',
+			'service-worker.js'
 		], {base: './'})
 		.pipe(plumber({ errorHandler: onError }))
 		.pipe(gulp.dest('dist/'));

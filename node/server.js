@@ -20,16 +20,34 @@ if (cluster.isMaster) {
 } else {
 */
 	var grpl = require('grpl'),
+		/* we're required to serve over http now
 		io = require('socket.io').listen(834,{
 			'close timeout': 3600, // 60 minutes to re-open a closed connection
 			'browser client minification': true,
 			'browser client etag': true,
 			'browser client gzip': true
 		}),
+		*/
 		https = require('https'),
+		fs = require('fs'),
 		Q = require('q'),
 		auth = require('./auth.js'),
 		season_id;
+
+
+var app = https.createServer({
+    key:    fs.readFileSync('/web/grpl/ssl/server.key'),
+    cert:   fs.readFileSync('/web/grpl/ssl/server.crt')//,
+    //ca:     fs.readFileSync('ssl/ca.crt')
+});
+io = require('socket.io').listen(app, {
+	'close timeout': 3600, // 60 minutes to re-open a closed connection
+			'browser client minification': true,
+			'browser client etag': true,
+			'browser client gzip': true
+		});
+app.listen(834, "0.0.0.0");
+
 
 	var logger = require('tracer').colorConsole();
 
@@ -39,7 +57,7 @@ if (cluster.isMaster) {
 		season_id = season.season_id
 	})
 	.fail(function(err){
-		season_id=4;
+		season_id=8;
 	}).done();
 
 
@@ -1092,6 +1110,32 @@ if (cluster.isMaster) {
 				}
 			});
 		});
+
+
+		/*
+		 *	Push Notifications via GCM
+		*/
+		socket.on('push.subscribe', function(endpoint, cb){
+			grpl.push.subscribe(endpoint)
+			.then(function(registration_id){
+				cb(null, registration_id);
+			})
+			.fail(function(err){
+				cb(handleError(err));
+			}).done();			
+		});
+
+		socket.on('push.unsubscribe', function(endpoint, cb){
+			grpl.push.unsubscribe(endpoint)
+			.then(function(registration_id){
+				cb(null, registration_id);
+			})
+			.fail(function(err){
+				cb(handleError(err));
+			}).done();			
+		});
+
+
 
 		
 		/*

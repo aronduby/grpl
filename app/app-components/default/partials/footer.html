@@ -1,3 +1,15 @@
+
+<section id="notifications">
+	<label class="switch">
+		<input type="checkbox" ng-checked="push.subscribed" ng-click="push.change()" onclick="return false"><i></i>
+		<span ng-if="push.disabled && !push.working">Push Notifications Not Supported or Disabled</span>
+		<span ng-if="(!push.disabled || push.working) && !push.subscribed">Subscribe to Push Notifications</span>
+		<span ng-if="(!push.disabled || push.working) && push.subscribed">Unsubscribe to Push Notifications</span>
+		<div ng-show="push.working" class="loader">working</div>
+	</label>
+</section>
+
+
 <nav>
 	<ul>
 		<li><a ng-href="#/about" title="About">About</a></li>
@@ -6,6 +18,7 @@
 		<li><a ng-href="#/changelog" title="Change Log">Change Log</a></li>
 	</ul>
 </nav>
+
 <section id="season-changer" ng-show="seasons.length">
 	<label for="season-changer-select">Switch Seasons:</label>
 	<select id="season-changer-select" ng-model="cur_season" ng-options="season.title for season in seasons | reverse" ng-change="changeSeason(cur_season)"></select> 

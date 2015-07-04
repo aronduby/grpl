@@ -1,9 +1,10 @@
 define(['js/app'], function(app){
 
-	app.controller('FooterController', ['$scope', '$window', 'api', 'ipCookie', 'Seasons', function($scope, $window, api, ipCookie, Seasons) {
+	app.controller('FooterController', ['$scope', '$window', 'api', 'ipCookie', 'Seasons', 'Push', function($scope, $window, api, ipCookie, Seasons, Push) {
 		$scope.seasons = [];
 		$scope.cur_season = null;
 		$scope.season = Seasons;
+		$scope.push = Push;
 
 		var season_id = ipCookie('season_id');
 
