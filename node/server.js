@@ -37,8 +37,8 @@ if (cluster.isMaster) {
 
 var app = https.createServer({
     key:    fs.readFileSync('/web/grpl/ssl/server.key'),
-    cert:   fs.readFileSync('/web/grpl/ssl/server.crt')//,
-    //ca:     fs.readFileSync('ssl/ca.crt')
+    cert:   fs.readFileSync('/web/grpl/ssl/server.crt'),
+    ca:     fs.readFileSync('/web/grpl/ssl/ca.crt')
 });
 io = require('socket.io').listen(app, {
 	'close timeout': 3600, // 60 minutes to re-open a closed connection
