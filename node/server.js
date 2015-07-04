@@ -34,12 +34,10 @@ if (cluster.isMaster) {
 		auth = require('./auth.js'),
 		season_id;
 
-https.globalAgent.options.rejectUnauthorized = false;
-
 var app = https.createServer({
-    key:    fs.readFileSync('/web/grpl/ssl/server.key'),
-    cert:   fs.readFileSync('/web/grpl/ssl/server.crt'),
-    ca:     fs.readFileSync('/web/grpl/ssl/ca.crt')
+    key:    fs.readFileSync('/web/grpl/ssl/ssl.key'),
+    cert:   fs.readFileSync('/web/grpl/ssl/ssl.crt'),
+    ca:     fs.readFileSync('/web/grpl/ssl/sub.class1.server.ca.pem')
 });
 io = require('socket.io').listen(app, {
 	'close timeout': 3600, // 60 minutes to re-open a closed connection
