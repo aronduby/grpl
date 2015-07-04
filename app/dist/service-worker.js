@@ -1,11 +1,11 @@
 self.addEventListener('push', function(event){
 
-	console.log('received push message', event);
+	// console.log('received push message', event);
 
-	var title = 'New Message!',
-		body = 'We got a new push message',
+	var title = 'Scoring Updated!',
+		body = 'Scoring has been updated, check out the new rankings.',
 		icon = '/icons/icon-192.png',
-		tag = 'scoring-stopped';
+		tag = 'scoring-updated';
 
 	event.waitUntil(
 		self.registration.showNotification(title, {
@@ -20,7 +20,7 @@ self.addEventListener('push', function(event){
 
 self.addEventListener('notificationclick', function(event){
 
-	console.log('notification clicked', event.notification.tag);
+	// console.log('notification clicked', event.notification.tag);
 
 	// Android doesn't close the notification when you click on it  
 	// See: http://crbug.com/463146  

@@ -1135,6 +1135,10 @@ app.listen(834, "0.0.0.0");
 			}).done();			
 		});
 
+		socket.on('push.send', function(dry_run, cb){
+			grpl.push.send(dry_run);
+		})
+
 
 
 		
