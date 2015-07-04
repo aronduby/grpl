@@ -34,6 +34,7 @@ if (cluster.isMaster) {
 		auth = require('./auth.js'),
 		season_id;
 
+https.globalAgent.options.rejectUnauthorized = false;
 
 var app = https.createServer({
     key:    fs.readFileSync('/web/grpl/ssl/server.key'),
