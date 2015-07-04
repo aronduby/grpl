@@ -289,6 +289,7 @@ app.listen(834, "0.0.0.0");
 				} else {				
 					grpl.scoring.stop()
 					.then(function(){
+						grpl.push.send();
 						io.sockets.emit('scoring_stopped');
 						cb(null, true);	
 					})
