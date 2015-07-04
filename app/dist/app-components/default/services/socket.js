@@ -4,11 +4,12 @@ define([], function(){
 	 *	The actual connection to the socket server
 	 *	Using a defered style here to be able to trigger the angular bootstrap
 	*/
-	var address = 'http://'+window.location.host+':834',
+	var address = 'https://'+window.location.host+':834',
 		options = {
 			'sync disconnect on unload': true,
-			'max reconnection attempts': 5
-		}
+			'max reconnection attempts': 5,
+			'secure': true
+		};
 
 	var socket = io.connect(address, options);
 

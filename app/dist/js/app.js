@@ -18,6 +18,7 @@ function(routingConfig){
 			'routeResolverServices',
 			'socketServices',
 			'authService',
+			'PushService',
 			'ajoslin.promise-tracker',
 			'angular-flare',
 			'BodyClasses',
@@ -30,10 +31,11 @@ function(routingConfig){
 		]);
 
 	app.config([
-		'$stateProvider', '$urlRouterProvider', '$locationProvider', 'navApiProvider', 'routeResolverProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', 
-		function($stateProvider, $urlRouterProvider, $locationProvider, navApiProvider, routeResolverProvider, $controllerProvider, $compileProvider, $filterProvider, $provide){
+		'$stateProvider', '$urlRouterProvider', '$locationProvider', 'navApiProvider', 'routeResolverProvider', 'PushProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', 
+		function($stateProvider, $urlRouterProvider, $locationProvider, navApiProvider, routeResolverProvider, pushProvider, $controllerProvider, $compileProvider, $filterProvider, $provide){
 
 			navApiProvider.setDefaults('GRPL', 'Grand Rapids Pinball League');
+			pushProvider.setWorker('/service-worker.js');
 			
 
 			//Change default views and controllers directory using the following:
@@ -190,8 +192,8 @@ function(routingConfig){
 	]);
 
 	app.run([
-		'$rootScope', '$window', '$state', 'socket', 'api', 'SocketMessages', 'ipCookie', 'Auth', 'flare', '$location', '$modalStack', '$templateCache', 'LeagueNights', 'Machines', 'Players', 'Seasons', 'Scoring', '$timeout',
-		function($rootScope, $window, $state, socket, api, SocketMessages, ipCookie, Auth, flare, $location, $modalStack, $templateCache, LeagueNights, Machines, Players, Seasons, Scoring, $timeout){
+		'$rootScope', '$window', '$state', 'socket', 'api', 'SocketMessages', 'ipCookie', 'Auth', 'flare', '$location', '$modalStack', '$templateCache', 'LeagueNights', 'Machines', 'Players', 'Seasons', 'Scoring', '$timeout', 'Push', 'PushConsoleSubscriber',
+		function($rootScope, $window, $state, socket, api, SocketMessages, ipCookie, Auth, flare, $location, $modalStack, $templateCache, LeagueNights, Machines, Players, Seasons, Scoring, $timeout, Push, PushConsoleSubscriber){
 			// override the default flare tpl to add ability to do html in message content
 			$templateCache.put("directives/flaremessages/index.tpl.html",
 			    "<div ng-repeat=\"(key,message) in flareMessages\" ng-class=\"classes(message)\">\n" +
@@ -199,6 +201,22 @@ function(routingConfig){
 			    "  <div ng-bind-html=\"message.content\"></div>\n" +
 			    "</div>\n" +
 			"");
+
+			// Push.setSubscriber(PushConsoleSubscriber);
+			Push.setSubscriber({
+				subscribe: function(endpoint){
+					api.post('push.subscribe', endpoint)
+					.catch(function(err){
+						console.error('unsuccess subscribe', err);
+					})
+				},
+				unsubscribe: function(endpoint){
+					api.post('push.unsubscribe', endpoint)
+					.catch(function(err){
+						console.error('unsuccess unsubscribe', err);
+					})
+				},
+			});
 
 			LeagueNights.loadNights();
 			Machines.loadMachines();
