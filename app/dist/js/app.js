@@ -194,6 +194,7 @@ function(routingConfig){
 	app.run([
 		'$rootScope', '$window', '$state', 'socket', 'api', 'SocketMessages', 'ipCookie', 'Auth', 'flare', '$location', '$modalStack', '$templateCache', 'LeagueNights', 'Machines', 'Players', 'Seasons', 'Scoring', '$timeout', 'Push', 'PushConsoleSubscriber',
 		function($rootScope, $window, $state, socket, api, SocketMessages, ipCookie, Auth, flare, $location, $modalStack, $templateCache, LeagueNights, Machines, Players, Seasons, Scoring, $timeout, Push, PushConsoleSubscriber){
+
 			// override the default flare tpl to add ability to do html in message content
 			$templateCache.put("directives/flaremessages/index.tpl.html",
 			    "<div ng-repeat=\"(key,message) in flareMessages\" ng-class=\"classes(message)\">\n" +
@@ -201,6 +202,13 @@ function(routingConfig){
 			    "  <div ng-bind-html=\"message.content\"></div>\n" +
 			    "</div>\n" +
 			"");
+
+			socket.on('write_cookie', function(key,val){
+				ipCookie(key, val, {secure: true});
+			});
+
+			// tell the server that we're ready for any queued events
+			socket.emit('ready');
 
 			// Push.setSubscriber(PushConsoleSubscriber);
 			Push.setSubscriber({
@@ -224,9 +232,6 @@ function(routingConfig){
 			Seasons.loadSeasons();
 			Scoring.emitIfStarted();
 
-			socket.on('write_cookie', function(key,val){
-				ipCookie(key, val, {secure: true});
-			})
 			
 			$rootScope.auth = Auth;
 			$rootScope.admin = false;

@@ -106,6 +106,27 @@ app.listen(834, "0.0.0.0");
 
 	io.sockets.on('connection', function(socket){
 
+		/*
+		 *	To avoid race conditions where a socket emits before angular is fully ready
+		 *	start off queueing any emitted events, then emit them when ready is called
+		*/
+		var original_emit = socket.emit,
+			queue = [];
+
+		socket.emit = function(){
+			queue.push(arguments);
+		}
+
+		socket.on('ready', function(){
+			socket.emit = original_emit;
+			queue.forEach(function(args){
+				socket.emit.apply(socket, args);
+			});
+		});
+
+		/*
+		 * Setup our user has and copy any data from a previous socket to this one
+		*/
 		if(socket.handshake.user_hash != undefined){
 			client.getset('uh'+socket.handshake.user_hash, socket.id, function(err, prev_socket_id){
 				if(prev_socket_id != undefined){
