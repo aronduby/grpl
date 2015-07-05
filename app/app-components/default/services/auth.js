@@ -42,7 +42,7 @@ define(['js/routingConfig'], function(routingConfig){
 		// do whats necessary to go from the login functions to actually loged in
 		function logPlayerIn(player){
 			if(player.hash !== null)
-				ipCookie('user_hash', player.hash, {expires: 30});
+				ipCookie('user_hash', player.hash, {expires: 30, secure: true});
 
 			for(i in player){
 				if(i in self.user)

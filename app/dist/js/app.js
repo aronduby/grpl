@@ -225,7 +225,7 @@ function(routingConfig){
 			Scoring.emitIfStarted();
 
 			socket.on('write_cookie', function(key,val){
-				ipCookie(key, val);
+				ipCookie(key, val, {secure: true});
 			})
 			
 			$rootScope.auth = Auth;
@@ -241,7 +241,7 @@ function(routingConfig){
 			.then(function(season){
 				Seasons.setActive(season.active);
 				Seasons.setCurrent(season.current);
-				ipCookie('season_id', season.active);
+				ipCookie('season_id', season.active, {secure: true});
 			});
 
 			/*

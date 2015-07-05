@@ -48,7 +48,7 @@ define(function(require){
 			loadingOverlayApi.hide();
 		}));
 
-		ipCookie('skipabout', '1', {expires: 120});
+		ipCookie('skipabout', '1', {expires: 120, secure: true});
 
 		// markdown help for admin editing
 		$scope.help = {

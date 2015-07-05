@@ -20,14 +20,6 @@ if (cluster.isMaster) {
 } else {
 */
 	var grpl = require('grpl'),
-		/* we're required to serve over http now
-		io = require('socket.io').listen(834,{
-			'close timeout': 3600, // 60 minutes to re-open a closed connection
-			'browser client minification': true,
-			'browser client etag': true,
-			'browser client gzip': true
-		}),
-		*/
 		https = require('https'),
 		fs = require('fs'),
 		Q = require('q'),

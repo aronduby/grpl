@@ -15,7 +15,7 @@ define(['js/app'], function(app){
 		});
 
 		$scope.changeSeason = function changeSeason(season){
-			ipCookie('season_id', season.season_id);
+			ipCookie('season_id', season.season_id, {secure: true});
 			api.get('changeSeason', season.season_id)
 			.then(function(){
 				console.log('changed', arguments);
