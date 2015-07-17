@@ -12,32 +12,32 @@
 						<li>
 							<label for="first_name">First Name</label>
 							<fieldset>
-								<input type="text" id="first_name" placeholder="first name" ng-model="user.first_name" />
+								<input type="text" id="first_name" name="first_name" placeholder="first name" ng-model="user.first_name" />
 							</fieldset>
 						</li>
 						<li>
 							<label for="last_name">Last Name</label>
 							<fieldset>
-								<input type="text" id="last_name" placeholder="last name" ng-model="user.last_name" />
+								<input type="text" id="last_name" name="last_name" placeholder="last name" ng-model="user.last_name" />
 							</fieldset>
 						</li>
 						<li>
 							<label for="facebook_id">Facebook ID</label>
 							<fieldset>
-								<input type="text" id="facebook_id" placeholder="facebook id" ng-model="user.facebook_id" />
+								<input type="text" id="facebook_id" name="facebook_id" placeholder="facebook id" ng-model="user.facebook_id" />
 							</fieldset>
 							<p>This will allow the user to login with Facebook</p>
 						</li>
 						<li>
 							<label for="email">Email</label>
 							<fieldset>
-								<input type="email" id="email" placeholder="email address" ng-model="user.email" />
+								<input type="email" id="email" name="email" placeholder="email address" ng-model="user.email" />
 							</fieldset>
 						</li>
 						<li>
 							<label for="password">Password</label>
 							<fieldset>
-								<input type="password" id="password" placeholder="nothing important" ng-model="user.password" />
+								<input type="password" id="password" name="password" placeholder="nothing important" ng-model="user.password" />
 							</fieldset>
 							<p>DO NOT use the same password as anything important</p>
 						</li>
@@ -53,6 +53,15 @@
 									>{{ season.title }}</label>								
 								</div>
 							</fieldset>
+						</li>
+						<li ng-if="!user.active">
+							<label>Replacing</label>
+							<fieldset>
+								<select ng-model="replacing.name_key" ng-options="u.name_key as u.full_name for u in users | where:{active: true} | orderBy:'first_name'">
+									<option value="">No</option>
+								</select>
+							</fieldset>
+							<p>Is this player replacing a player in the current season?</p>
 						</li>
 					</ul>
 					</div>

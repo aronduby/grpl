@@ -198,17 +198,52 @@ app.listen(834, "0.0.0.0");
 			}).done();
 		});
 
-		// registering a user to login with email/password
+		// registering a user
 		socket.on('user.register', function(data, cb){
-			grpl.player.register(data, season_id) // always the current season
-			.then(function(player){
-				cb(null, player);
-				io.sockets.emit('user_updated', player);
-			})
-			.fail(function(err){
-				cb(handleError(err));
-			}).done();
+			socket.get('user.admin', function(err, admin){
+				if(admin != true && admin != 'true'){
+					cb({
+						title:'Error',
+						headline: 'Nope...',
+						msg: '<p>Only Admins can edit users. If you think you should be an admin talk to the people in charge.</p>'
+					});
+				} else {				
+					grpl.player.register(data, season_id) // always the current season
+					.then(function(player){
+						cb(null, player);
+						io.sockets.emit('user_updated', player);
+					})
+					.fail(function(err){
+						cb(handleError(err));
+					}).done();
+				}
+			});
 		});
+
+		// replacing a user with another
+		socket.on('user.replace', function(data, cb){
+			socket.get('user.admin', function(err, admin){
+				if(admin != true && admin != 'true'){
+					cb({
+						title:'Error',
+						headline: 'Nope...',
+						msg: '<p>Only Admins can edit users. If you think you should be an admin talk to the people in charge.</p>'
+					});
+				} else {				
+					grpl.player.replace(data.replace, data.replace_with, season_id) // always the current season
+					.then(function(player){
+						cb(null, player);
+						io.sockets.emit('user_replaced', {
+							replace: data.replace,
+							replace_with: player
+						});
+					})
+					.fail(function(err){
+						cb(handleError(err));
+					}).done();
+				}
+			});
+		})
 
 		/*
 		 *	TIEBREAKER

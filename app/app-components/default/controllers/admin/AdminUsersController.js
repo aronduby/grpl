@@ -10,6 +10,9 @@ define(['js/app'], function(app){
 		$scope.seasons = Seasons.all;
 		$scope.users = [];
 		$scope.user = null;
+		$scope.replacing = {
+			name_key: false
+		};
 
 		var players_promise = Players.getAllPlayers();
 		players_promise.then(function(){
@@ -26,9 +29,11 @@ define(['js/app'], function(app){
 				email: null,
 				password: null,
 				role: 1,
-				seasons: []
+				seasons: [],
+				active: false
 			};
 			navApi.setTitle('New User', 'Choose a Different User');
+			$scope.new = true;
 			loadingOverlayApi.hide();
 		} else if($stateParams.name_key.trim() == ''){
 			$scope.user = null;
@@ -44,6 +49,8 @@ define(['js/app'], function(app){
 				_.each($scope.seasons, function(season){
 					$scope.user.seasons[season.season_id] = _.indexOf(user_seasons, season.season_id) >= 0;
 				});
+
+				$scope.user.active = $scope.user.seasons[Seasons.active_id];
 
 				navApi.setTitle($scope.user.full_name, 'Choose a Different User');
 			})
@@ -66,20 +73,42 @@ define(['js/app'], function(app){
 					data.seasons.push(key);
 			});
 
+			
+			
 			api.post('user.register', data)
 			.then(function(data){
-				$state.go('admin.users', {'name_key': ''});
-				dialog({
-					title: 'User updated',
-					headline: 'User data has been saved',
-					msg: '<p>The user\'s data has been successfully saved.</p>'
-				});
+				if(!$scope.replacing.name_key){
+					saveSuccessful();
+				} else {
+					var replace_data = {
+						replace: $scope.replacing.name_key,
+						replace_with: data.name_key
+					};
+
+					api.post('user.replace', replace_data)
+					.then(function(data){
+						saveSuccessful();
+					})
+					.catch(function(err){
+						err.msg += '<p>User was added but did not replace the other user</p>';
+						dialog(err);
+						loadingOverlayApi.hide();
+					});
+				}
+				
 			})
 			.catch(function(err){
 				dialog(err);
-			})
-			.finally(function(){
 				loadingOverlayApi.hide();
+			});
+		}
+
+		function saveSuccessful(){
+			$state.go('admin.users', {'name_key': ''});
+			dialog({
+				title: 'User updated',
+				headline: 'User data has been saved',
+				msg: '<p>The user\'s data has been successfully saved.</p>'
 			});
 		}
 		

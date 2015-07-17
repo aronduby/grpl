@@ -90,7 +90,7 @@ require(['js/app'], function(app){
 
 		Players.getAllPlayers()
 		.then(function(){
-			$scope.users =Players.all;
+			$scope.users = Players.all;
 		});
 
 		Seasons.loading
