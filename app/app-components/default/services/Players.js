@@ -188,7 +188,21 @@ define(['js/app'], function(app){
 				}
 			});
 		}
-		socket.on('user_updated', angular.bind(this, userUpdated));
+
+		function userReplaced(data){
+			var self = this;
+			_.each(['players', 'active', 'all'], function(type){
+				// new user has already been added, make replace no longer active
+				var player = _.findWhere(self[type], {name_key: data.replace});
+				if(player){
+					player.active = false;
+				}
+			});
+		}
+
+		socket
+			.on('user_updated', angular.bind(this, userUpdated))
+			.on('user_replaced', angular.bind(this, userReplaced));
 	}
 	
 	app.service('Players', ['$q', 'api', 'socket', Players]);
