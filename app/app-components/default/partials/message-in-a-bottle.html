@@ -1,0 +1,14 @@
+<div id="miab-panel" class="panel">
+	<header>
+		<h1>Congrats {{ user.first_name}}!</h1>
+		<a class="close" ng-click="close()">Close</a>
+	</header>
+	<article class="content">
+		<div ng-bind-html="joke"></div>
+
+		<div class="button-holder right">
+			<a class="close" ng-click="close()">Close</a>
+			<button class="again" ng-click="next()"><span class="title">Next</span></button>
+		</div>
+	</article>
+</div>

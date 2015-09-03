@@ -2,10 +2,11 @@
 
 define([
 	'js/routingConfig',
+	'app-components/controllers/MessageInABottleController',
 	'app-components/services/routeResolver', 
 	'app-components/services/auth'
 ], 
-function(routingConfig){
+function(routingConfig, MessageInABottleController){
 
 	var app = angular.module('grpl', [
 			//'ngAnimate',
@@ -192,8 +193,8 @@ function(routingConfig){
 	]);
 
 	app.run([
-		'$rootScope', '$window', '$state', 'socket', 'api', 'SocketMessages', 'ipCookie', 'Auth', 'flare', '$location', '$modalStack', '$templateCache', 'LeagueNights', 'Machines', 'Players', 'Seasons', 'Scoring', '$timeout', 'Push', 'PushConsoleSubscriber',
-		function($rootScope, $window, $state, socket, api, SocketMessages, ipCookie, Auth, flare, $location, $modalStack, $templateCache, LeagueNights, Machines, Players, Seasons, Scoring, $timeout, Push, PushConsoleSubscriber){
+		'$rootScope', '$window', '$state', 'socket', 'api', 'SocketMessages', 'ipCookie', 'Auth', 'flare', '$location', '$modalStack', '$modal', '$templateCache', 'LeagueNights', 'Machines', 'Players', 'Seasons', 'Scoring', '$timeout', 'Push', 'PushConsoleSubscriber',
+		function($rootScope, $window, $state, socket, api, SocketMessages, ipCookie, Auth, flare, $location, $modalStack, $modal, $templateCache, LeagueNights, Machines, Players, Seasons, Scoring, $timeout, Push, PushConsoleSubscriber){
 
 			// override the default flare tpl to add ability to do html in message content
 			$templateCache.put("directives/flaremessages/index.tpl.html",
@@ -237,6 +238,23 @@ function(routingConfig){
 			$rootScope.admin = false;
 			$rootScope.$watch('auth.user', function(user){
 				$rootScope.admin = Auth.authorize('admin');
+
+				var name_key = user.name_key;
+				if(name_key !== false && (
+					name_key == 'TestUser'
+					|| name_key == 'AronDuby'
+					|| name_key == 'ChadBecker'
+					|| name_key == 'JenniferBehrens'
+				)){
+					var modalInstance = $modal.open({
+						templateUrl: 'app-components/partials/message-in-a-bottle.html',
+						controller: MessageInABottleController,
+						resolve: {
+							User: function(){ return user; }
+						}
+					});
+				}
+
 			}, true);
 
 			var logging_in = Auth.tryLogin();

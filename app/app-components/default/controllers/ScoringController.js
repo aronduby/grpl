@@ -1,8 +1,8 @@
 define(['js/app'], function(app){
 
-	var injectParams = ['$scope', '$filter', '$state', '$stateParams', '$localStorage' 'loadingOverlayApi', 'dialog', 'navApi', 'Auth', 'Seasons', 'Scoring', 'LeagueNights', 'Players'];
+	var injectParams = ['$scope', '$filter', '$state', '$stateParams', '$localStorage', 'loadingOverlayApi', 'dialog', 'navApi', 'Auth', 'Seasons', 'Scoring', 'LeagueNights', 'Players'];
 
-	var ScoringController = function($scope, $filter, $state, $stateParams, $localStorage loadingOverlayApi, dialog, navApi, Auth, Seasons, Scoring, LeagueNights, Players){
+	var ScoringController = function($scope, $filter, $state, $stateParams, $localStorage, loadingOverlayApi, dialog, navApi, Auth, Seasons, Scoring, LeagueNights, Players){
 		loadingOverlayApi.show();
 		navApi.defaultTitle();
 		navApi.setCenterPanelKey('scoring-machine-panel');		
