@@ -241,9 +241,7 @@ function(routingConfig, MessageInABottleController){
 
 				var name_key = user.name_key;
 				if(name_key !== false && (
-					name_key == 'TestUser'
-					|| name_key == 'AronDuby'
-					|| name_key == 'ChadBecker'
+					name_key == 'ChadBecker'
 					|| name_key == 'JenniferBehrens'
 				)){
 					var modalInstance = $modal.open({
