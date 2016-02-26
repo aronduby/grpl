@@ -1,7 +1,8 @@
 define(['js/app'], function(app){
 
-	function LeagueNights($q, api, socket, Scoring){
-
+    LeagueNights.$inject = ['$q', '$rootScope', 'api', 'socket', 'Scoring'];
+	function LeagueNights($q, $rootScope, api, socket, Scoring){
+        var self = this;
 		var today = moment().startOf('day');
 
 		this.loading = undefined;
@@ -144,19 +145,25 @@ define(['js/app'], function(app){
 		*/
 		function leaguenightUpdated(data){
 			setupNight(data);
-			var idx = _.indexOf(_.pluck(this.nights, 'night_id'), data.night_id);
+			var idx = _.indexOf(_.pluck(self.nights, 'night_id'), data.night_id);
 			if(idx == -1){
-				this.nights.push(data);
+				self.nights.push(data);
 			} else {
-				this.nights.splice(idx, 1, data);
+				self.nights.splice(idx, 1, data);
 			}
-		};
+		}
+
+        function scoringStopped(night_id) {
+            var scoredNight = _.find(self.nights, {'night_id': parseInt(night_id, 10)});
+            scoredNight.scored = true;
+        }
 
 		socket
-			.on('leaguenight_updated', angular.bind(this, leaguenightUpdated));
+			.on('leaguenight_updated', angular.bind(this, leaguenightUpdated))
+            .on('scoring_stopped', angular.bind(this, scoringStopped));
 	}
 	
-	app.service('LeagueNights', ['$q', 'api', 'socket', 'Scoring', LeagueNights]);
+	app.service('LeagueNights', LeagueNights);
 
 	return app;
 })

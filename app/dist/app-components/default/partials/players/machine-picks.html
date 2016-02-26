@@ -1,0 +1,16 @@
+<section class="machine-holder machine-picks" collapsible="players.machine-picks">
+    <header>
+        <h1>Machine Picks</h1>
+    </header>
+    <div class="content">
+        <div class="machine" ng-repeat="mac in machine_picks">
+            <div class="thumb">
+                <img ng-src="{{mac[0].image}}" alt="{{mac[0].abbv}}" />
+                <span class="abbv">{{mac[0].abbv}}</span>
+                <span class="count" ng-if="mac.length > 1">x{{mac.length}}</span>
+            </div>
+            <h1>{{mac[0].name}}</h1>
+            <time ng-repeat="m in mac">{{ m.picked_on.format('M/D') }}</time>
+        </div>
+    </div>
+</section>

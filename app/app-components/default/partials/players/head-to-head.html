@@ -1,0 +1,43 @@
+<section class="head-to-head-holder" collapsible="players.head-to-head">
+    <header>
+        <h1>Head to Head ({{title}})</h1>
+    </header>
+    <div class="content">
+        <img src="layout_imgs/grey-block-loading-light.gif" class="loading" ng-if="tracker.active()" />
+        <div class="listview">
+            <ul>
+                <li ng-repeat="opponent in head_to_head" collapsible closed>
+                    <header>
+                        <h1>{{ opponent.first_name }} {{ opponent.last_name }} <span
+                            class="record"
+                            ng-class="{
+						        'winning': opponent.wins > opponent.losses,
+						        'losing': opponent.wins < opponent.losses,
+						        'tied': opponent.wins == opponent.losses
+					        }"
+                        >{{opponent.wins}}-{{opponent.losses}}</span
+                        ></h1>
+                    </header>
+                    <div class="content">
+                        <table>
+                            <tr
+                                ng-repeat="game in opponent.games | orderBy:'abbv'"
+                                ng-class="{
+							        'won': game.won,
+							        'lost': !game.won
+						        }"
+                            >
+                                <th><abbr title="{{game.title}}">{{ game.abbv }}</abbr></th>
+                                <td class="league_night">{{ game.starts }}</td>
+                                <td class="scores">
+                                    <div class="this-player bar" data-points="{{game.player}}">{{ game.player }}</div
+                                    ><div class="opponent bar" data-points="{{game.opponent}}">{{ game.opponent }}</div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>

@@ -57,8 +57,8 @@
 			</section>
 
 			<div class="button-holder right">
-				<span ng-show="!confirmed" class="notes">you must confirm the scores before saving</span>
-				<button type="submit" class="inline" ng-disabled="!confirmed" ng-click="save()">{{ continue_scoring ? 'Next Machine' : 'Save and Exit' }}</button>
+				<span ng-show="!saveEnabled" class="notes">you must <strong ng-show="!machineChoosen">supply a machine</strong>{{ !machineChoosen && !confirmed ? ' and ' : '' }}<strong ng-show="!confirmed">confirm the scores</strong> before saving</span>
+				<button type="submit" class="inline" ng-disabled="!saveEnabled" ng-click="save()">{{ continue_scoring ? 'Next Machine' : 'Save and Exit' }}</button>
 			</div>
 
 		</form>

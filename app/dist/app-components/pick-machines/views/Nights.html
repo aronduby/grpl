@@ -87,10 +87,10 @@
 												<span class="machine-points">{{ machine.points }}</span>
 											</span>
 										</p>
-										<span class="score right" ng-class="{double: !night.future && !night.totals}">
-											<span ng-if="night.future">{{ player.score }}</span>
-											<span ng-if="!night.future">{{ player.night_score }}</span>
-											<span ng-if="!night.future">{{ player.score  + player.night_score }}</span>
+										<span class="score right" ng-class="{double: player.night_score > 0}">
+											<span class="total-score" ng-if="!(player.night_score > 0)">{{ player.score }}</span>
+											<span class="night-score" ng-if="player.night_score > 0">{{ player.night_score }}</span>
+											<span class="total-score" ng-if="player.night_score > 0">{{ player.score  + player.night_score }}</span>
 										</span>
 									</a>
 								</li>								

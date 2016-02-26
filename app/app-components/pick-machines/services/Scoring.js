@@ -2,6 +2,7 @@ define(['js/app'], function(app){
 	
 	function Scoring($q, api, socket, Players, Machines, flare, dialog, $state){
 
+		var self = this;
 		this.started = false;
 		this.starts = false;
 		this.night = false;
@@ -103,16 +104,15 @@ define(['js/app'], function(app){
 
 		function whenStarted(data){
 			// private function to setup the object as needed
-			this.started = data.started;
-			this.night = {
+			self.started = data.started;
+			self.night = {
 				starts: data.starts,
 				night_id: data.night_id,
 				divisions: _.values(data.divisions)
 			};
 			
 			// convert division abbv machines to full machines
-			var self = this;
-			_.each(this.night.divisions, function(division, didx){
+			_.each(self.night.divisions, function(division, didx){
 				_.each(division.machines, function(abbv, midx){
 					self.night.divisions[didx].machines[midx] = Machines.getMachine(abbv);
 				});
@@ -121,8 +121,8 @@ define(['js/app'], function(app){
 
 		function stopped(data){
 			// private function to "disassemble" the object when scoring is stopped
-			this.started = false;
-			this.night = {};
+			self.started = false;
+			self.night = {};
 			// this.players = [];
 		};
 
@@ -133,7 +133,7 @@ define(['js/app'], function(app){
 
 		function updated(data){
 			// private function to update the data
-			var players = _.flatten(_.pluck(_.pluck(this.night.divisions, 'player_list'),'players'));
+			var players = _.flatten(_.pluck(_.pluck(self.night.divisions, 'player_list'),'players'));
 
 			_.each(data.players, function(score, name_key){
 				var player = _.find(players, {'name_key': name_key});				
@@ -158,10 +158,10 @@ define(['js/app'], function(app){
 
 
 		socket
-		.on('scoring_started', angular.bind(this, whenStarted))
-		.on('scoring_stopped', angular.bind(this, stopped))
-		.on('scoring_logged_in', angular.bind(this, logged_in))
-		.on('scoring_update', angular.bind(this, updated));
+		.on('scoring_started', angular.bind(self, whenStarted))
+		.on('scoring_stopped', angular.bind(self, stopped))
+		.on('scoring_logged_in', angular.bind(self, logged_in))
+		.on('scoring_update', angular.bind(self, updated));
 
 
 

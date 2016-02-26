@@ -301,7 +301,9 @@ abbr{
 	}
 
 .content-page .content p,
-.content-page .content ul{
+.content-page .content ul,
+.content-section .content p,
+.content-section .content ul{
 	font-weight:300;
 	font-size:1.1428em;
 	line-height:1.45em;
@@ -328,6 +330,7 @@ abbr{
 	color: #8C8C8C;
 }
 .content-page .content a,
+.content-section .content a,
 .listview li a.inline{
 	color:#6A9FB4;
 }
@@ -740,7 +743,9 @@ body.loading > footer{
 	line-height:.9em;
 }
 	.listview li .score span{ display:block; }
-	.listview li .score span:last-child{ color:#98724b; }
+    .listview li .score .night-score{ color:#775737; }
+	.listview li .score .total-score{ color:#98724b; }
+
 
 	/*-- players scores --*/
 .player-holder .player-points{
@@ -2322,4 +2327,20 @@ li.subsection fieldset{
   40% {
     box-shadow: 0 2.5em 0 0 #ffffff;
   }
+}
+
+/*
+ *	IFPA
+*/
+.ifpa-holder {
+	position: relative;
+}
+
+.ifpa-loading {
+	position: absolute;
+	top: 58px; /* push below header */
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background: rgba(255,255,255,.8) url(/layout_imgs/grey-block-loading-light.gif) no-repeat 50%;
 }

@@ -20,6 +20,7 @@ require(
 		'app-components/services/dialog',
 		'app-components/services/SocketMessages',
 		'app-components/services/Push',
+        'app-components/services/IFPA',
 		'app-components/filters/pluck',
 		'app-components/filters/joinBy',
 		'app-components/filters/mathAbs',
@@ -31,7 +32,6 @@ require(
 		'app-components/directives/AccessLevel',
 		'app-components/directives/Collapsible',
 		'app-components/directives/InlineModal',
-		'app-components/directives/HeadToHead',
 		'app-components/directives/Slip',
 		'app-components/directives/Abbr',
 		'app-components/BodyClasses',
@@ -47,5 +47,23 @@ require(
 				bootstrapped = true;	
 			}
 		});
+
+		// add pluck back in instead of doing a bunch of work finding and replacing
+        function pluck(collection, fld) {
+            console.error('_.pluck');
+            return _.map(collection, function(obj){
+               return obj[fld];
+            });
+        }
+
+        function contains(haystack, needle){
+            console.error('_.contains');
+            return _.includes(haystack, needle);
+        }
+
+        _.mixin({
+            'pluck': pluck,
+            'contains': contains
+        });
 		
 	});

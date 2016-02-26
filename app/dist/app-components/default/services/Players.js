@@ -170,6 +170,25 @@ define(['js/app'], function(app){
 		this.playerData = function playerData(name_key){
 			return _.find(this.players, {'name_key': name_key});
 		};
+
+		this.saveIFPAID = function saveIFPAID (name_key, id) {
+            var self = this,
+                d = $q.defer(),
+                data = {
+                    name_key: name_key,
+                    ifpa_id: id
+                };
+
+            api.post('players.namekey.saveIFPAID', data)
+                .then(function(){
+                    d.resolve();
+                })
+                .catch(function(err){
+                    d.reject(err);
+                });
+
+            return d.promise;
+        };
 		
 
 		/*

@@ -42,10 +42,16 @@ define(['js/app', 'app-components/directives/ScoreEditor'], function(app){
 			loadingOverlayApi.hide();
 
 		} else {
-			LeagueNights.getScores($scope.night.starts)
-			.then(function(scores){
+			var allPlayersPromise = Players.getAllPlayers(),
+                scoresPromise = LeagueNights.getScores($scope.night.starts);
+
+			$q.all([allPlayersPromise, scoresPromise])
+			.then(function(allData){
+                var allPlayers = allData[0],
+                    scores = allData[1];
+
 				navApi.setTitle($scope.night.title, $scope.night.description);
-				formatScores(scores);
+				formatScores(allPlayers, scores);
 			})
 			.catch(function(err){
 				dialog(err);
@@ -70,7 +76,7 @@ define(['js/app', 'app-components/directives/ScoreEditor'], function(app){
 			});
 		};
 
-		function formatScores(scores){
+		function formatScores(allPlayers, scores){
 			var groups_by_machine = [],
 				groups = [];
 
@@ -87,7 +93,7 @@ define(['js/app', 'app-components/directives/ScoreEditor'], function(app){
 
 					_.each(group, function(row){
 						if(obj.players[row.name_key] == undefined){
-							obj.players[row.name_key] = Players.getPlayer(row.name_key);
+							obj.players[row.name_key] = _.find(allPlayers, {'name_key': row.name_key});
 							obj.players[row.name_key].start_order = row.start_order;
 						}
 
@@ -113,7 +119,7 @@ define(['js/app', 'app-components/directives/ScoreEditor'], function(app){
 				}).value();
 
 			$scope.groups = groups;
-		};
+		}
 
 	};
 

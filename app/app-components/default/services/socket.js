@@ -120,6 +120,16 @@ define([], function(){
 			return scope;
 		};
 
+		this.addSelfDestroyingScope = function(angular_scope){
+            var scope = new Scope(angular_scope.$id);
+
+            angular_scope.$on('$destroy', function(){
+               scope.clear();
+            });
+
+            return scope;
+        };
+
 		this.getScope = function(id){
 			if(scopes[id]){
 				return scopes[id];
@@ -130,7 +140,7 @@ define([], function(){
 
 		this.getSocket = function(){
 			return socket;
-		}
+		};
 
 
 		/*
@@ -142,6 +152,7 @@ define([], function(){
 			this.events = {};
 			scopes[id] = this;
 		}
+
 		Scope.prototype.on = function(e, handler){
 			if(this.events[e] == undefined){
 				this.events[e] = [];
@@ -150,7 +161,8 @@ define([], function(){
 			this.events[e].push(wrapped_handler);
 			addListener(e, wrapped_handler);
 			return this;
-		}
+		};
+
 		Scope.prototype.clear = function(){
 			// loop through all of our events and removeListener
 			var keys = Object.keys(this.events);
@@ -162,7 +174,7 @@ define([], function(){
 			    	socket.removeListener(e, handlers[j]);
 			    }
 			}
-		}
+		};
 
 		/*
 		 *	Since we can remove things now we have to be able to have a reference to the actual function
