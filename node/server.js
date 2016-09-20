@@ -10,8 +10,8 @@ var grpl          = require('./grpl'),
     season_id;
 
 var app = https.createServer({
-    key: fs.readFile(settings.ssl.key),
-    cert: fs.readFile(settings.ssl.cert)
+    key: fs.readFileSync(settings.ssl.key),
+    cert: fs.readFileSync(settings.ssl.cert)
 });
 
 io = require('socket.io').listen(app, {
