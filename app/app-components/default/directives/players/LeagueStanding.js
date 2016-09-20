@@ -110,6 +110,7 @@ define(function(require){
                     }
                 }
             };
+
             function drawChart() {
                 $scope.chart.data = new google.visualization.DataTable();
                 $scope.chart.data.addColumn('date', 'Night');

@@ -31,7 +31,7 @@ function(routingConfig, MessageInABottleController){
 			'googlechart'
 		]);
 
-	app.value('IFPA_API_KEY', '123ABC');
+	app.value('IFPA_API_KEY', '1c0decf07111fd75e69d51f6b8ee9262');
 
 	app.config([
 		'$stateProvider', '$urlRouterProvider', '$locationProvider', 'navApiProvider', 'routeResolverProvider', 'PushProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', 
