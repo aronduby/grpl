@@ -11,8 +11,7 @@ var grpl          = require('./grpl'),
 
 var app = https.createServer({
     key: fs.readFile(settings.ssl.key),
-    cert: fs.readFile(settings.ssl.cert),
-    ca: fs.readFile(settings.ssl.ca)
+    cert: fs.readFile(settings.ssl.cert)
 });
 
 io = require('socket.io').listen(app, {
