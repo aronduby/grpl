@@ -6,12 +6,13 @@ var grpl          = require('./grpl'),
     redis         = require('redis'),
     redisClient   = redis.createClient(),
     socketioRedis = require('socket.io-redis'),
+    settings      = require('../env.json'),
     season_id;
 
 var app = https.createServer({
-    key: fs.readFileSync('/web/grpl/ssl/ssl.key'),
-    cert: fs.readFileSync('/web/grpl/ssl/ssl.crt'),
-    ca: fs.readFileSync('/web/grpl/ssl/sub.class1.server.ca.pem')
+    key: settings.ssl.key,
+    cert: settings.ssl.cert,
+    ca: settings.ssl.ca
 });
 
 io = require('socket.io').listen(app, {
@@ -43,7 +44,7 @@ io.use(function (socket, next) {
         handshakeData.user_hash = 'ANON' + (+new Date()).toString(36);
     }
 
-    if(cookies.season_id != undefined){
+    if (cookies.season_id != undefined) {
         socket.season_id = cookies.season_id;
     }
 
@@ -894,18 +895,18 @@ io.sockets.on('connection', function (socket) {
             }
 
             d.promise.then(function (image) {
-                    data.image = image;
-                    var m = new grpl.machine.Machine(data);
+                data.image = image;
+                var m = new grpl.machine.Machine(data);
 
-                    m.save().then(function (m) {
-                            cb(null, m);
-                            io.emit('machine_updated', m);
-                        })
-                        .fail(function (err) {
-                            cb(handleError(err));
-                        }).done();
-
+                m.save().then(function (m) {
+                    cb(null, m);
+                    io.emit('machine_updated', m);
                 })
+                    .fail(function (err) {
+                        cb(handleError(err));
+                    }).done();
+
+            })
                 .fail(function (err) {
                     cb(handleError(err));
                 }).done();
@@ -991,20 +992,20 @@ io.sockets.on('connection', function (socket) {
         }).done();
     });
 
-    socket.on('players.namekey.saveIFPAID', function(data, cb){
+    socket.on('players.namekey.saveIFPAID', function (data, cb) {
         grpl.player.getByNameKey(data.name_key)
-            .then(function(player) {
+            .then(function (player) {
                 player.ifpa_id = data.ifpa_id;
                 player.save()
-                    .then(function(data){
+                    .then(function (data) {
                         cb(null, data);
                     })
-                    .fail(function(err){
+                    .fail(function (err) {
                         cb(handleError(err));
                     })
                     .done();
             })
-            .fail(function(err){
+            .fail(function (err) {
                 cb(handleError(err));
             })
             .done();
@@ -1106,9 +1107,9 @@ io.sockets.on('connection', function (socket) {
             var p = new grpl.page.Page(data);
 
             p.save().then(function (p) {
-                    cb(null, p);
-                    io.emit('page_updated', p);
-                })
+                cb(null, p);
+                io.emit('page_updated', p);
+            })
                 .fail(function (err) {
                     cb(handleError(err));
                 }).done();

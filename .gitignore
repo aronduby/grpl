@@ -9,3 +9,4 @@
 *.beforefix
 .node-inspectorrc
 **ssl
+/env.json
