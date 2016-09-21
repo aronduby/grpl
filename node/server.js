@@ -59,7 +59,7 @@ grpl.season.getCurrent()
         season_id = season.season_id
     })
     .fail(function (err) {
-        season_id = 8;
+        season_id = 10;
     }).done();
 
 
