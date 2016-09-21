@@ -7,10 +7,7 @@ header("Pragma: no-cache");
 if(isset($_COOKIE['season_id'])){
 	$season_id = $_COOKIE['season_id'];
 	header("X-Season-Id: ".$season_id);
-	if(
-		$season_id >= 6
-		&& $season_id < 10
-	){
+	if($season_id >= 6){
 		$overload = 'pick-machines';
 	} else {
 		$overload = 'default';
@@ -19,6 +16,7 @@ if(isset($_COOKIE['season_id'])){
 	header("X-Season-Id: Not Set");
 	$overload = 'pick-machines'; // set it to whatever the default season is
 }
+
 
 
 
