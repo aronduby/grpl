@@ -1828,14 +1828,14 @@ li.subsection fieldset{
 /*
  *  Player Order
 */
-#player-order li{
+.player-order li{
 	position:relative;
 	border-color:#c9c9c9;
 	overflow:hidden;
 	white-space:nowrap;
 	padding-right:57px;
 }
-	#player-order li.divider{
+	.player-order li.divider{
 		height: 15px;
 		background: #9f9f9f;
 		border-top: 1px solid #8b8b8b;
@@ -1843,43 +1843,43 @@ li.subsection fieldset{
 		padding:0;
 	}
 
-	#player-order li.error{
+	.player-order li.error{
 		color:#900;
 		border-left:5px solid;
 	}
-		#player-order li.error .rank{
+		.player-order li.error .rank{
 			color:#A26E6E;
 		}
-		#player-order li.error .dnp{
+		.player-order li.error .dnp{
 			background-color: #7d1010;
 			background-image: linear-gradient(to bottom,  #ba2626 0%,#7d1010 100%);
 			border-color:#981313;
 		}
 
-	#player-order li.slip-reordering{
+	.player-order li.slip-reordering{
 		background:#fff;
 	}
 		
-		#player-order li > *{
+		.player-order li > *{
 			display:inline-block;
 			vertical-align:middle;
 		}
 
-		#player-order button.dnp{
+		.player-order button.dnp{
 			position:absolute;
 			top:-1px; right:0;
 			bottom:-1px; left:auto;
 			border-radius:0;
 			opacity:.8;
 		}
-			#player-order button.dnp:hover{
+			.player-order button.dnp:hover{
 				opacity:1;
 			}
-			#player-order > li:first-child .dnp{
+			.player-order > li:first-child .dnp{
 				top:0;
 			}
 
-		#player-order .rank{
+		.player-order .rank{
 			font-weight:bold;
 			font-size:18px;
 			color:#9f9f9f;
@@ -1888,7 +1888,7 @@ li.subsection fieldset{
 			text-align:center;
 			line-height:13px;
 		}
-			#player-order .rank::before{
+			.player-order .rank::before{
 				content:'rank';
 				display:block;
 				font-size:10px;
@@ -1896,10 +1896,10 @@ li.subsection fieldset{
 				text-transform:uppercase;
 			}
 
-	#player-order li.dnp > *{
+	.player-order li.dnp > *{
 		opacity:.35;
 	}
-		#player-order li.dnp > .dnp:hover{
+		.player-order li.dnp > .dnp:hover{
 			opacity:.55;
 		}
 

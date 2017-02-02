@@ -1,18 +1,35 @@
 <div class="page" id="night-order-admin">
 
 	<article>
+
+		<section collapsible="admin.night.order.sorters">
+			<header>
+				<h1>Predefined Order</h1>
+			</header>
+			<div class="content">
+				<ul class="listview">
+					<li ng-repeat="sorter in sorters">
+						<a ng-click="sort(sorter)">
+							<h2>{{sorter.title}}</h2>
+							<p>{{sorter.description}}</p>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</section>
+
 		<form class="order-form" autocomplete="off">
-			<section>
+			<section collapsible="admin.night.order.manual">
 				<header>
-					<a class="button gear edit-night" ui-sref="admin.nights.edit({starts:night.starts})"> Edit Night</a>
-					<h1>Edit the Order for the Night</h1>
+					<a class="button gear" ng-click="setAllDNP(true); $event.stopPropagation();"> All DNP</a>
+					<h1>Manual Order</h1>
 				</header>
 				<div class="content">
 					<div class="fields listview">
-						<ul id="player-order" class="slip-list" slip slip-controller="slipController"><!-- player-order directive -->
+						<ul id="player-order" class="player-order slip-list" slip slip-controller="slipController"><!-- player-order directive -->
 
 						<li 
-							ng-repeat-start="player in order | orderBy:'start_order'" 
+							ng-repeat-start="player in (ordered = (order | filter:{dnp:false} | orderBy:'start_order'))"
 							ng-class="{
 								'dnp': player.dnp,
 								'error': player.error
@@ -25,15 +42,43 @@
 							<h3>{{ player.full_name }}</h3>
 							<button class="x dnp yellow" ng-click="setDNP(player)"></button>
 						</li>
-						<li ng-repeat-end ng-if="$index < order.length - 1 && player.grouping != order[$index + 1].grouping" class="divider disabled" data-grouping="{{player.grouping}}" data-start-order="{{player.start_order + 1}}" data-name-key="{{player.name_key}}" data-after>group #{{player.grouping + 2}}</li>
+						<li ng-repeat-end
+							ng-if="$index < order.length - 1 && player.grouping != ordered[$index + 1].grouping"
+							class="divider disabled"
+							data-grouping="{{player.grouping}}"
+							data-next-grouping="{{ordered[$index+1].grouping}}"
+							data-start-order="{{player.start_order + 1}}"
+							data-name-key="{{player.name_key}}"
+							data-after
+						>group #{{player.grouping + 2}}</li>
 					</ul></div>
 				</div>
 			</section>
+
+			<section collapsible="admin.night.order.dnp">
+				<header>
+					<a class="button gear" ng-click="setAllDNP(false); $event.stopPropagation();"> No DNP</a>
+					<h1>Did Not Play</h1>
+				</header>
+				<div class="content">
+					<div class="fields listview">
+						<ul class="player-order">
+							<li ng-repeat="player in order | filter:{dnp:true} | orderBy:'first_name'">
+								<span class="rank">{{ player.rank }}</span>
+								<h3>{{ player.full_name }}</h3>
+								<button class="plus dnp green" ng-click="setDNP(player)"></button>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</section>
+
 			<div class="button-holder right">
 				<span ng-show="has_errors" class="notes">groups have errors, can't save</span>
 				<button class="inline" ng-click="save()" ng-disabled="has_errors">Save</button>
 			</div>
 		</form>
+
 	</article>
 
 	<div id="order-admin-nights-panel" class="panel" inline-modal>

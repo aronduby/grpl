@@ -125,7 +125,7 @@ gulp.task('api', function() {
 
 // Watch files for changes
 gulp.task('watch', function() {
-	gulp.watch('./', ['html', 'images']);
+	gulp.watch(['./**/*.*', '!./dist/**/*.*'], ['html', 'images']);
 });
 
 // Default task

@@ -631,44 +631,34 @@ io.sockets.on('connection', function (socket) {
                 msg: '<p>Only Admins can edit league nights. If you think you should be an admin talk to the people in charge.</p>'
             });
         } else {
-            var today = new Date();
-            today.setHours(0);
-            today.setMinutes(0);
-            today.setSeconds(0);
-            today.setMilliseconds(0);
+            grpl.leaguenight.getByStarts(data.starts)
+                .then(function (night) {
 
-            var nd = new Date(data.starts + ' 0:0:0');
-            //nd.setHours(0);
-            //nd.setMinutes(0);
-            //nd.setSeconds(0);
-            //nd.setMilliseconds(0);
+                    if (night.scored) {
+                        cb({
+                            title: 'Error',
+                            headline: 'Nope...',
+                            msg: '<p>You can\'t update the order of a night that\'s already been scored</p>'
+                        });
 
-            if (nd < today) {
-                cb({
-                    title: 'Error',
-                    headline: 'Nope...',
-                    msg: '<p>You can\'t edit the start order of a night that already happened</p>'
-                });
-            } else {
-                grpl.leaguenight.getByStarts(data.starts)
-                    .then(function (night) {
+                        return false;
+                    }
 
-                        data.night_id = night.night_id;
+                    data.night_id = night.night_id;
 
-                        night.saveOrder(data)
-                            .then(function (order) {
-                                cb(null, true);
-                                io.emit('leaguenight_order_updated', night);
-                            })
-                            .fail(function (err) {
-                                cb(handleError(err));
-                            }).done();
+                    night.saveOrder(data)
+                        .then(function (order) {
+                            cb(null, true);
+                            io.emit('leaguenight_order_updated', night);
+                        })
+                        .fail(function (err) {
+                            cb(handleError(err));
+                        }).done();
 
-                    })
-                    .fail(function (err) {
-                        cb(handleError(err));
-                    }).done();
-            }
+                })
+                .fail(function (err) {
+                    cb(handleError(err));
+                }).done();
         }
     });
 
