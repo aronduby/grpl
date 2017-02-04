@@ -29,8 +29,10 @@ define([
                 $window.history.back();
             });
 
-            // Scored night, can't edit order
-            } else if( $scope.night.scored ){
+
+        }
+        // Scored night, can't edit order
+        else if( $scope.night.scored ){
             	var d = dialog({
             		title: 'I\'m Afraid I Can\'t Let You Do That',
             		headline: 'Night Already Scored!',
@@ -43,10 +45,12 @@ define([
             	});
 
 
-        } else {
+        }
+        else {
             api.get('leaguenight.order', $scope.night.starts)
                 .then(function (order) {
                     $scope.order = order.players;
+                    sortOrderArray();
                     checkForErrors();
                 })
                 .catch(function (err) {
@@ -72,6 +76,14 @@ define([
                 });
             });
             $scope.has_errors = !!_.countBy($scope.order, 'error')[true];
+        }
+
+        function sortOrderArray() {
+            // we need to reorder the actual array otherwise back and forth sorting get's crazy
+            // but base it on rank because that seems the most natural when using it
+            $scope.order.sort(function(a,b) {
+                return a.rank - b.rank;
+            });
         }
 
         $scope.setDNP = function (player) {
@@ -118,15 +130,52 @@ define([
             // filter out DNP people from the sort
             var sort = _.filter($scope.order, ['dnp', false]);
             sorter(sort)
-                .then(function() {
-                    // we need to reorder the actual array otherwise back and forth sorting get's crazy
-                    // but base it on rank because that seems the most natural when using it
-                    $scope.order.sort(function(a,b) {
-                       return a.rank - b.rank;
+                .then(sortOrderArray)
+                .then(checkForErrors)
+                .catch(function(err) {
+                    dialog({
+                        title: 'I Can\'t Let You Do That',
+                        headline: 'Sorting Error',
+                        msg: err
                     });
-                })
-                .then(checkForErrors);
+                });
         };
+
+        // QUICK ADD
+        $scope.quickAddPlayer = null;
+        $scope.quickAddExistingPlayer = null;
+        $scope.inactivePlayers = [];
+
+        Players.getAllPlayers()
+            .then(function(all) {
+               $scope.inactivePlayers = _.filter(all, ['active', false]);
+            });
+
+        $scope.quickAdd = function(player) {
+            // send player data to server
+            // then add the player to the order at the bottom
+            loadingOverlayApi.show();
+            $q.when(api.post('user.quickAdd', player))
+                .then(function(player) {
+                    player.grouping = _.maxBy($scope.order, 'grouping').grouping;
+                    player.rank = _.maxBy($scope.order, 'rank').rank + 1;
+                    player.start_order = _.maxBy($scope.order, 'start_order').start_order + 1;
+                    player.dnp = false;
+                    $scope.order.push(player);
+                    sortOrderArray();
+                    checkForErrors();
+                })
+                .catch(function (err) {
+                    dialog.open(err);
+                })
+                .finally(function () {
+                    loadingOverlayApi.hide();
+                });
+
+            $scope.quickAddPlayer = null;
+            $scope.quickAddExistingPlayer = null;
+        };
+
 
 
         // slip events

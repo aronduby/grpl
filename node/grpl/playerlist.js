@@ -102,11 +102,10 @@ exports.getRankings = function(season_id, starts){
 					"SUM(n.subbed) AS subbed " +
 				"FROM  " +
 					"player_to_season pts " +
-					"LEFT JOIN player_points_per_night n USING(name_key) " +
+					"LEFT JOIN player_points_per_night n USING(name_key, season_id) " +
 					"LEFT JOIN player p USING(name_key) " +
 				"WHERE " +
 					"pts.season_id = "+season_id+" " +
-					"AND n.season_id = " + season_id + " " +
 					(starts != null ? 'AND starts < \''+starts+'\' ' : '') + 
 				"GROUP BY  " +
 					"name_key  " +

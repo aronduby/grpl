@@ -29,11 +29,12 @@ define(function (require) {
         // nothing fancy, just wraps the sorter to call applyGrouping
         function defaultWrapper(sortFn) {
             var fn = function (players, options) {
-                return $q.when(sortFn(players, options))
-                    .then(applyGrouping)
-                    .catch(function (err) {
-                        console.error(err);
-                    });
+                try {
+                    return $q.when(sortFn(players, options))
+                        .then(applyGrouping);
+                } catch(err) {
+                    return $q.reject(err);
+                }
             };
 
             fn.title = sortFn.title;
@@ -62,10 +63,13 @@ define(function (require) {
 
                     modalInstance.result
                         .then(function(options) {
-                            $q.when(sortFn(players, options))
-                                .then(applyGrouping)
-                                .then(resolve)
-                                .catch(reject);
+                            try {
+                                $q.when(sortFn(players, options))
+                                    .then(applyGrouping)
+                                    .then(resolve)
+                            } catch (err) {
+                                reject(err);
+                            }
                         });
                 });
             };

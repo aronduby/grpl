@@ -204,6 +204,27 @@ io.sockets.on('connection', function (socket) {
         }
     });
 
+    // quick adding a user from the night order page
+    socket.on('user.quickAdd', function (data, cb) {
+        var admin = isAdmin(socket);
+        if (admin != true && admin != 'true') {
+            cb({
+                title: 'Error',
+                headline: 'Nope...',
+                msg: '<p>Only Admins can edit users. If you think you should be an admin talk to the people in charge.</p>'
+            });
+        } else {
+            grpl.player.quickAdd(data, season_id) // always the current season
+                .then(function (player) {
+                    cb(null, player);
+                    io.emit('user_updated', player);
+                })
+                .fail(function (err) {
+                    cb(handleError(err));
+                }).done();
+        }
+    });
+
     // replacing a user with another
     socket.on('user.replace', function (data, cb) {
         var admin = isAdmin(socket);

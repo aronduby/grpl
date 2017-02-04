@@ -1641,6 +1641,7 @@ li.subsection li{
 li.subsection button.remove{
 	float:right;
 	line-height:.8em;
+	margin-left: 15px;
 }
 #sublist fieldset,
 #divisionlist fieldset,
@@ -1649,7 +1650,7 @@ li.subsection fieldset{
 	width:auto;
 	box-shadow:none;
 	float:none;
-	margin-right:45px;
+	/*margin-right:45px;*/
 }
 
 	#sublist fieldset select,

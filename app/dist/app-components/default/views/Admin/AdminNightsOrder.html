@@ -73,6 +73,55 @@
 				</div>
 			</section>
 
+			<section collapsible="admin.night.order.quick-add-player">
+				<header>
+					<h1>Quick Add Player</h1>
+				</header>
+				<div class="content">
+					<div class="fields listview">
+						<ul>
+							<li class="subsection">
+								<h2>Inactive Player</h2>
+								<p>Add a player that has played in previous seasons.</p>
+								<div class="listview">
+									<ul>
+										<li>
+											<fieldset>
+												<select id="existing-player" ng-model="quickAddExistingPlayer" ng-options="player.full_name for player in inactivePlayers | orderBy:'full_name'">
+													<option value=""></option>
+												</select>
+											</fieldset>
+										</li>
+									</ul>
+								</div>
+								<button class="blue small" ng-disabled="!quickAddExistingPlayer" ng-click="quickAdd(quickAddExistingPlayer)">Add Player</button>
+							</li>
+							<li class="subsection">
+								<h2>New Player</h2>
+								<p>Add a totally new player.</p>
+								<div class="listview">
+									<ul>
+										<li>
+											<label for="first_name">First Name</label>
+											<fieldset>
+												<input type="text" id="first_name" name="first_name" placeholder="first name" ng-model="quickAddPlayer.first_name" />
+											</fieldset>
+										</li>
+										<li>
+											<label for="last_name">Last Name</label>
+											<fieldset>
+												<input type="text" id="last_name" name="last_name" placeholder="last name" ng-model="quickAddPlayer.last_name" />
+											</fieldset>
+										</li>
+									</ul>
+								</div>
+								<button class="blue small" ng-disabled="!quickAddPlayer" ng-click="quickAdd(quickAddPlayer)">Add Player</button>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</section>
+
 			<div class="button-holder right">
 				<span ng-show="has_errors" class="notes">groups have errors, can't save</span>
 				<button class="inline" ng-click="save()" ng-disabled="has_errors">Save</button>

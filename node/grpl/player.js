@@ -158,7 +158,40 @@ exports.register = function(data, season_id){
 	});
 
 	return d.promise;
-}
+};
+
+/*
+ *	Adds a player from the night order screen
+ */
+exports.quickAdd = function(data, season_id) {
+	var d = Q.defer();
+
+	if(!data.name_key){
+		data.name_key = data.first_name + data.last_name;
+	}
+
+	getPool().getConnection(function(err, db){
+		if(err){ d.reject(err); return false; }
+		var sql = "INSERT INTO player SET "+
+			"name_key=?, first_name=?, last_name=?, facebook_id=?, email=?, hash=MD5(CONCAT(?,'-',IFNULL(facebook_id,''))) "+
+			"ON DUPLICATE KEY UPDATE name_key=VALUES(name_key), first_name=VALUES(first_name), last_name=VALUES(last_name), facebook_id=VALUES(facebook_id), email=VALUES(email), hash=VALUES(hash)";
+
+		db.query(sql, [data.name_key, data.first_name, data.last_name, data.facebook_id, data.email, data.name_key+'-'+data.email+'-'+data.password], function(err, results){
+			if(err){ err.sql = sql; err.data = data; d.reject(err); return false; }
+
+			var sql = "INSERT INTO player_to_season (name_key, season_id) VALUES (?, ?)";
+			db.query(sql, [data.name_key, season_id], function(err, r){
+				if(err){ err.sql = sql; d.reject(err); db.release(); return false; }
+
+				data.active = true;
+				d.resolve(new Player(data));
+				db.release();
+			});
+		});
+	});
+
+	return d.promise;
+};
 
 
 /*
