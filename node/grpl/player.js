@@ -402,14 +402,15 @@ Player.prototype.getNightTotals = function(season_id){
 	var self = this,
 		d = Q.defer(),
 		sql = "SELECT " + 
-			"ln.title, DATE_FORMAT(ln.starts, '%Y-%m-%d') AS starts, ln.description AS description, pppn.points, lns.sub " +
+			"ln.title, DATE_FORMAT(ln.starts, '%Y-%m-%d') AS starts, ln.description AS description, pppn.points, lns.sub, lno.dnp " +
 		"FROM " +
 			"league_night ln " + 
 			"LEFT JOIN player_points_per_night pppn USING(starts) " +
-			"LEFT JOIN league_night_sub lns USING(night_id, name_key) " +
+			"LEFT JOIN league_night_sub lns ON(lns.night_id = ln.night_id AND lns.name_key = pppn.name_key) " +
+			"LEFT JOIN league_night_order lno ON(lno.night_id = ln.night_id AND lno.name_key = pppn.name_key) " +
 		"WHERE " +
 			"ln.season_id=? " +
-			"AND name_key=? " +
+			"AND pppn.name_key=? " +
 		"ORDER BY starts DESC";
 
 	getPool().getConnection(function(err, db){
@@ -608,7 +609,8 @@ Player.prototype.getHeadToHead = function(season_id) {
 			") " +
 		"WHERE " + 
 			(season_id != undefined ? "ln.season_id = "+season_id+" AND " : '' ) + 
-			"lno_p.name_key = ? " + 
+			"lno_p.name_key = ? " +
+			"AND lno_p.dnp = 0 " +
 			"AND player_sub.sub_id IS NULL " +
 			"AND opponent_sub.sub_id IS NULL " +
 			"AND lns.points != 0 " +

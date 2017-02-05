@@ -349,7 +349,7 @@ exports.getPointsForNight = function(season_id, starts){
 						"ORDER BY lns.name_key";
 				} else {
 					var sql = "SELECT " +
-							"lns.name_key, SUM(lns.points) AS points, " + 
+							"lns.name_key, pppn.points, " +
 							"GROUP_CONCAT(" +
 								"'abbv:',lns.abbv,','," +
 								"'points:',IFNULL(lns.points,''),','," +
@@ -361,6 +361,7 @@ exports.getPointsForNight = function(season_id, starts){
 							"player_to_season pts " +
 							"JOIN league_night n USING(season_id) " +
 							"JOIN league_night_score lns USING(name_key, night_id) " +
+							"LEFT JOIN player_points_per_night pppn USING (name_key, night_id) " +
 						"WHERE n.starts = ? " +
 						"GROUP BY lns.name_key " +
 						"ORDER BY lns.name_key";

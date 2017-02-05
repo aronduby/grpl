@@ -805,11 +805,13 @@ body.loading > footer{
 
 /* if there are preset DNPs */
 .player-holder li.dnp,
-.players li[data-dnp="1"]{
+.players li[data-dnp="1"],
+.league-standing li.dnp{
 	opacity:.5;
 }
 	.player-holder li.dnp h3::after,
-	.players li[data-dnp="1"] h2::after{
+	.players li[data-dnp="1"] h2::after,
+	.league-standing li.dnp h2::after{
 		content:'DNP';
 		font-weight:bold;
 		color:#900;

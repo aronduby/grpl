@@ -1,4 +1,4 @@
-<section class="nights-holder" collapsible="players.nights" collapse-callback="nightsCollapsed(closed)">
+<section class="nights-holder league-standing" collapsible="players.nights" collapse-callback="nightsCollapsed(closed)">
     <header>
         <h1>League Standing</h1>
     </header>
@@ -16,7 +16,7 @@
         </fieldset>
         <div class="listview">
             <ul>
-                <li ng-repeat="night in nights">
+                <li ng-repeat="night in nights" ng-class="{'dnp': night.dnp}">
                     <a ng-href="#/index/{{ night.starts }}" title="view week">
                         <h2>{{ night.title }} <span ng-if="night.sub" class="sub" title="sub">{{ night.sub }}</span></h2>
                         <p>{{ night.description }}</p>
