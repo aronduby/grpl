@@ -143,6 +143,11 @@ function(routingConfig, MessageInABottleController){
 					path: 'admin/',
 					baseName: 'AdminSeasons'
 				}))
+                .state('admin.seasonPlayers', route.resolve({
+                    url: '/admin/season/players',
+                    path: 'admin/',
+                    baseName: 'AdminSeasonPlayers'
+                }))
 				.state('admin.machines', route.resolve({
 					url: '/admin/machines/:abbv',
 					path: 'admin/',

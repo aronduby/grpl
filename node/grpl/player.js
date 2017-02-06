@@ -193,6 +193,41 @@ exports.quickAdd = function(data, season_id) {
 	return d.promise;
 };
 
+/*
+ * Batch activation
+ */
+exports.batchActivation = function(nameKeys, seasonId) {
+	// delete everyone from player to season with seasonID to catch setting people to inactive
+	// insert everyone in nameKeys into pts with seasonId
+	var d = Q.defer();
+
+	getPool().getConnection(function(err, db) {
+		if(err){ d.reject(err); return false; }
+
+		var deleteSql = "DELETE FROM player_to_season WHERE season_id = ?";
+		db.query(deleteSql, [seasonId], function(err, results) {
+			if(err){ err.sql = deleteSql; err.data = nameKeys; d.reject(err); db.release(); return false; }
+
+			var insertSql = "INSERT INTO player_to_season (name_key, season_id) VALUES ";
+			var sets = [];
+
+			nameKeys.forEach(function(key) {
+				sets.push('(\'' + key + '\', ' + seasonId + ')');
+			});
+
+			insertSql += sets.join(', ');
+
+			db.query(insertSql, function(err, results) {
+				if(err){ err.sql = insertSql; err.data = nameKeys; d.reject(err); db.release(); return false; }
+
+				d.resolve(true);
+				db.release();
+			});
+		});
+	});
+
+	return d.promise;
+};
 
 /*
  *	Replaces an active player with someone else

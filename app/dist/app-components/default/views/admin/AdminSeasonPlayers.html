@@ -1,0 +1,78 @@
+<div class="page" id="season-players-admin">
+
+	<article>
+
+		<form class="order-form" autocomplete="off">
+			<section collapsible="admin.season.players.active">
+				<header>
+					<h1>Active Players</h1>
+				</header>
+				<div class="content">
+					<div class="fields listview">
+						<ul id="player-order" class="player-order">
+                            <li ng-repeat="player in (players | filter:{active:true} | orderBy:'full_name')">
+                                <h3>{{ player.full_name }}</h3>
+                                <button class="x dnp yellow" ng-click="setActive(player, false)"></button>
+                            </li>
+					    </ul>
+                    </div>
+				</div>
+			</section>
+
+			<section collapsible="admin.season.players.inactive">
+				<header>
+					<h1>Inactive</h1>
+				</header>
+				<div class="content">
+					<div class="fields listview">
+						<ul class="player-order">
+                            <li ng-repeat="player in (players | filter:{active:false} | orderBy:'full_name')">
+								<h3>{{ player.full_name }}</h3>
+								<button class="plus dnp green" ng-click="setActive(player, true)"></button>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</section>
+
+			<section collapsible="admin.night.order.quick-add-player">
+				<header>
+					<h1>Quick Add Player</h1>
+				</header>
+				<div class="content">
+					<div class="fields listview">
+						<ul>
+							<li class="subsection">
+								<h2>New Player</h2>
+								<p>Add a totally new player.</p>
+								<div class="listview">
+									<ul>
+										<li>
+											<label for="first_name">First Name</label>
+											<fieldset>
+												<input type="text" id="first_name" name="first_name" placeholder="first name" ng-model="quickAddPlayer.first_name" />
+											</fieldset>
+										</li>
+										<li>
+											<label for="last_name">Last Name</label>
+											<fieldset>
+												<input type="text" id="last_name" name="last_name" placeholder="last name" ng-model="quickAddPlayer.last_name" />
+											</fieldset>
+										</li>
+									</ul>
+								</div>
+								<button class="blue small" ng-disabled="!quickAddPlayer" ng-click="quickAdd(quickAddPlayer)">Add Player</button>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</section>
+
+			<div class="button-holder right">
+				<button class="inline" ng-click="save()">Save</button>
+			</div>
+		</form>
+
+	</article>
+
+</div>

@@ -1010,6 +1010,10 @@ body.loading > footer{
 	margin: 0;
 }
 
+#admin-menu .button-holder .button + .button {
+	margin-top: 2px;
+}
+
 #admin-menu span.count{
 	float:right;
 	width:22px;

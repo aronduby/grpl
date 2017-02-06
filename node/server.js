@@ -249,6 +249,27 @@ io.sockets.on('connection', function (socket) {
         }
     });
 
+    // batch managing active users
+    socket.on('users.batchActivation', function(nameKeys, cb) {
+        var admin = isAdmin(socket);
+        if (admin != true && admin != 'true') {
+            cb({
+                title: 'Error',
+                headline: 'Nope...',
+                msg: '<p>Only Admins can edit users. If you think you should be an admin talk to the people in charge.</p>'
+            });
+        } else {
+            grpl.player.batchActivation(nameKeys, season_id) // always the current season
+                .then(function() {
+                    cb(null, true);
+                    io.emit('users_batch_activation', season_id);
+                })
+                .fail(function (err) {
+                    cb(handleError(err));
+                }).done();
+        }
+    });
+
     /*
      *	TIEBREAKER
      */

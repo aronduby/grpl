@@ -95,6 +95,9 @@
 						<a class="button blue plus" ng-href="#/admin/users/new">
 							<span class="title">Add a User</span>
 						</a>
+						<a class="button green login" ng-href="#/admin/season/players">
+							<span class="title">Active Users</span>
+						</a>
 					</div>
 
 					<h2 ng-repeat-start="(key, group) in users | groupBy:'active' | toArray:true | orderBy:'active'">
