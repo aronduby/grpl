@@ -11,16 +11,29 @@
 						<li>
 							<label for="title">Title</label>
 							<fieldset>
-								<input type="text"id="title" placeholder="ie. Season 5" ng-model="season.title" />
+								<input type="text" id="title" placeholder="ie. Season 5" ng-model="season.title" />
 							</fieldset>
 						</li>
 						<li>
-							<label for="current">Current</label>
+							<label>Current</label>
 							<fieldset>
 								<div class="btn-group">
 									<label class="" ng-model="season.current" btn-radio="true">Yes</label>	
 									<label class="" ng-model="season.current" btn-radio="false">No</label>	
 								</div>
+							</fieldset>
+						</li>
+						<li>
+							<label for="dnp_multiplier">DNP Average Multiplier</label>
+							<fieldset>
+								<input type="number"
+                                       id="dnp_multiplier"
+                                       placeholder="set to 0 to disable"
+                                       ng-model="season.dnp_multiplier"
+                                       min="0"
+                                       max="1"
+                                       step=".01"
+                                />
 							</fieldset>
 						</li>
 						<li class="divisionlist-holder subsection">

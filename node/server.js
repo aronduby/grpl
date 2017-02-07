@@ -466,7 +466,7 @@ io.sockets.on('connection', function (socket) {
                 msg: '<p>Only Admins can edit season. If you think you should be an admin talk to the people in charge.</p>'
             });
         } else {
-            var season = new grpl.season.Season(data.season_id, data.title, data.scoring_order);
+            var season = new grpl.season.Season(data);
             season.current = data.current == true;
             season.save()
                 .then(function () {

@@ -6,12 +6,12 @@ exports.getAll = function(){
 	getPool().getConnection(function(err, db){
 		if(err){ d.reject(err); return false; }
 
-		db.query("SELECT season_id, title, scoring_order FROM season", function(err, results){
+		db.query("SELECT * FROM season", function(err, results){
 			if(err){ d.reject(err); db.release(); return false; }
 
 			var seasons = [];
 			results.forEach(function(row){
-				seasons.push(new Season(row.season_id, row.title, row.scoring_order));
+				seasons.push(new Season(row));
 			});
 			d.resolve(seasons);
 			db.release();
@@ -27,11 +27,11 @@ exports.getById = function(id){
 	getPool().getConnection(function(err, db){
 		if(err){ d.reject(err); return false; }
 
-		db.query("SELECT season_id, title, scoring_order FROM season WHERE season_id=?", [id], function(err, results){
+		db.query("SELECT * FROM season WHERE season_id=?", [id], function(err, results){
 			if(err){ d.reject(err); db.release(); return false; }
 
 			var row = results[0];
-			d.resolve(new Season(row.season_id, row.title, row.scoring_order));
+			d.resolve(new Season(row));
 			db.release();
 		})
 	});
@@ -45,11 +45,11 @@ exports.getCurrent = function(){
 	getPool().getConnection(function(err, db){
 		if(err){ d.reject(err); return false; }
 
-		db.query("SELECT season_id, title, scoring_order FROM season WHERE season_id = (SELECT v FROM config WHERE k='current_season')", function(err, results){
+		db.query("SELECT * FROM season WHERE season_id = (SELECT v FROM config WHERE k='current_season')", function(err, results){
 			if(err){ d.reject(err); db.release(); return false; }
 
 			var row = results[0];
-			d.resolve(new Season(row.season_id, row.title, row.scoring_order));
+			d.resolve(new Season(row));
 			db.release();
 		})
 	});
@@ -65,22 +65,26 @@ function getPool(){
 // this allows us to create new empty items by saying new grpl.season.Season();
 exports.Season = Season;
 
-function Season(id, title, scoring_order){
-	this.season_id = id;
-	this.title = title;
-
-	if(scoring_order !== undefined && scoring_order.length > 0){
-		if(typeof scoring_order == 'string'){
-			this.scoring_order = JSON.parse(scoring_order);
-		} else {
-			this.scoring_order = scoring_order;
+function Season(data){
+	for(prop in data){
+		if (prop in this) {
+			this[prop] = data[prop];
 		}
-	};
+	}
+
+	if(
+		this.scoring_order !== undefined
+		&& typeof this.scoring_order == 'string'
+		&& this.scoring_order.length > 0
+	){
+		this.scoring_order = JSON.parse(this.scoring_order);
+	}
 }
 Season.prototype.season_id = null;
 Season.prototype.title = null;
 Season.prototype.current = null;
 Season.prototype.scoring_order = null;
+Season.prototype.dnp_multiplier = 0;
 
 Season.prototype.save = function(){
 	var self = this,

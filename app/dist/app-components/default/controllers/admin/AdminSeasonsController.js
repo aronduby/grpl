@@ -24,7 +24,8 @@ define(['js/app'], function(app){
 			$scope.season = {
 				season_id: null,
 				title: null,
-				current: false
+				current: false,
+				dnp_multiplier: 0
 			};
 
 			navApi.setTitle('New Season', 'Choose a Different Season');
