@@ -16,7 +16,6 @@ define(['js/app'], function(app){
 			api.get('players')
 				.then(function(players){
 					self.players = players;
-
 					d.resolve(self.players);
 				})
 				.catch(function(err){
@@ -34,7 +33,6 @@ define(['js/app'], function(app){
 				api.get('players.active')
 					.then(function(players){
 						self.active = players;
-
 						d.resolve(self.players);
 					})
 					.catch(function(err){
@@ -55,7 +53,6 @@ define(['js/app'], function(app){
 				api.get('players.all')
 					.then(function(players){
 						self.all = players;
-
 						d.resolve(self.all);
 					})
 					.catch(function(err){

@@ -80,9 +80,8 @@ define([
 
         function sortOrderArray() {
             // we need to reorder the actual array otherwise back and forth sorting get's crazy
-            // but base it on rank because that seems the most natural when using it
             $scope.order.sort(function(a,b) {
-                return a.rank - b.rank;
+                return a.start_order - b.start_order;
             });
         }
 

@@ -28,9 +28,10 @@ define(function (require) {
             $q.when(api.post('user.quickAdd', player))
                 .then(function (player) {
                     // might not have to do anything here
+                    $scope.players.push(player);
                 })
                 .catch(function (err) {
-                    dialog.open(err);
+                    dialog(err);
                 })
                 .finally(function () {
                     loadingOverlayApi.hide();

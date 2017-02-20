@@ -90,7 +90,7 @@ exports.getRankings = function(season_id, starts){
 	getPool().getConnection(function(err, db){
 		if(err){ d.reject(err); return false; }
 
-		var sql = "SELECT f.*, lnop.rank AS previous_rank, breaker, CONCAT(score,'.',firsts,'.',seconds,'.',thirds,'.',fourths,'.',subbed,'.',IFNULL(breaker,0)) AS scoring_string " +
+		var sql = "SELECT f.*, 0 AS dnp, lnop.rank AS previous_rank, breaker, CONCAT(score,'.',firsts,'.',seconds,'.',thirds,'.',fourths,'.',subbed,'.',IFNULL(breaker,0)) AS scoring_string " +
 			"FROM ( " +
 				"SELECT  " +
 					"p.*,  " +

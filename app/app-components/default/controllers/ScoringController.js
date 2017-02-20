@@ -106,7 +106,7 @@ define(['js/app'], function(app){
 							$scope.places[4].points = undefined;
 							break;
 						case 2:
-							$scope.places[2].points = 1;
+							$scope.places[2].points = 4;
 							$scope.places[3].points = undefined;
 							$scope.places[4].points = undefined;
 							break;
@@ -121,7 +121,10 @@ define(['js/app'], function(app){
 
 				// set the proper order of the players
 				_.each(season.scoring_order[offset], function(pidx, i){
-					$scope.group.players[pidx].scoring_order = i;
+					// in case of 3 player groups
+					if (typeof $scope.group.players[pidx] !== 'undefined') {
+						$scope.group.players[pidx].scoring_order = i;
+					}
 				});
 
 				$scope.next_machine = _.find(macs, function(mac){
@@ -193,7 +196,7 @@ define(['js/app'], function(app){
 							$scope.places[4].points = 0;
 							break;
 						case 2:
-							$scope.places[2].points = 1;
+							$scope.places[2].points = 4;
 							$scope.places[3].points = 0;
 							$scope.places[4].points = 0;
 							break;

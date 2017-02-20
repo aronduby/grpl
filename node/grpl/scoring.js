@@ -739,17 +739,6 @@ exports.tiebreaker = function(data){
 				});
 			});
 		});
-
-		/*
-		var sql = "INSERT INTO tie_breaker (night_id, name_key, place) VALUES (?, ?, ?) ON DUPLICATE KEY update place=VALUES(place)";
-		data.players.forEach(function(p){
-			var query = db.query(sql, [night_id, p.name_key, p.place]);
-			// console.log(query.sql);
-		});
-		d.resolve(data.players[0].name_key);
-
-		db.release();
-		*/
 	});
 	
 	return d.promise;

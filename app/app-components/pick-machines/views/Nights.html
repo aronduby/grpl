@@ -18,7 +18,7 @@
 			<header>
 				<h1>{{ division.title }}</h1>
 			</header>			
-			<div class="content">
+			<div class="content" ng-init="(didNotPlay = (division.player_list.players | filter:{dnp:true} | orderBy:'name_key'))">
 
 				<section class="machine-holder" collapsible="index.division.{{division.division_id}}.machines">
 					<header>
@@ -49,7 +49,7 @@
 						
 						<div class="listview">
 							<ul 
-								ng-repeat="(group, players) in division.player_list.players | groupBy: 'grouping' | toArray:true | orderBy:properGroupOrder"
+								ng-repeat="(group, players) in division.player_list.players | filter:{dnp:false} | groupBy: 'grouping' | toArray:true | orderBy:properGroupOrder"
 								data-group="{{ $index + 1 }}"
 							>
 								<li 
@@ -94,6 +94,61 @@
 										</span>
 									</a>
 								</li>								
+							</ul>
+						</div>
+
+					</div>
+				</section>
+
+				<section
+					class="player-holder"
+					collapsible="index.division.{{division.division_id}}.players.dnp"
+					ng-if="didNotPlay.length > 0"
+				>
+					<header>
+						<h1>Did Not Play</h1>
+					</header>
+					<div class="content">
+
+						<div class="listview">
+							<ul>
+								<li
+									ng-repeat="player in didNotPlay track by player.name_key"
+									ng-class="{
+										'user starred': (user.logged_in && user.name_key == player.name_key),
+										'dnp': player.dnp,
+										'tied': player.tied,
+										'even': player.tied && player.tied_index %2==1
+									}"
+									data-name-key="{{ player.name_key }}"
+									data-pre-total="{{ }}"
+									data-scoring-string="{{ player.scoring_string }}"
+									ng-init = "rank_movement = (player.previous_rank != null ? player.previous_rank - player.rank : 0);
+											picked = machines_by_picked[player.name_key]"
+								>
+									<a ng-href="#/players/{{ player.name_key }}" title="view player info">
+										<h3>
+											<span class="rank">{{ player.rank }}
+												<span
+														class="movement"
+														ng-class="{
+														'positive': rank_movement > 0,
+														'same': rank_movement == 0,
+														'negative': rank_movement < 0
+													}"
+												>{{ rank_movement | mathAbs | notZero }}</span
+												></span>
+											{{ player.first_name }} {{ player.last_name }}
+											<span ng-if="night.subs[player.name_key]" class="sub" title="sub">{{ night.subs[player.name_key].sub }}</span>
+										</h3>
+
+										<span class="score right" ng-class="{double: player.night_score > 0}">
+											<span class="total-score" ng-if="!(player.night_score > 0)">{{ player.score }}</span>
+											<span class="night-score" ng-if="player.night_score > 0">{{ player.night_score }}</span>
+											<span class="total-score" ng-if="player.night_score > 0">{{ player.score  + player.night_score }}</span>
+										</span>
+									</a>
+								</li>
 							</ul>
 						</div>
 

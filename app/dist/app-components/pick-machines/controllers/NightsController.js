@@ -77,6 +77,10 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 
 				if(ties.length > 0 && !(ties.length == 1 && ties[0].length == players.length)){
 					_.each(ties, function(group, tie_index){
+						if (group[0].scoring_string === '0') {
+						    return true;
+                        }
+
 						_.each(group, function(player){
 							player.tied = true;
 							player.tied_index = tie_index;

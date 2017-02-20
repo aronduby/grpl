@@ -6,7 +6,8 @@ define(function (require) {
     var sorters = {
         adjacent: require('js/sorters/adjacentPairing'),
         groupTieredSwiss: require('js/sorters/groupTieredSwissPairing'),
-        slaughter: require('js/sorters/slaughterPairing')
+        slaughter: require('js/sorters/slaughterPairing'),
+        alpha: require('js/sorters/alphaNamePairing')
     };
 
     SorterService.$inject = ['$q', '$modal'];
@@ -83,6 +84,7 @@ define(function (require) {
         sorters.adjacent = defaultWrapper(sorters.adjacent);
         sorters.slaughter = defaultWrapper(sorters.slaughter);
         sorters.groupTieredSwiss = dialogWrapper(sorters.groupTieredSwiss, 'app-components/partials/modals/group-tiered-swiss-options.html');
+        sorters.alpha = defaultWrapper(sorters.alpha);
 
         return sorters;
     }

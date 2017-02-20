@@ -89,6 +89,10 @@ define(['js/app'], function (app) {
                     $scope.machines = group.machines;
                     $scope.continue_scoring = group.players[0].machines == null || group.players[0].machines.length < 4; // one less since it won't have the current machine
 
+                    // filter out people already marked DNP at this point
+                    // this keeps them from the scoring and machine select
+                    // $scope.group.players = _.filter($scope.group.players, {dnp: false});
+
                     // group will just include the abbv and picked by, set it to the full thing
                     _.each($scope.machines, function (mac, idx) {
                         $scope.machines[idx] = Machines.getMachine(mac.abbv);
@@ -142,7 +146,7 @@ define(['js/app'], function (app) {
                                 $scope.places[4].points = undefined;
                                 break;
                             case 2:
-                                $scope.places[2].points = 1;
+                                $scope.places[2].points = 4;
                                 $scope.places[3].points = undefined;
                                 $scope.places[4].points = undefined;
                                 break;
@@ -157,7 +161,10 @@ define(['js/app'], function (app) {
 
                     // set the proper order of the players
                     _.each(season.scoring_order[offset], function (pidx, i) {
-                        $scope.group.players[pidx].scoring_order = i;
+                        // in case of 3 player groups
+                        if (typeof $scope.group.players[pidx] !== 'undefined') {
+                            $scope.group.players[pidx].scoring_order = i;
+                        }
                     });
 
                 })
@@ -225,7 +232,7 @@ define(['js/app'], function (app) {
                             $scope.places[4].points = 0;
                             break;
                         case 2:
-                            $scope.places[2].points = 1;
+                            $scope.places[2].points = 4;
                             $scope.places[3].points = 0;
                             $scope.places[4].points = 0;
                             break;
