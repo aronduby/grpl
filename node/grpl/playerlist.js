@@ -232,6 +232,10 @@ exports.getTies = function(season_id, starts){
 			cur_string = false;
 
 		player_list.players.forEach(function(player){
+			if (player.scoring_string == '0') {
+			    return true;
+            }
+
 			if(player.scoring_string != null && (player.scoring_string == cur_string || cur_string == false)){
 				cur_tie.push(player);
 			} else {
