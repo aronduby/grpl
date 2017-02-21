@@ -243,7 +243,7 @@ exports.quickAdd = function (data, season_id) {
                         orderInserts.push([
                             row.night_id, // night_id
                             data.name_key, // name_key
-                            999, // rank
+                            0, // rank
                             999, //start_order
                             true // dnp
                         ]);
@@ -251,7 +251,7 @@ exports.quickAdd = function (data, season_id) {
                         scoringInserts.push([
                             row.night_id, // night_id
                             data.name_key, // name_key
-                            'DNS', // machine abbv
+                            'DNP', // machine abbv
                             0, // points
                             0 // played_order
                         ]);
@@ -559,6 +559,7 @@ Player.prototype.role = null;
 Player.prototype.scoring_string = null;
 Player.prototype.rank = null;
 Player.prototype.previous_rank = null;
+Player.prototype.previous_dnp = null;
 Player.prototype.start_order = null;
 Player.prototype.grouping = null;
 Player.prototype.dnp = null;

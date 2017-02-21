@@ -90,7 +90,7 @@ exports.getRankings = function(season_id, starts){
 	getPool().getConnection(function(err, db){
 		if(err){ d.reject(err); return false; }
 
-		var sql = "SELECT f.*, 0 AS dnp, lnop.rank AS previous_rank, breaker, CONCAT(score,'.',firsts,'.',seconds,'.',thirds,'.',fourths,'.',subbed,'.',IFNULL(breaker,0)) AS scoring_string " +
+		var sql = "SELECT f.*, 0 AS dnp, lnop.rank AS previous_rank, lnop.dnp AS previous_dnp, breaker, CONCAT(score,'.',firsts,'.',seconds,'.',thirds,'.',fourths,'.',subbed,'.',IFNULL(breaker,0)) AS scoring_string " +
 			"FROM ( " +
 				"SELECT  " +
 					"p.*,  " +
@@ -112,7 +112,7 @@ exports.getRankings = function(season_id, starts){
 			") AS f " +
 			"LEFT JOIN( " +
 				"SELECT " +
-					"lno.name_key, lno.rank " +
+					"lno.name_key, lno.rank, lno.dnp " +
 				"FROM " +
 					"league_night ln " +
 					"LEFT JOIN league_night_order lno USING(night_id) " +
@@ -265,7 +265,7 @@ exports.getOrderForNight = function(season_id, starts){
 
 		// rankings query but ordered by the lno
 		var sql = "SELECT " +
-			"lno.rank, lnop.rank AS previous_rank, lno.start_order, lno.grouping, lno.dnp, p.*, IFNULL(f.score, 0) AS score, IFNULL(CONCAT(score,'.',firsts,'.',seconds,'.',thirds,'.',fourths,'.',subbed,'.',IFNULL(breaker,0)),0) AS scoring_string " +
+			"lno.rank, lnop.rank AS previous_rank, lnop.dnp AS previous_dnp, lno.start_order, lno.grouping, lno.dnp, p.*, IFNULL(f.score, 0) AS score, IFNULL(CONCAT(score,'.',firsts,'.',seconds,'.',thirds,'.',fourths,'.',subbed,'.',IFNULL(breaker,0)),0) AS scoring_string " +
 		"FROM " +
 		"league_night n " +
 		"LEFT JOIN league_night_order lno USING(night_id) " +
@@ -288,7 +288,7 @@ exports.getOrderForNight = function(season_id, starts){
 		") AS f USING(name_key) " +
 		"LEFT JOIN ( " +
 			"SELECT " +
-				"lno.name_key, lno.rank " +
+				"lno.name_key, lno.rank, lno.dnp " +
 			"FROM " +
 				"league_night ln " +
 				"LEFT JOIN league_night_order lno USING(night_id) " +

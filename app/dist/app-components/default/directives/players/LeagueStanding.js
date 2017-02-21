@@ -128,6 +128,10 @@ define(function(require){
                         end_place = PlayerData.places[PlayerData.nights[i + 1].starts];
                     }
 
+                    if (night.dnp) {
+                        end_place = null;
+                    }
+
                     var sub = null;
                     if (night.sub != null) {
                         sub = night.points;

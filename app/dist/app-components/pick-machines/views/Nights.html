@@ -63,7 +63,7 @@
 									data-name-key="{{ player.name_key }}"
 									data-pre-total="{{ }}"
 									data-scoring-string="{{ player.scoring_string }}"
-									ng-init = "rank_movement = (player.previous_rank != null ? player.previous_rank - player.rank : 0); 
+									ng-init = "rank_movement = (player.previous_rank != null && !player.previous_dnp ? player.previous_rank - player.rank : 0);
 												picked = machines_by_picked[player.name_key]"
 								>
 									<a ng-href="#/players/{{ player.name_key }}" title="view player info">
@@ -128,24 +128,13 @@
 								>
 									<a ng-href="#/players/{{ player.name_key }}" title="view player info">
 										<h3>
-											<span class="rank">{{ player.rank }}
-												<span
-														class="movement"
-														ng-class="{
-														'positive': rank_movement > 0,
-														'same': rank_movement == 0,
-														'negative': rank_movement < 0
-													}"
-												>{{ rank_movement | mathAbs | notZero }}</span
-												></span>
 											{{ player.first_name }} {{ player.last_name }}
 											<span ng-if="night.subs[player.name_key]" class="sub" title="sub">{{ night.subs[player.name_key].sub }}</span>
 										</h3>
 
-										<span class="score right" ng-class="{double: player.night_score > 0}">
-											<span class="total-score" ng-if="!(player.night_score > 0)">{{ player.score }}</span>
-											<span class="night-score" ng-if="player.night_score > 0">{{ player.night_score }}</span>
-											<span class="total-score" ng-if="player.night_score > 0">{{ player.score  + player.night_score }}</span>
+										<span class="score right double">
+											<span class="night-score">{{ player.night_score }}</span>
+											<span class="total-score">{{ player.score  + player.night_score }}</span>
 										</span>
 									</a>
 								</li>

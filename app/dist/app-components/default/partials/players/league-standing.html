@@ -20,11 +20,11 @@
                     <a ng-href="#/index/{{ night.starts }}" title="view week">
                         <h2>{{ night.title }} <span ng-if="night.sub" class="sub" title="sub">{{ night.sub }}</span></h2>
                         <p>{{ night.description }}</p>
-								<span class="score right double">
-									<span>{{ night.points }}</span>
-									<span ng-if="!nights[ $index + 1]">{{ places.totals | ordinal }}</span>
-									<span ng-if="nights[ $index + 1]">{{ places[ nights[$index + 1].starts ] | ordinal }}</span>
-								</span>
+                        <span class="score right" ng-class="{'double': !night.dnp}">
+                            <span>{{ night.points }}</span>
+                            <span ng-if="!night.dnp && !nights[ $index + 1]">{{ places.totals | ordinal }}</span>
+                            <span ng-if="!night.dnp && nights[ $index + 1]">{{ places[ nights[$index + 1].starts ] | ordinal }}</span>
+                        </span>
                     </a>
                 </li>
                 <li ng-if="!nights.length"><p>no nights played yet</p></li>
