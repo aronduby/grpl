@@ -167,7 +167,7 @@
 						</a>
 					</div>
 
-					<h2 ng-repeat-start="group in machines | groupBy:'status' | toArray:true | orderBy:'status'">
+					<h2 ng-repeat-start="group in machines | groupBy:'status' | toArray:true | orderBy:'$key'">
 						{{ group[0].status }} Machines
 					</h2>
 					<div class="listview edit-machine-list" ng-repeat-end>
