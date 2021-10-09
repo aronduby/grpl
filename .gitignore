@@ -10,3 +10,6 @@
 .node-inspectorrc
 **ssl
 /env.json
+/_assets/
+/node_modules/
+/node/node_modules/
