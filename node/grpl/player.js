@@ -534,7 +534,12 @@ function Player(opts) {
     }
 
     this.full_name = this.first_name + ' ' + this.last_name;
-    this.initials = this.first_name[0] + this.last_name[0];
+    if (this.first_name && this.last_name) {
+        this.initials = this.first_name[0] + this.last_name[0];
+    } else {
+        this.initials = '';
+    }
+
     this.had_sub = !!this.had_sub;
 
     if (this.active != undefined)

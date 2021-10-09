@@ -419,7 +419,7 @@ a.button{
   button.grey,
   a.button.grey{
     border-color:#616161;
-    background-image:linear-gradient(to bottom, #8A8A8A 0%, #4F4F4F 100%) repeat scroll 0 0 rgba(0, 0, 0, 0);
+    background:linear-gradient(to bottom, #8A8A8A 0%, #4F4F4F 100%) repeat scroll 0 0 rgba(0, 0, 0, 0);
   }
 
   header > button:first-child, 

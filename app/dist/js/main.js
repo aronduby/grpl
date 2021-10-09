@@ -50,7 +50,7 @@ require(
 
 		// add pluck back in instead of doing a bunch of work finding and replacing
         function pluck(collection, fld) {
-            console.error('_.pluck');
+            // console.error('_.pluck');
             return _.map(collection, function(obj){
                return obj[fld];
             });
