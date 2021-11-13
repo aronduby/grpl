@@ -237,6 +237,13 @@ exports.quickAdd = function (data, season_id) {
                 db.query(sql, [season_id], function (err, nightIds) {
                     if (err) { err.sql = sql; d.reject(err); db.release(); return false; }
 
+                    if (!nightIds.length) {
+                        data.active = true;
+                        d.resolve(new Player(data));
+                        db.release();
+                        return;
+                    }
+
                     var orderInserts = [];
                     var scoringInserts = [];
                     nightIds.forEach(function (row) {
@@ -308,6 +315,12 @@ exports.batchActivation = function (nameKeys, seasonId) {
             nameKeys.forEach(function (key) {
                 sets.push('(\'' + key + '\', ' + seasonId + ')');
             });
+
+            if (!sets.length) {
+                d.resolve(true);
+                db.release();
+                return;
+            }
 
             insertSql += sets.join(', ');
 

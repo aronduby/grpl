@@ -192,7 +192,7 @@ LeagueNight.prototype.save = function(){
 
 						// inject division
 						injectDivision(self.season_id, sets, 4)
-						.then(function(sets){
+						.then(function(sets) {
 
 							var query = db.query("INSERT INTO league_night_order (`night_id`, `name_key`, `rank`, `start_order`, `grouping`, `division_id`) VALUES ?", [sets], function(err, results){
 								if(err){ d.reject(err); db.release(); return false; }

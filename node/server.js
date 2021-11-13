@@ -64,6 +64,7 @@ grpl.season.getCurrent()
 
 
 function handleError(err) {
+    logger.error(err);
     logger.error(err.stack);
     return {
         title: 'Error',
