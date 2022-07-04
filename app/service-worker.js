@@ -4,7 +4,7 @@ self.addEventListener('push', function(event){
 
 	var title = 'Scoring Updated!',
 		body = 'Scoring has been updated, check out the new rankings.',
-		icon = '/icons/icon-192.png',
+		icon = '/icons/android-chrome-192x192.png',
 		tag = 'scoring-updated';
 
 	event.waitUntil(

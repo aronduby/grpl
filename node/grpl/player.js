@@ -35,15 +35,30 @@ exports.getByFBToken = function (token) {
     var https = require('https'),
         d     = Q.defer();
 
-    https.get('https://graph.facebook.com/me?fields=id&access_token=' + token, function (res) {
+    https.get('https://graph.facebook.com/me?fields=id,first_name,last_name&access_token=' + token, function (res) {
         res.on('data', function (data) {
-            var fb_id = JSON.parse(data).id;
+            var fbData = JSON.parse(data);
+            var fb_id = fbData.id;
+
             exports.getByFBID(fb_id)
                 .then(function (player) {
                     d.resolve(player);
                 })
                 .fail(function (err) {
-                    d.reject(err);
+                    if (err.CREATE_FAKE_USER === true) {
+                        console.log('creating a fake user from FB token');
+                        d.resolve(new Player({
+                            player_id: 0,
+                            first_name: fbData.first_name,
+                            last_name:fbData.last_name,
+                            facebook_id: fbData.id,
+                            name_key: fbData.first_name + fbData.last_name,
+                            role: 2,
+                            hash: null
+                        }))
+                    } else {
+                        d.reject(err);
+                    }
                 });
         });
     }).on('error', function (e) {
@@ -70,11 +85,16 @@ exports.getByFBID = function (fb_id) {
                 return false;
             }
 
-            if (results.length == 0) {
-                d.reject(new Error('could not find user with that ID'));
+            // if there's no users return a faked one with the given information
+            // this is basically just to get FB off my jock every couple months
+            if (results.length === 0) {
+                var rejectError = new Error('could not find user with that ID');
+                rejectError.CREATE_FAKE_USER = true;
+                d.reject(rejectError);
                 db.release();
                 return false;
             }
+
             d.resolve(new Player(results[0]));
             db.release();
         });

@@ -36,6 +36,26 @@ define(['js/app'], function(app){
 			return _.find( this.all, {'abbv': abbv});
 		}
 
+		this.getPreviousPicks = function getPreviousPicks() {
+			var d = $q.defer();
+
+			api.get('machine.getPreviousPicksForSeason')
+				.then((picks) => {
+					Object.keys(picks).forEach(nameKey => {
+						picks[nameKey].forEach(pick => {
+							pick.machine = this.getMachine(pick.abbv);
+						});
+					});
+
+					d.resolve(picks);
+				})
+				.catch(function(err) {
+					d.reject(err);
+				});
+
+			return d.promise;
+		}
+
 		/*
 		 *	Socket Events
 		*/

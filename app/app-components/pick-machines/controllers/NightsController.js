@@ -16,95 +16,105 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 		$scope.prev_night = undefined;
 
 		$scope.players = Players.players;
+		$scope.getPlayer = (nameKey) => Players.getPlayer(nameKey);
 		$scope.previous_machines;
 		$scope.previous_machines_tracker = promiseTracker();
 
 		var all_nights_promise, this_nights_promise;
 
 		LeagueNights.loading
-		.then(function(nights){
-			$scope.nights = LeagueNights.nights;
+			.then(function(nights) {
+				$scope.nights = LeagueNights.nights;
 
-			if($stateParams.starts === ''){
-				$scope.night = LeagueNights.getNextNight(true);
-			} else {
-				$scope.night = LeagueNights.getNight($stateParams.starts);
-			}
+				if($stateParams.starts === ''){
+					$scope.night = LeagueNights.getNextNight(true);
+				} else {
+					$scope.night = LeagueNights.getNight($stateParams.starts);
+				}
 
-			if($scope.night === undefined)
-				$scope.night = LeagueNights.getTotals();
+				if($scope.night === undefined)
+					$scope.night = LeagueNights.getTotals();
 
-			navApi.setTitle($scope.night.title, $scope.night.description);
+				navApi.setTitle($scope.night.title, $scope.night.description);
 
-			// figure out the previous night
-			if($scope.night.starts == 'totals'){
-				$scope.prev_night = LeagueNights.getMostRecentNight();
-			} else {
-				$scope.prev_night = LeagueNights.getPreviousNight($scope.night.starts);	
-			}
+				// figure out the previous night
+				if($scope.night.starts == 'totals'){
+					$scope.prev_night = LeagueNights.getMostRecentNight();
+				} else {
+					$scope.prev_night = LeagueNights.getPreviousNight($scope.night.starts);
+				}
 
-		})
-		.finally(function(){
-
-			loadNight($scope.night.starts);
-			
-		});
+			})
+			.finally(function() {
+				loadNight($scope.night.starts);
+			});
 
 
 		function loadNight(starts){
 			// get the current nights full information
 			LeagueNights.getFullNight(starts)
-			.then(function(night){
-				$scope.night = night;
+				.then(function(night){
+					$scope.night = night;
 
-				$scope.live = Scoring.started && $scope.night.starts == Scoring.night.starts;
-				if($scope.live){
-					Scoring.night.note = $scope.night.note;
-					Scoring.night.subs = $scope.night.subs;
-					$scope.night = Scoring.night;
-				}
+					$scope.live = Scoring.started && $scope.night.starts == Scoring.night.starts;
+					if($scope.live){
+						Scoring.night.note = $scope.night.note;
+						Scoring.night.subs = $scope.night.subs;
+						$scope.night = Scoring.night;
+					}
 
-				// underscore chaining FTW!
-				var players = _.chain(night.divisions)
-					.map(function(obj){ return obj.player_list.players })
-					.flatten()
-					.value();
+					// underscore chaining FTW!
+					var players = _.chain(night.divisions)
+						.map(function(obj){ return obj.player_list.players })
+						.flatten()
+						.value();
 
-				var ties = _.chain(players)
-					.groupBy('scoring_string')
-					.filter(function(arr){ return arr.length > 1; })
-					.value();
+					var ties = _.chain(players)
+						.groupBy('scoring_string')
+						.filter(function(arr){ return arr.length > 1; })
+						.value();
 
-				if(ties.length > 0 && !(ties.length == 1 && ties[0].length == players.length)){
-					_.each(ties, function(group, tie_index){
-						if (group[0].scoring_string === '0') {
-						    return true;
-                        }
+					if(ties.length > 0 && !(ties.length == 1 && ties[0].length == players.length)){
+						_.each(ties, function(group, tie_index){
+							if (group[0].scoring_string === '0') {
+								return true;
+							}
 
-						_.each(group, function(player){
-							player.tied = true;
-							player.tied_index = tie_index;
-						})
-					});
-				}
+							_.each(group, function(player){
+								player.tied = true;
+								player.tied_index = tie_index;
+							})
+						});
+					}
 
-				// create an obj of name_key => [abbv, abbv] for night's machine picks
-				$scope.machines_by_picked = _.chain(night.divisions)
-					.map(function(obj){ return obj.machines })
-					.flatten()
-					.groupBy('picked_by')
-					.each(function(val, key, obj){ obj[key] = _.pluck(val, 'abbv') })
-					.value();
+					// create an obj of name_key => [abbv, abbv] for night's machine picks
+					$scope.machines_by_picked = _.chain(night.divisions)
+						.map(function(obj){ return obj.machines })
+						.flatten()
+						.groupBy('picked_by')
+						.each(function(val, key, obj){ obj[key] = _.pluck(val, 'abbv') })
+						.value();
+				})
+				.catch(function(err){
+					dialog(err);
+				})
+				.finally(function(){
+					loadingOverlayApi.hide();
+				});
+
+			// region Previous Picks
+			var previousPicksPromise = Machines.getPreviousPicks();
+			$scope.previous_machines_tracker.addPromise(previousPicksPromise);
+			$scope.previous_machines_tracker.addPromise(Players.loading);
+
+			previousPicksPromise.then(function(picks) {
+				$scope.previous_machines = picks;
 			})
-			.catch(function(err){
-				dialog(err);
-			})
-			.finally(function(){
-				loadingOverlayApi.hide();
-			});
+			// endregion
+
 
 			// get the previous nights machines
-			if($scope.prev_night !== undefined){
+			/*if($scope.prev_night !== undefined) {
 				var prev_mac_promise = LeagueNights.getFullNight($scope.prev_night.starts);
 				$scope.previous_machines_tracker.addPromise(prev_mac_promise);
 				prev_mac_promise.then(function(prev){
@@ -131,7 +141,7 @@ define(['js/app', 'app-components/controllers/RandomizerController'], function(a
 				});
 			} else {
 				$scope.previous_machines = false;
-			}
+			}*/
 		}
 
 

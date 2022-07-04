@@ -59,7 +59,7 @@ grpl.season.getCurrent()
         season_id = season.season_id
     })
     .fail(function (err) {
-        season_id = 25;
+        season_id = 26;
     }).done();
 
 
@@ -871,6 +871,19 @@ io.sockets.on('connection', function (socket) {
             })
             .done();
     });
+
+    socket.on('machine.getPreviousPicksForSeason', function(cb) {
+        var ssid = getSeasonID(socket);
+
+        grpl.machine.getPreviousPicksForSeason(ssid)
+            .then(function(picks) {
+                cb(null, picks);
+            })
+            .fail(function (err) {
+                cb(handleError(err));
+            })
+            .done();
+    })
 
     socket.on('machine.abbv', function (abbv, cb) {
         grpl.machine.getByAbbv(abbv)

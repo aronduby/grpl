@@ -63,8 +63,8 @@ gulp.task('html', function() {
 	gulp.src('index.html')
 		.pipe(plumber({ errorHandler: onError }))
 		.pipe(assets)
-		.pipe(gulpif('*.js', uglify()))
-		.pipe(gulpif('*.css', csspipe()))
+		.pipe(gulpif('**/*.js', uglify()))
+		.pipe(gulpif('**/*.css', csspipe()))
 		.pipe(assets.restore())
 		.pipe(useref())
 		.pipe(gulp.dest('dist'));
@@ -91,12 +91,13 @@ gulp.task('html', function() {
 		.pipe(gulp.dest('dist/layout_imgs'));
 
 	gulp.src([
-			'js/**/*.*', 
-			'bower_components/angular/**/*.*', 
-			'bower_components/requirejs/**/*.*', 
+			'js/**/*.*',
+			'bower_components/angular/**/*.*',
+			'bower_components/requirejs/**/*.*',
 			'bower_components/slip/**/*.*',
 			'bower_components/showdown/**/*.*',
 			'manifest.json',
+			'manifest.*.json',
 			'service-worker.js'
 		], {base: './'})
 		.pipe(plumber({ errorHandler: onError }))

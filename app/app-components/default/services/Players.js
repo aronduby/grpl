@@ -63,7 +63,7 @@ define(['js/app'], function(app){
 			return d.promise;
 		};
 
-		this.getPlayer = function(name_key){
+		this.getPlayer = function(name_key) {
 			return _.find(this.players, {'name_key': name_key});
 		};
 

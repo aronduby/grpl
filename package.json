@@ -24,5 +24,6 @@
     "gulp": "^3.8.11",
     "lazypipe": "^0.2.2",
     "gulp-sourcemaps": "^1.3.0"
-  }
+  },
+  "dependencies": {}
 }

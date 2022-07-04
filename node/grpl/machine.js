@@ -75,6 +75,40 @@ exports.getForLeagueNightAndDivision = function(starts, division_id){
 	return d.promise;
 }
 
+exports.getPreviousPicksForSeason = function(season_id) {
+	var d = Q.defer(),
+		picks = [];
+
+	getPool().getConnection((function(err, db) {
+		if (err) { d.reject(err); return false; }
+
+		var sql = "SELECT * FROM " +
+				"machine_to_league_night " +
+			"WHERE " +
+				"night_id IN  (SELECT night_id FROM league_night WHERE season_id = ?) " +
+			"ORDER BY " +
+				"picked_by, night_id";
+
+		db.query(sql, [season_id], function(err, results) {
+			if(err){ d.reject(err); db.release(); return false; }
+
+			picks = results.reduce(function(acc, row) {
+				if (!acc.hasOwnProperty(row.picked_by)) {
+					acc[row.picked_by] = [];
+				}
+
+				acc[row.picked_by].push(row);
+				return acc;
+			}, {});
+
+			d.resolve(picks);
+			db.release();
+		});
+	}));
+
+	return d.promise;
+}
+
 
 exports.getForSeason = function(season_id){
 	var d = Q.defer(),

@@ -5,12 +5,16 @@ html,body{
 }
 
 body{
-  background:url(/layout_imgs/ps-floor-pattern-grey.png);  
   font-family:'Roboto Condensed', sans-serif;
   font-size:14px;
   color:#515151;
   position:relative;
+  /*background-color: slategrey; safari doesn't know slategrey */
+  background-color: #708090;
+  background-image: url(/layout_imgs/noise.jpg?v=2);
+  background-blend-mode: multiply;
 }
+
   body.amo{
     overflow-y: hidden;
   }
@@ -97,9 +101,9 @@ code{
     display:inline-block;
     width:51px; height:38px;
     margin:1px 10px 0 5px;
-    overlfow:hidden;
+    overflow:hidden;
     text-indent:-999px;
-    background:url(/layout_imgs/mobile_sprite.png) 0 0 no-repeat;
+    background:url(/layout_imgs/mobile_sprite.png?v=2) 0 0 no-repeat;
   }
 
   #main-navbar .select-trigger{
@@ -120,7 +124,7 @@ code{
       right:-23px;
       margin-top:-6px;
       width:13px; height:12px;
-      background:url(/layout_imgs/mobile_sprite.png) 0 -247px;
+      background:url(/layout_imgs/mobile_sprite.png?v=2) 0 -247px;
     }
     #main-navbar .select-trigger h2{
       font-size:20px;
@@ -303,7 +307,7 @@ p.deprecated{
         margin-top:-9px;
         display:block;
         width:11px; height:19px;
-        background:url(/layout_imgs/mobile_sprite.png) no-repeat 0 -192px;
+        background:url(/layout_imgs/mobile_sprite.png?v=2) no-repeat 0 -192px;
         clear:both;
       }
       
@@ -375,7 +379,7 @@ a.button{
   button:before,
   a.button:before{
     content:' ';
-    background-image:url(/layout_imgs/mobile_sprite.png);
+    background-image:url(/layout_imgs/mobile_sprite.png?v=2);
     background-repeat:no-repeat;
     display:inline-block;
     vertical-align:middle;
@@ -664,7 +668,7 @@ img.loading{
     overflow:hidden;
     width:14px; height:14px;
     text-indent:-999px;
-    background:url(/layout_imgs/mobile_sprite.png) no-repeat 0 -211px;
+    background:url(/layout_imgs/mobile_sprite.png?v=2) no-repeat 0 -211px;
   
     opacity: 1;
 }
@@ -738,7 +742,7 @@ img.loading{
   display:block;
   width:18px; 
   height:18px;
-  background:url(/layout_imgs/mobile_sprite.png);
+  background:url(/layout_imgs/mobile_sprite.png?v=2);
   background-position:0 -274px;
 }
 .status-indicator.off, .status-indicator[data-status="off"]{ background-position:0 -274px; }
