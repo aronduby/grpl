@@ -210,8 +210,11 @@ function Machine(opts){
 			this[prop] = opts[prop];
 		}
 	}
+
 	if(this.note != null && this.note.length)
 		this.note = nl2br(this.note);
+
+	this.abbv = '' + this.abbv;
 }
 Machine.prototype.machine_id = null;
 Machine.prototype.name = null;
