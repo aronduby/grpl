@@ -12,8 +12,8 @@
     "node-gcm-service": "^0.2.8",
     "q": "^1.0.1",
     "redis": "^0.8.3",
-    "socket.io": "^1.0.0",
-    "socket.io-redis": "^1.0.0",
+    "socket.io": "^4.5.3",
+    "socket.io-redis": "^6.1.1",
     "tracer": "^0.7.1",
     "underscore": "^1.8.3"
   },
